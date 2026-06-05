@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>환상의 매직랜드 해피 플래너 & 드림 코인 상점 (Ver 6.0-magic)</title>
+    <title>환상의 매직랜드 해피 플래너 (Ver 6.1-auth)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <!-- 대시보드 차트용 라이브러리 탑재 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Noto+Sans+KR:wght=300;400;500;700;900&display=swap');
@@ -64,13 +63,113 @@
 <body class="text-slate-800 min-h-screen flex flex-col transition-colors duration-300" id="app-body">
 
     <!-- 매직랜드 클라우드 동기화 대기 오버레이 -->
-    <div id="db-loading-overlay" class="fixed inset-0 bg-amber-950/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center text-white transition-opacity duration-300">
+    <div id="db-loading-overlay" class="fixed inset-0 bg-amber-950/80 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center text-white transition-opacity duration-300">
         <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-amber-400"></div>
             <span class="absolute text-2xl animate-bounce">🎡</span>
         </div>
-        <h3 class="text-xl font-bold tracking-tight">매직랜드 클라우드 동기화 중...</h3>
-        <p class="text-xs text-amber-200/80 mt-2">엄마 폰과 아이 패널의 드림 코인을 실시간으로 연결하고 있습니다.</p>
+        <h3 class="text-xl font-bold tracking-tight">매직랜드 보안 게이트 통과 중...</h3>
+        <p class="text-xs text-amber-200/80 mt-2">안전한 데이터 가동 환경을 수립하고 있습니다.</p>
+    </div>
+
+    <!-- 토스트 알림창 컨테이너 -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== [신규] 로그인/회원가입/비밀번호찾기 통합 관문 레이어 ==================== -->
+    <div id="auth-gate-container" class="fixed inset-0 bg-gradient-to-tr from-amber-100 via-orange-50 to-purple-100 z-[90] flex items-center justify-center p-4">
+        <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-orange-100 space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-5xl animate-bounce inline-block">🎠</span>
+                <h2 class="text-2xl font-black text-slate-800">환상의 매직랜드 로그인</h2>
+                <p class="text-xs text-slate-400">온 가족이 드림 코인을 가꾸는 마법 해피 플래너 🎡</p>
+            </div>
+
+            <!-- 관문 선택 탭 버튼 -->
+            <div class="flex bg-slate-100/80 p-1 rounded-2xl text-xs font-bold gap-1">
+                <button onclick="switchAuthTab('LOGIN')" id="auth-tab-login" class="flex-1 py-2.5 rounded-xl text-center bg-white text-slate-800 shadow-sm transition">로그인</button>
+                <button onclick="switchAuthTab('REGISTER')" id="auth-tab-register" class="flex-1 py-2.5 rounded-xl text-center text-slate-500 hover:text-slate-800 transition">회원가입</button>
+                <button onclick="switchAuthTab('RECOVER')" id="auth-tab-recover" class="flex-1 py-2.5 rounded-xl text-center text-slate-500 hover:text-slate-800 transition">비밀번호 찾기</button>
+            </div>
+
+            <!-- 1. 로그인 폼 -->
+            <form id="auth-form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs font-semibold">
+                <div>
+                    <label class="block text-slate-500 mb-1">패밀리 마법사 ID</label>
+                    <input type="text" id="login-id" required placeholder="아이디를 입력해 주세요" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                </div>
+                <div>
+                    <label class="block text-slate-500 mb-1">마법 비밀번호</label>
+                    <input type="password" id="login-pw" required placeholder="비밀번호를 입력해 주세요" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                </div>
+                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> 매직랜드 게이트 입장
+                </button>
+            </form>
+
+            <!-- 2. 회원가입 폼 -->
+            <form id="auth-form-register" onsubmit="handleRegisterSubmit(event)" class="space-y-4 text-xs font-semibold hidden">
+                <div>
+                    <label class="block text-slate-500 mb-1">신규 마법사 ID</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="register-id" required placeholder="영어/숫자 포함" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                        <button type="button" onclick="checkIdDuplication()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 rounded-xl shrink-0 transition">중복 점검</button>
+                    </div>
+                    <span id="id-check-badge" class="text-[10px] mt-1 block text-slate-400">아이디 중복 점검을 진행해 주세요.</span>
+                </div>
+                <div>
+                    <label class="block text-slate-500 mb-1">마법 비밀번호</label>
+                    <input type="password" id="register-pw" required placeholder="기억하기 쉬운 비밀번호" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                </div>
+                <div>
+                    <label class="block text-slate-500 mb-1">비밀번호 찾기 질문</label>
+                    <select id="register-question" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold text-slate-700">
+                        <option value="우리 집 귀여운 애완동물 이름은?">우리 집 귀여운 애완동물 이름은?</option>
+                        <option value="가장 기억에 남는 추억 여행지는?">가장 기억에 남는 추억 여행지는?</option>
+                        <option value="내가 제일 좋아하는 마법 보물은?">내가 제일 좋아하는 마법 보물은?</option>
+                        <option value="엄마 아빠가 처음 만난 장소는?">엄마 아빠가 처음 만난 장소는?</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-500 mb-1">질문 답변</label>
+                    <input type="text" id="register-answer" required placeholder="질문에 대한 답변을 정답처럼 입력" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> 해피 패밀리 마법 영토 개설
+                </button>
+            </form>
+
+            <!-- 3. 비밀번호 찾기 및 변경 폼 -->
+            <div id="auth-form-recover" class="space-y-4 text-xs font-semibold hidden">
+                <!-- 아이디 입력 및 질문 검증 단계 -->
+                <div id="recover-step-1" class="space-y-4">
+                    <div>
+                        <label class="block text-slate-500 mb-1">확인할 마법사 ID</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="recover-id" required placeholder="아이디 입력" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                            <button type="button" onclick="verifyRecoverId()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 rounded-xl shrink-0 transition">질문 조회</button>
+                        </div>
+                    </div>
+                    <div id="recover-question-area" class="hidden space-y-3 bg-amber-50/50 p-3 rounded-2xl border border-amber-100">
+                        <p class="font-bold text-slate-600">질문: <span id="recover-question-text" class="text-orange-600">질문 내역</span></p>
+                        <div>
+                            <label class="block text-slate-500 mb-1">질문 답변 입력</label>
+                            <input type="text" id="recover-answer" placeholder="답변을 입력해 주세요" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                        </div>
+                        <button type="button" onclick="verifyRecoverAnswer()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition">답변 인증하기</button>
+                    </div>
+                </div>
+
+                <!-- 비밀번호 재설정 단계 -->
+                <div id="recover-step-2" class="space-y-4 hidden bg-teal-50/40 p-4 rounded-2xl border border-teal-100/60">
+                    <h4 class="font-black text-teal-800 text-center text-sm"><i class="fa-solid fa-shield-halved"></i> 인증 성공! 새 패스코드 변경</h4>
+                    <div>
+                        <label class="block text-slate-500 mb-1">새로운 마법 비밀번호</label>
+                        <input type="password" id="recover-new-pw" placeholder="새롭게 가꿀 비밀번호" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-400 font-bold">
+                    </div>
+                    <button type="button" onclick="resetRecoverPassword()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl transition">비밀번호 변경 완료</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 헤더 영역 -->
@@ -84,14 +183,14 @@
                     <h1 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
                         <span class="text-orange-600"><i class="fa-solid fa-wand-magic-sparkles"></i> 매직랜드 해피 플래너</span>
                         <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 flex items-center gap-1">
-                            <i class="fa-solid fa-cloud"></i> Ver 6.0-magic
+                            <i class="fa-solid fa-cloud"></i> Ver 6.1-auth
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-500 font-medium">실시간 동기화로 부모님과 함께 가꾸는 즐거운 모험 놀이터 🎡</p>
+                    <p class="text-xs text-slate-500 font-medium">우리 패밀리의 소중한 놀이 정원, 환영합니다! 🎡</p>
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3 justify-center sm:justify-end">
                 <!-- 드림코인 카운터 지표 -->
                 <div id="global-star-container" class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2 flex items-center gap-2 shadow-sm transition-all duration-300">
                     <span class="text-amber-500 text-lg animate-bounce"><i class="fa-solid fa-coins"></i></span>
@@ -107,14 +206,18 @@
                         <span id="dropdown-selected-name" class="font-bold text-xs">놀이공원 입장 패스</span>
                         <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
                     </button>
-                    <div id="dropdown-menu-items" class="hidden absolute right-0 mt-2 w-48 bg-white border border-orange-100 rounded-2xl shadow-xl z-50 overflow-hidden py-1">
-                    </div>
+                    <div id="dropdown-menu-items" class="hidden absolute right-0 mt-2 w-48 bg-white border border-orange-100 rounded-2xl shadow-xl z-50 overflow-hidden py-1"></div>
                 </div>
 
-                <!-- 부모 모드 전환 단추 -->
+                <!-- 관리자 및 역할 변경 단추 그룹 -->
                 <button id="role-toggle-btn" class="bg-slate-800 text-white hover:bg-slate-900 font-bold py-2 px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-2 text-sm shrink-0">
                     <i class="fa-solid fa-lock"></i>
                     <span>부모 모드로 전환</span>
+                </button>
+
+                <!-- 로그아웃 단추 -->
+                <button onclick="handleLogout()" class="bg-rose-100 text-rose-700 hover:bg-rose-200 font-bold py-2 px-3 rounded-xl transition text-sm flex items-center gap-1">
+                    <i class="fa-solid fa-power-off"></i>
                 </button>
             </div>
         </div>
@@ -125,187 +228,203 @@
         
         <!-- ==================== 자녀 모드 뷰 ==================== -->
         <div id="child-view" class="space-y-8">
-            <!-- 웰컴 놀이공원 배너 -->
-            <div class="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-                <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl">
-                    <i class="fa-solid fa-carousels">🎡</i>
-                </div>
-                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="flex items-center gap-4">
-                        <div id="welcome-child-avatar-container" class="w-16 h-16 rounded-2xl overflow-hidden bg-white/20 border-2 border-white/40 flex items-center justify-center text-3xl shadow-md shrink-0">
-                            <i class="fa-solid fa-face-smile"></i>
-                        </div>
-                        <div>
-                            <span id="today-full-date-sentence" class="text-sm text-yellow-200 font-bold block mb-1">매직랜드 투데이 위클리</span>
-                            <h2 class="text-2xl sm:text-3xl font-black flex items-center gap-2">
-                                안녕하세요, <span id="welcome-child-name" class="underline decoration-yellow-300 decoration-wavy">시윤</span>님! Welcome! 🎉
-                            </h2>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 self-start md:self-auto">
-                        <div class="text-center">
-                            <p class="text-xs uppercase tracking-wider text-orange-100">오늘 완료 미션</p>
-                            <p class="text-2xl font-black child-font" id="today-completed-ratio">0/0</p>
-                        </div>
-                        <div class="w-[1px] h-10 bg-white/20"></div>
-                        <div class="text-center">
-                            <p class="text-xs uppercase tracking-wider text-orange-100">오늘 성취도</p>
-                            <p class="text-2xl font-black text-yellow-200 child-font" id="today-success-percent">0%</p>
-                        </div>
-                    </div>
-                </div>
+
+            <!-- 🎡 자녀가 없을 때 보여주는 매직랜드 온보딩 카드 -->
+            <div id="child-empty-state" class="hidden bg-white rounded-3xl p-8 text-center border border-orange-100 max-w-lg mx-auto shadow-sm space-y-6 my-12">
+                <span class="text-7xl animate-bounce block">🎠</span>
+                <h3 class="text-2xl font-black text-slate-800">매직랜드에 오신 것을 환영합니다!</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    아직 등록된 매직랜드 모험가(자녀)가 없습니다.<br>
+                    우측 상단의 <b class="text-slate-900">[부모 모드로 전환]</b> 버튼을 눌러 관리자 인증 후,<br>
+                    <b class="text-orange-600">[자녀 설정]</b> 및 <b class="text-orange-600">[별 포상 상점 관리]</b> 탭에서<br> 자녀와 리워드 목록을 가장 먼저 등록해 주세요!<br>
+                    <span class="text-xs text-orange-500 font-bold block mt-3 bg-orange-50 py-2.5 rounded-xl border border-orange-100/50">(부모 모드 초기 비밀번호: 1234)</span>
+                </p>
             </div>
 
-            <!-- 자녀 모드 메인 레이아웃 (그리드 분할) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <!-- 좌측 2개 컬럼 -->
-                <div class="lg:col-span-2 space-y-6">
+            <!-- 실제 자녀 대시보드 및 학습 콘텐츠 (자녀가 존재할 때만 활성화) -->
+            <div id="child-active-content" class="space-y-8">
+                <!-- 웰컴 놀이공원 배너 -->
+                <div class="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-500 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl">
+                        <i class="fa-solid fa-carousels">🎡</i>
+                    </div>
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="flex items-center gap-4">
+                            <div id="welcome-child-avatar-container" class="w-16 h-16 rounded-2xl overflow-hidden bg-white/20 border-2 border-white/40 flex items-center justify-center text-3xl shadow-md shrink-0">
+                                <i class="fa-solid fa-face-smile"></i>
+                            </div>
+                            <div>
+                                <span id="today-full-date-sentence" class="text-sm text-yellow-200 font-bold block mb-1">매직랜드 투데이 위클리</span>
+                                <h2 class="text-2xl sm:text-3xl font-black flex items-center gap-2">
+                                    안녕하세요, <span id="welcome-child-name" class="underline decoration-yellow-300 decoration-wavy">시윤</span>님! Welcome! 🎉
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 self-start md:self-auto">
+                            <div class="text-center">
+                                <p class="text-xs uppercase tracking-wider text-orange-100">오늘 완료 미션</p>
+                                <p class="text-2xl font-black child-font" id="today-completed-ratio">0/0</p>
+                            </div>
+                            <div class="w-[1px] h-10 bg-white/20"></div>
+                            <div class="text-center">
+                                <p class="text-xs uppercase tracking-wider text-orange-100">오늘 성취도</p>
+                                <p class="text-2xl font-black text-yellow-200 child-font" id="today-success-percent">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 자녀 모드 메인 레이아웃 (그리드 분할) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
-                    <!-- 나의 누적 학업성취도 리포트 -->
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="p-3 bg-teal-50 text-teal-600 rounded-2xl"><i class="fa-solid fa-chart-pie text-lg"></i></span>
-                                <div>
-                                    <h3 class="font-bold text-lg text-slate-800">나의 누적 학업성취도 리포트</h3>
-                                    <p class="text-xs text-slate-400">학습성과와 드림코인 획득 내역을 한눈에 살펴보세요.</p>
-                                </div>
-                            </div>
-                            <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                                <button onclick="setChildStatFilter('WEEK')" id="cstat-filter-week" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 shadow-sm transition">이번 주</button>
-                                <button onclick="setChildStatFilter('MONTH')" id="cstat-filter-month" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">이번 달</button>
-                                <button onclick="setChildStatFilter('YEAR')" id="cstat-filter-year" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">올해 누적</button>
-                            </div>
-                        </div>
+                    <!-- 좌측 2개 컬럼 -->
+                    <div class="lg:col-span-2 space-y-6">
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                            <div class="p-2">
-                                <p class="text-xs text-slate-400 font-medium mb-1">총 수행 미션</p>
-                                <p class="text-xl font-bold text-slate-700" id="stat-total-count">0건</p>
-                            </div>
-                            <div class="p-2 border-y sm:border-y-0 sm:border-x border-slate-200">
-                                <p class="text-xs text-slate-400 font-medium mb-1">총 공부 시간</p>
-                                <p class="text-xl font-bold text-indigo-600" id="stat-total-time">0분</p>
-                            </div>
-                            <div class="p-2">
-                                <p class="text-xs text-slate-400 font-medium mb-1">평균 미션 완수율</p>
-                                <p class="text-xl font-bold text-emerald-600" id="stat-average-percent">0%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 미래 일정 및 메모 보드 -->
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="p-3 bg-pink-50 text-pink-600 rounded-2xl"><i class="fa-solid fa-bell text-lg"></i></span>
-                                <div>
-                                    <h3 class="font-bold text-lg text-slate-800">중요 일정 및 숙제 알림판</h3>
-                                    <p class="text-xs text-slate-400">잊지 말고 기억해야 할 일들을 기록판에 적어주세요.</p>
+                        <!-- 나의 누적 학업성취도 리포트 -->
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="p-3 bg-teal-50 text-teal-600 rounded-2xl"><i class="fa-solid fa-chart-pie text-lg"></i></span>
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">나의 누적 학업성취도 리포트</h3>
+                                        <p class="text-xs text-slate-400">학습성과와 드림코인 획득 내역을 한눈에 살펴보세요.</p>
+                                    </div>
+                                </div>
+                                <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                                    <button onclick="setChildStatFilter('WEEK')" id="cstat-filter-week" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 shadow-sm transition">이번 주</button>
+                                    <button onclick="setChildStatFilter('MONTH')" id="cstat-filter-month" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">이번 달</button>
+                                    <button onclick="setChildStatFilter('YEAR')" id="cstat-filter-year" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">올해 누적</button>
                                 </div>
                             </div>
-                            <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                                <button onclick="setScheduleFilter('UNCOMPLETED')" id="sched-filter-uncompleted" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 shadow-sm transition">미완료</button>
-                                <button onclick="setScheduleFilter('COMPLETED')" id="sched-filter-completed" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">완료된 것</button>
-                                <button onclick="setScheduleFilter('ALL')" id="sched-filter-all" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">전체</button>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <div class="p-2">
+                                    <p class="text-xs text-slate-400 font-medium mb-1">총 수행 미션</p>
+                                    <p class="text-xl font-bold text-slate-700" id="stat-total-count">0건</p>
+                                </div>
+                                <div class="p-2 border-y sm:border-y-0 sm:border-x border-slate-200">
+                                    <p class="text-xs text-slate-400 font-medium mb-1">총 공부 시간</p>
+                                    <p class="text-xl font-bold text-indigo-600" id="stat-total-time">0분</p>
+                                </div>
+                                <div class="p-2">
+                                    <p class="text-xs text-slate-400 font-medium mb-1">평균 미션 완수율</p>
+                                    <p class="text-xl font-bold text-emerald-600" id="stat-average-percent">0%</p>
+                                </div>
                             </div>
                         </div>
 
-                        <form onsubmit="addFutureSchedule(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4 text-xs">
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">카테고리</label>
-                                <select id="form-sched-category" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-                                    <option value="시험">📝 시험</option>
-                                    <option value="숙제">📚 숙제</option>
-                                    <option value="준비물">🎨 준비물</option>
-                                    <option value="행사">🎡 행사</option>
-                                </select>
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-slate-500 font-bold mb-1">메모 내용</label>
-                                <input type="text" id="form-sched-content" placeholder="예: 구구단 3단 외우기, 가위와 풀 준비" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-                            </div>
-                            <div>
-                                <label class="block text-slate-500 font-bold mb-1">목표 기한</label>
-                                <div class="flex gap-1">
-                                    <input type="date" id="form-sched-duedate" required class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-                                    <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white font-bold px-3 rounded-xl transition shrink-0"><i class="fa-solid fa-plus"></i></button>
+                        <!-- 미래 일정 및 메모 보드 -->
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="p-3 bg-pink-50 text-pink-600 rounded-2xl"><i class="fa-solid fa-bell text-lg"></i></span>
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">중요 일정 및 숙제 알림판</h3>
+                                        <p class="text-xs text-slate-400">잊지 말고 기억해야 할 일들을 기록판에 적어주세요.</p>
+                                    </div>
+                                </div>
+                                <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                                    <button onclick="setScheduleFilter('UNCOMPLETED')" id="sched-filter-uncompleted" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 shadow-sm transition">미완료</button>
+                                    <button onclick="setScheduleFilter('COMPLETED')" id="sched-filter-completed" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">완료된 것</button>
+                                    <button onclick="setScheduleFilter('ALL')" id="sched-filter-all" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">전체</button>
                                 </div>
                             </div>
-                        </form>
 
-                        <div id="child-schedules-list" class="space-y-2 max-h-[220px] overflow-y-auto pr-1"></div>
-                    </div>
-
-                    <!-- 오늘의 학습 미션 리스트 -->
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                            <div class="flex items-center gap-3">
-                                <span class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><i class="fa-solid fa-calendar-day text-lg"></i></span>
+                            <form onsubmit="addFutureSchedule(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4 text-xs">
                                 <div>
-                                    <h3 class="font-bold text-lg text-slate-800">오늘의 해피 드림 미션</h3>
-                                    <p class="text-xs text-slate-400">오늘 완료해야 하는 매직 미션 카드입니다. 완료하고 드림코인을 적립하세요!</p>
-                                </div>
-                            </div>
-                            <!-- 자녀 직접 추가 미션 수립 폼 트리거 -->
-                            <button onclick="toggleChildCustomForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto shrink-0">
-                                <i class="fa-solid fa-circle-plus"></i>
-                                <span>오늘 미션 직접 만들기</span>
-                            </button>
-                        </div>
-
-                        <!-- 자녀 직접 추가 미션 수립 폼 박스 -->
-                        <div id="child-custom-mission-form" class="hidden bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl mb-6 text-xs transition duration-300">
-                            <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-1.5">🎟️ 오늘 내가 직접 도전할 보너스 미션 등록하기</h4>
-                            <form onsubmit="handleChildCreateMission(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                                <div>
-                                    <label class="block text-slate-500 font-bold mb-1">도전 과목</label>
-                                    <input type="text" id="child-form-subject" placeholder="예: 독서, 영어공부" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
+                                    <label class="block text-slate-500 font-bold mb-1">카테고리</label>
+                                    <select id="form-sched-category" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                                        <option value="시험">📝 시험</option>
+                                        <option value="숙제">📚 숙제</option>
+                                        <option value="준비물">🎨 준비물</option>
+                                        <option value="행사">🎡 행사</option>
+                                    </select>
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block text-slate-500 font-bold mb-1">도전 목표 분량</label>
-                                    <input type="text" id="child-form-range" placeholder="예: 동화책 재미있게 읽고 독서 기록하기" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
+                                    <label class="block text-slate-500 font-bold mb-1">메모 내용</label>
+                                    <input type="text" id="form-sched-content" placeholder="예: 구구단 3단 외우기, 가위와 풀 준비" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
                                 </div>
                                 <div>
-                                    <label class="block text-slate-500 font-bold mb-1">도전 보상 코인</label>
-                                    <div class="flex gap-1.5">
-                                        <select id="child-form-stars" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 font-bold text-amber-600">
-                                            <option value="1">🪙 코인 1개</option>
-                                            <option value="2">🪙🪙 코인 2개</option>
-                                            <option value="3">🪙🪙🪙 코인 3개</option>
-                                            <option value="4">🪙🪙🪙🪙 코인 4개</option>
-                                            <option value="5">🪙🪙🪙🪙🪙 코인 5개</option>
-                                        </select>
-                                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 rounded-xl transition shrink-0"><i class="fa-solid fa-check"></i></button>
+                                    <label class="block text-slate-500 font-bold mb-1">목표 기한</label>
+                                    <div class="flex gap-1">
+                                        <input type="date" id="form-sched-duedate" required class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                                        <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white font-bold px-3 rounded-xl transition shrink-0"><i class="fa-solid fa-plus"></i></button>
                                     </div>
                                 </div>
                             </form>
-                            <p class="text-[10px] text-slate-400 mt-2"><i class="fa-solid fa-circle-info"></i> 스스로 제안한 특별 보너스 미션은 부모님이 확인 후 승인해야 최종 드림 코인이 지급됩니다.</p>
+
+                            <div id="child-schedules-list" class="space-y-2 max-h-[220px] overflow-y-auto pr-1"></div>
                         </div>
 
-                        <div id="today-missions-list" class="space-y-4"></div>
-                    </div>
-                </div>
-
-                <!-- 우측 1개 컬럼: 드림 코인 상점 보상 구매 스페이스 -->
-                <div class="space-y-6">
-                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 sticky top-24">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="p-3 bg-amber-50 text-amber-500 rounded-2xl"><i class="fa-solid fa-store text-lg"></i></span>
-                            <div>
-                                <h3 class="font-bold text-lg text-slate-800">드림 코인 상점</h3>
-                                <p class="text-xs text-slate-400">열심히 모은 코인을 마법 패스 쿠폰으로 바꾸어 사용하세요!</p>
+                        <!-- 오늘의 학습 미션 리스트 -->
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                                <div class="flex items-center gap-3">
+                                    <span class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><i class="fa-solid fa-calendar-day text-lg"></i></span>
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">오늘의 해피 드림 미션</h3>
+                                        <p class="text-xs text-slate-400">오늘 완료해야 하는 매직 미션 카드입니다. 완료하고 드림코인을 적립하세요!</p>
+                                    </div>
+                                </div>
+                                <!-- 자녀 직접 추가 미션 수립 폼 트리거 -->
+                                <button onclick="toggleChildCustomForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto shrink-0">
+                                    <i class="fa-solid fa-circle-plus"></i>
+                                    <span>오늘 미션 직접 만들기</span>
+                                </button>
                             </div>
+
+                            <!-- 자녀 직접 추가 미션 수립 폼 박스 -->
+                            <div id="child-custom-mission-form" class="hidden bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl mb-6 text-xs transition duration-300">
+                                <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-1.5">🎟️ 오늘 내가 직접 도전할 보너스 미션 등록하기</h4>
+                                <form onsubmit="handleChildCreateMission(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <div>
+                                        <label class="block text-slate-500 font-bold mb-1">도전 과목</label>
+                                        <input type="text" id="child-form-subject" placeholder="예: 독서, 영어공부" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-slate-500 font-bold mb-1">도전 목표 분량</label>
+                                        <input type="text" id="child-form-range" placeholder="예: 동화책 재미있게 읽고 독서 기록하기" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-500 font-bold mb-1">도전 보상 코인</label>
+                                        <div class="flex gap-1.5">
+                                            <select id="child-form-stars" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 font-bold text-amber-600">
+                                                <option value="1">🪙 코인 1개</option>
+                                                <option value="2">🪙🪙 코인 2개</option>
+                                                <option value="3">🪙🪙🪙 코인 3개</option>
+                                                <option value="4">🪙🪙🪙🪙 코인 4개</option>
+                                                <option value="5">🪙🪙🪙🪙🪙 코인 5개</option>
+                                            </select>
+                                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 rounded-xl transition shrink-0"><i class="fa-solid fa-check"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <p class="text-[10px] text-slate-400 mt-2"><i class="fa-solid fa-circle-info"></i> 스스로 제안한 특별 보너스 미션은 부모님이 확인 후 승인해야 최종 드림 코인이 지급됩니다.</p>
+                            </div>
+
+                            <div id="today-missions-list" class="space-y-4"></div>
                         </div>
-
-                        <div id="star-rewards-store-list" class="space-y-3 max-h-[550px] overflow-y-auto pr-1"></div>
                     </div>
+
+                    <!-- 우측 1개 컬럼: 드림 코인 상점 보상 구매 스페이스 -->
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 sticky top-24">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="p-3 bg-amber-50 text-amber-500 rounded-2xl"><i class="fa-solid fa-store text-lg"></i></span>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800">드림 코인 상점</h3>
+                                    <p class="text-xs text-slate-400">열심히 모은 코인을 마법 패스 쿠폰으로 바꾸어 사용하세요!</p>
+                                </div>
+                            </div>
+
+                            <div id="star-rewards-store-list" class="space-y-3 max-h-[550px] overflow-y-auto pr-1"></div>
+                        </div>
+                    </div>
+
                 </div>
-
             </div>
-        </div>
 
+        </div>
 
         <!-- ==================== 부모 모드 전용 대시보드 및 설정 관리 창 ==================== -->
         <div id="parent-view" class="space-y-8 hidden">
@@ -325,8 +444,8 @@
                 </button>
             </div>
 
-            <!-- 부모 모드 전용 5개 탭 컨트롤 바 네비게이션 -->
-            <div class="flex flex-wrap border-b border-slate-200 bg-slate-100 p-1.5 rounded-2xl max-w-4xl mx-auto text-xs font-bold gap-1 shadow-sm justify-center">
+            <!-- 부모 모드 탭 컨트롤 바 네비게이션 -->
+            <div class="flex flex-wrap border-b border-slate-200 bg-slate-100 p-1.5 rounded-2xl max-w-5xl mx-auto text-xs font-bold gap-1 shadow-sm justify-center">
                 <button onclick="switchParentTab('DASHBOARD')" id="ptab-dashboard" class="flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 bg-white text-slate-800 shadow-sm">
                     <i class="fa-solid fa-chart-pie text-[14px]"></i> 성과 리포트
                 </button>
@@ -336,16 +455,18 @@
                 <button onclick="switchParentTab('PLAN')" id="ptab-plan" class="flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
                     <i class="fa-solid fa-calendar-days text-[14px]"></i> 학습 플랜 수립
                 </button>
-                <!-- #1 신규 상점 관리 탭 추가 -->
                 <button onclick="switchParentTab('REWARDS_MGMT')" id="ptab-rewards_mgmt" class="flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
                     <i class="fa-solid fa-gift text-[14px]"></i> 별 포상 상점 관리
                 </button>
                 <button onclick="switchParentTab('CHILD')" id="ptab-child" class="flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
                     <i class="fa-solid fa-users-gear text-[14px]"></i> 자녀 설정
                 </button>
-                <!-- #2 신규 패스워드 관리 탭 추가 -->
                 <button onclick="switchParentTab('SECURITY_MGMT')" id="ptab-security_mgmt" class="flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
                     <i class="fa-solid fa-key text-[14px]"></i> 비밀번호 변경
+                </button>
+                <!-- [신규] 관리자 계정(yoonadmin) 전용 전체 패밀리 계정 관리 탭 -->
+                <button onclick="switchParentTab('GLOBAL_ADMIN')" id="ptab-global_admin" class="hidden flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-rose-500 hover:text-rose-800 border border-rose-200 bg-rose-50/50">
+                    <i class="fa-solid fa-screwdriver-wrench text-[14px]"></i> 전체회원관리
                 </button>
             </div>
 
@@ -367,8 +488,18 @@
                                 <option value="2026">2026년</option>
                             </select>
                             <select id="db-filter-month" onchange="updateParentDashboard()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-600 focus:outline-none">
+                                <option value="01">1월</option>
+                                <option value="02">2월</option>
+                                <option value="03">3월</option>
+                                <option value="04">4월</option>
                                 <option value="05">5월</option>
                                 <option value="06" selected>6월</option>
+                                <option value="07">7월</option>
+                                <option value="08">8월</option>
+                                <option value="09">9월</option>
+                                <option value="10">10월</option>
+                                <option value="11">11월</option>
+                                <option value="12">12월</option>
                             </select>
                             <select id="db-filter-week" onchange="updateParentDashboard()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-600 focus:outline-none">
                                 <option value="ALL">월간 전체</option>
@@ -436,7 +567,7 @@
                                         <i class="fa-solid fa-gift"></i> AI 매직랜드 놀이 주간 코칭 가이드
                                     </h4>
                                 </div>
-                                <span class="text-[10px] text-slate-400 font-mono tracking-tight" id="db-analysis-sunday">주간 분석일자: 2026-05-31 (일요일 기준 분석)</span>
+                                <span class="text-[10px] text-slate-400 font-mono tracking-tight" id="db-analysis-sunday">주간 분석일자: 2026-06-06 (일요일 기준 분석)</span>
                             </div>
                             
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
@@ -546,7 +677,7 @@
                         </div>
                     </div>
 
-                    <!-- 반복 학습 플랜 수립 시 건별 획득 별 정의 선택 셀렉터 콤보 박스 탑재 -->
+                    <!-- 반복 학습 플랜 수립 폼 -->
                     <form onsubmit="handleSaveDefaultMission(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-1 sm:grid-cols-5 gap-3 mb-6 text-xs">
                         <div>
                             <label class="block text-slate-500 font-bold mb-1">대상 자녀 선택</label>
@@ -593,7 +724,7 @@
                 </div>
             </div>
 
-            <!-- ==================== [Tab 4] 별 포상 상점 관리 패널 (#1 신규 추가) ==================== -->
+            <!-- ==================== [Tab 4] 별 포상 상점 관리 패널 ==================== -->
             <div id="ppanel-rewards_mgmt" class="space-y-6 hidden">
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
                     <div class="flex items-center gap-3 mb-4">
@@ -656,12 +787,11 @@
                     </div>
                     
                     <!-- 자녀 목록 카드 컨테이너 -->
-                    <div id="parent-child-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    </div>
+                    <div id="parent-child-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
 
-            <!-- ==================== [Tab 6] 비밀번호 변경 패널 (#2 신규 추가) ==================== -->
+            <!-- ==================== [Tab 6] 비밀번호 변경 패널 ==================== -->
             <div id="ppanel-security_mgmt" class="space-y-6 hidden">
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 max-w-md mx-auto">
                     <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-3">
@@ -695,16 +825,44 @@
                 </div>
             </div>
 
+            <!-- ==================== [Tab 7] [신규] 전체 패밀리 계정 관리실 (yoonadmin 전용) ==================== -->
+            <div id="ppanel-global_admin" class="space-y-6 hidden">
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="p-3 bg-rose-50 text-rose-600 rounded-2xl"><i class="fa-solid fa-screwdriver-wrench text-lg"></i></span>
+                        <div>
+                            <h3 class="font-bold text-lg text-rose-900">👑 매직랜드 전체 회원 통합 제어판</h3>
+                            <p class="text-xs text-rose-500">각 패밀리 회원 정보와 가입일자를 안전하게 감독하고 초기화/삭제합니다.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto mt-4">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-rose-100 bg-rose-50 text-slate-500 font-bold">
+                                    <th class="p-3">패밀리 ID</th>
+                                    <th class="p-3">가입 일자</th>
+                                    <th class="p-3">가입 질문</th>
+                                    <th class="p-3">등록된 자녀 수</th>
+                                    <th class="p-3 text-center">회원 조치</th>
+                                </tr>
+                            </thead>
+                            <tbody id="global-admin-accounts-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </main>
 
     <footer class="bg-white border-t border-slate-100 py-4 text-center text-xs text-slate-400 mt-12">
-        <p>&copy; 2026 환상의 매직랜드 해피 플래너 시스템 (Ver 6.0-magic). All Rights Reserved.</p>
+        <p>&copy; 2026 환상의 매직랜드 해피 플래너 시스템 (Ver 6.1-auth). All Rights Reserved.</p>
     </footer>
 
-    <!-- ==================== 버그 및 충돌 방지 커스텀 다이얼로그 모달 모듈 ==================== -->
-    <div id="custom-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <!-- 버그 및 충돌 방지 커스텀 다이얼로그 모달 모듈 -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[999] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="custom-modal-box">
             <h3 class="text-lg font-black text-slate-800 mb-2" id="custom-modal-title">알림</h3>
             <p class="text-xs text-slate-500 mb-6 leading-relaxed" id="custom-modal-message">내용</p>
@@ -715,7 +873,7 @@
     </div>
 
     <!-- 커스텀 패스워드 입력 전용 모달 -->
-    <div id="parent-auth-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div id="parent-auth-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[999] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="parent-auth-box">
             <h3 class="text-lg font-black text-slate-800 mb-2">🎡 매직랜드 관리실 인증</h3>
             <p class="text-xs text-slate-400 mb-4 leading-relaxed">비밀번호를 입력하여 관리자 화면으로 진입합니다.</p>
@@ -727,8 +885,8 @@
         </div>
     </div>
 
-    <!-- 자녀 등록 / 수정 전용 우주 커스텀 모달 (프로필 사진 직접 등록 및 Crop 연동 설계) -->
-    <div id="child-manage-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <!-- 자녀 등록 / 수정 전용 우주 커스텀 모달 -->
+    <div id="child-manage-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[999] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="child-manage-box">
             <h3 class="text-lg font-black text-slate-800 mb-2" id="child-modal-title">매직랜드 입장 모험가 설정</h3>
             <p class="text-xs text-slate-400 mb-4 leading-relaxed">모험가의 이름과 사진(입장 패스포트 프로필)을 등록해 주세요.</p>
@@ -767,15 +925,13 @@
         </div>
     </div>
 
-
     <!-- ==================== Firebase 클라우드 DB 연동 & 앱 구동 엔진 ==================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ==================== [핵심 개선] 모듈 로드 즉시 모든 글로벌 호이스팅 바인딩 선제 설정 ====================
-        // 브라우저 샌드박스의 onclick 바인딩 레이스 컨디션 에러를 원천적(ReferenceError)으로 차단하기 위해 최상단에 배치합니다.
+        // 브라우저 샌드박스의 onclick 바인딩 레이스 컨디션 에러 방지를 위해 전역 주입
         window.toggleChildDropdown = toggleChildDropdown;
         window.selectChildFromDropdown = selectChildFromDropdown;
         window.changeActiveChild = changeActiveChild;
@@ -789,6 +945,7 @@
         window.toggleScheduleComplete = toggleScheduleComplete;
         window.deleteSchedule = deleteSchedule;
         window.submitMissionProgress = submitMissionProgress;
+        window.cancelMissionProgress = cancelMissionProgress; // [신규] 완료 취소
         window.purchaseReward = purchaseReward;
         window.handleSaveDefaultMission = handleSaveDefaultMission;
         window.deleteDefaultMission = deleteDefaultMission;
@@ -808,226 +965,429 @@
         window.rejectCustomMissionRequest = rejectCustomMissionRequest;
         window.updateParentDashboard = updateParentDashboard;
         
-        // #1. 리워드 상점 기획 함수 전역 바인딩
         window.handleSaveRewardStoreItem = handleSaveRewardStoreItem;
         window.deleteRewardStoreItem = deleteRewardStoreItem;
         window.editRewardStoreItem = editRewardStoreItem;
         window.renderParentRewardsStoreTable = renderParentRewardsStoreTable;
-        
-        // #2. 비밀번호 관리 기획 함수 전역 바인딩
         window.handleUpdateParentPassword = handleUpdateParentPassword;
 
+        // [신규] 관문 및 계정 전역 바인딩
+        window.switchAuthTab = switchAuthTab;
+        window.handleLoginSubmit = handleLoginSubmit;
+        window.handleRegisterSubmit = handleRegisterSubmit;
+        window.checkIdDuplication = checkIdDuplication;
+        window.verifyRecoverId = verifyRecoverId;
+        window.verifyRecoverAnswer = verifyRecoverAnswer;
+        window.resetRecoverPassword = resetRecoverPassword;
+        window.handleLogout = handleLogout;
+        window.performAdminReset = performAdminReset;
+        window.performAdminDelete = performAdminDelete;
+
         // 글로벌 주입 환경 변수 추출
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'galaxy-planner-v5';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'galaxy-planner-v61';
         let db = null;
         let auth = null;
-        let user = null;
+        let isFirebaseActive = false;
 
         // 차트 인스턴스 전역 보관함
         let distChartInstance = null;
         let achChartInstance = null;
-
-        // 임시 사진 데이터 보관함
         let currentPhotoBase64 = "";
 
-        // 글로벌 기본 초기 데이터 설계 (DB 미구축 시 최초 저장 데이터)
-        let state = {
+        // ==================== [핵심 개선] 로그인 및 계정 결합형 상태 구조 ====================
+        let currentUser = null; // 현재 로그인된 회원 계정 정보 { id, password, createdAt, passwordQuestion, ... }
+        let isIdChecked = false; // 중복검사 여부
+        let isRecoverVerified = false; // 비밀번호 찾기 인증 성공 여부
+
+        // 기본 유저 세션 초기화용 스키마 템플릿
+        const defaultUserTemplate = {
             isParentMode: false,
-            activeChildId: "child-siyoon",
+            activeChildId: "",
             childStatFilter: "WEEK",
             scheduleFilter: "UNCOMPLETED",
-            parentActiveTab: "DASHBOARD", // DASHBOARD, APPROVAL, PLAN, REWARDS_MGMT, CHILD, SECURITY_MGMT
-            parentPassword: "1234", // 부모 변경 비밀번호 수용 핵심 데이터 스키마
-            children: {
-                "child-siyoon": {
-                    id: "child-siyoon",
-                    name: "시윤",
-                    photo: "https://placehold.co/150x150/fb923c/ffffff?text=👦", // 예시 아바타 탑재
-                    stars: 12,
-                    schedules: [
-                        { id: 1, category: "시험", content: "초등 받아쓰기 6단원 단원평가", duedate: "2026-06-10", completed: false },
-                        { id: 2, category: "숙제", content: "일기장 작성 및 독서록 한 편 쓰기", duedate: "2026-06-07", completed: true }
-                    ],
-                    history: {
-                        week: { totalCount: 14, totalTime: 420, completedCount: 12 },
-                        month: { totalCount: 56, totalTime: 1680, completedCount: 50 },
-                        year: { totalCount: 240, totalTime: 7200, completedCount: 225 }
-                    },
-                    defaultMissions: [
-                        { id: 101, day: "월", subject: "수학", range: "만점왕 2장 풀기", stars: 2 },
-                        { id: 102, day: "화", subject: "영어", range: "리딩북 1단원 소리내어 읽기", stars: 1 },
-                        { id: 103, day: "수", subject: "국어", range: "독해력 교재 2쪽", stars: 1 },
-                        { id: 104, day: "목", subject: "수학", range: "연산 프린트 1장", stars: 2 },
-                        { id: 105, day: "금", subject: "영어", range: "단어 10개 암기하기", stars: 1 }
-                    ],
-                    todayMissions: [
-                        { id: 501, subject: "영어", range: "단어 10개 암기하기", completed: false, timeSpent: 0, actualRange: "", stars: 1, isCustom: false, isApproved: true },
-                        { id: 502, subject: "독서", range: "자유 도서 30분 읽기", completed: true, timeSpent: 35, actualRange: "동화책 12p~35p 완료", stars: 2, isCustom: false, isApproved: true }
-                    ],
-                    rewardRequests: [], // 별 상점 교환 대기 목록 수용 공간
-                    missionRequests: [], // 자녀 직접 등록 완료 승인 대기 목록 수용 공간
-                    
-                    // 정교한 대시보드 및 AI의 편중성 의견 도출을 위한 공부 데이터베이스 (studyLogs)
-                    studyLogs: [
-                        { date: "2026-05-25", subject: "수학", timeSpent: 60, completed: true, stars: 2 },
-                        { date: "2026-05-26", subject: "영어", timeSpent: 40, completed: true, stars: 1 },
-                        { date: "2026-05-27", subject: "국어", timeSpent: 30, completed: true, stars: 1 },
-                        { date: "2026-05-28", subject: "수학", timeSpent: 50, completed: true, stars: 2 },
-                        { date: "2026-05-29", subject: "영어", timeSpent: 10, completed: false, stars: 1 },
-                        { date: "2026-05-30", subject: "독서", timeSpent: 40, completed: true, stars: 2 },
-                        { date: "2026-05-31", subject: "수학", timeSpent: 90, completed: true, stars: 2 },
-                        { date: "2026-06-01", subject: "국어", timeSpent: 20, completed: true, stars: 1 },
-                        { date: "2026-06-02", subject: "영어", timeSpent: 15, completed: true, stars: 1 },
-                        { date: "2026-06-03", subject: "수학", timeSpent: 80, completed: true, stars: 1 },
-                        { date: "2026-06-04", subject: "수학", timeSpent: 75, completed: true, stars: 2 },
-                        { date: "2026-06-05", subject: "독서", timeSpent: 35, completed: true, stars: 2 }
-                    ],
-                    
-                    // 과거 부모 승인 이력 보관함
-                    approvalHistory: [
-                        { id: 901, type: "REWARD", title: "주말 롤러코스터 비디오 30분 시청", cost: 5, status: "APPROVED", date: "2026-05-25", timestamp: "오후 6:12" },
-                        { id: 902, type: "REWARD", title: "아이스크림 트럭 기프티콘", cost: 3, status: "APPROVED", date: "2026-06-01", timestamp: "오후 4:30" },
-                        { id: 903, type: "MISSION", subject: "그리기", range: "매직풍선 색칠하기 3장", stars: 2, status: "APPROVED", date: "2026-05-28", timestamp: "오후 8:15" },
-                        { id: 904, type: "MISSION", subject: "영어", range: "영어동요 리딩 1회", stars: 3, status: "APPROVED", date: "2026-06-02", timestamp: "오후 9:40" }
-                    ]
-                },
-                "child-seroon": {
-                    id: "child-seroon",
-                    name: "서윤",
-                    photo: "https://placehold.co/150x150/f43f5e/ffffff?text=👧",
-                    stars: 8,
-                    schedules: [
-                        { id: 3, category: "준비물", content: "미술 시간 찰흙, 조각칼 챙기기", duedate: "2026-06-08", completed: false }
-                    ],
-                    history: {
-                        week: { totalCount: 10, totalTime: 250, completedCount: 9 },
-                        month: { totalCount: 45, totalTime: 1100, completedCount: 40 },
-                        year: { totalCount: 190, totalTime: 4800, completedCount: 178 }
-                    },
-                    defaultMissions: [
-                        { id: 201, day: "월", subject: "한글", range: "낱말 카드 10개 쓰기", stars: 1 },
-                        { id: 202, day: "수", subject: "그리기", range: "스케치북 크레파스 칠하기", stars: 1 },
-                        { id: 203, day: "금", subject: "수학", range: "숫자 이어쓰기 1장", stars: 1 }
-                    ],
-                    todayMissions: [
-                        { id: 601, subject: "수학", range: "숫자 이어쓰기 1장", completed: false, timeSpent: 0, actualRange: "", stars: 1, isCustom: false, isApproved: true }
-                    ],
-                    rewardRequests: [],
-                    missionRequests: [],
-                    studyLogs: [
-                        { date: "2026-05-25", subject: "한글", timeSpent: 30, completed: true, stars: 1 },
-                        { date: "2026-05-27", subject: "그리기", timeSpent: 45, completed: true, stars: 1 },
-                        { date: "2026-05-29", subject: "수학", timeSpent: 20, completed: true, stars: 1 },
-                        { date: "2026-06-01", subject: "한글", timeSpent: 35, completed: true, stars: 1 },
-                        { date: "2026-06-03", subject: "그리기", timeSpent: 40, completed: false, stars: 1 },
-                        { date: "2026-06-05", subject: "수학", timeSpent: 25, completed: false, stars: 1 }
-                    ],
-                    approvalHistory: [
-                        { id: 911, type: "REWARD", title: "드림랜드 회전목마 한바퀴 쿠폰", cost: 3, status: "APPROVED", date: "2026-06-03", timestamp: "오후 3:10" }
-                    ]
-                }
-            },
+            parentActiveTab: "DASHBOARD",
+            parentPassword: "1234",
+            children: {},
             rewards: [
-                { id: 1, title: "🎡 드림 자유이용권 30분 연장", cost: 5, icon: "fa-gamepad", color: "text-indigo-500" },
-                { id: 2, title: "🍿 해피랜드 피자/치킨 파티", cost: 15, icon: "fa-pizza-slice", color: "text-amber-500" },
-                { id: 3, title: "🍦 젤라또 아이스크림 기프트콘", cost: 3, icon: "fa-ice-cream", color: "text-pink-500" },
-                { id: 4, title: "🧸 스토어 장난감 단 하나 선물권", cost: 20, icon: "fa-gift", color: "text-emerald-500" }
+                { id: 1, title: "[드림쿠폰] 시원한 아이스크림 간식", cost: 5, icon: "fa-ice-cream" },
+                { id: 2, title: "[드림쿠폰] 달콤 보너스 게임 30분", cost: 10, icon: "fa-gamepad" }
             ]
         };
 
-        // Firebase 연동 활성화 및 인증 엔진 기동
+        // 로컬 가동 메모리 상태
+        let state = JSON.parse(JSON.stringify(defaultUserTemplate));
+
+        // NoSQL 클라우드 DB 구동 개시
         async function runFirebaseSetup() {
             try {
                 if (typeof __firebase_config === 'undefined' || !__firebase_config) {
-                    throw new Error("설정값이 누락되었습니다. 오프라인 모드로 실행합니다.");
+                    throw new Error("환경 설정이 원격에 없습니다.");
                 }
                 const firebaseConfig = JSON.parse(__firebase_config);
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // auth 객체가 생성 완료된 후 리스너를 등록하여 'Cannot read properties of null' 오류를 완벽히 차단합니다.
-                onAuthStateChanged(auth, (u) => {
-                    user = u;
+                onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        setupRealtimeSync();
+                        isFirebaseActive = true;
+                        hideLoadingOverlay();
+                        // 자동 세션 및 쿠키 검사 (만약 기존 로그인된 세션이 있다면 복구)
+                        checkSavedSession();
                     }
                 });
 
-                // 규칙 3: 선 인증 후 쿼리 진행
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                await signInAnonymously(auth);
             } catch (err) {
-                console.warn("DB 연결 실패 (오프라인 모드 작동):", err);
+                console.warn("DB 연결 대기 중 (인증 통과):", err);
+                isFirebaseActive = false;
                 hideLoadingOverlay();
-                renderChildSelectOptions();
-                initFilterDateOptions();
-                syncDOM();
+                checkSavedSession();
             }
         }
 
-        // 실시간 클라우드 NoSQL 실시간 Sync 리스너 구축
-        function setupRealtimeSync() {
-            if (!db || !user) return;
-            
-            // 규칙 1: Strict Paths 규칙 준수
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'planner', 'main');
-            
-            // 실시간 상태 업데이트 동기화 감지기 시작
-            onSnapshot(docRef, (snap) => {
-                if (snap.exists()) {
-                    const onlineData = snap.data();
-                    if (onlineData && onlineData.children) {
-                        // 클라우드 데이터 스키마 보정처리
-                        Object.keys(onlineData.children).forEach(cid => {
-                            if (!onlineData.children[cid].rewardRequests) onlineData.children[cid].rewardRequests = [];
-                            if (!onlineData.children[cid].missionRequests) onlineData.children[cid].missionRequests = [];
-                            if (!onlineData.children[cid].approvalHistory) onlineData.children[cid].approvalHistory = [];
-                            if (!onlineData.children[cid].studyLogs) onlineData.children[cid].studyLogs = [];
-                        });
-                        state.children = onlineData.children;
-                        
-                        // #1. 리워드 상점 동적 클라우드 리스트 복원
-                        if (onlineData.rewards) {
-                            state.rewards = onlineData.rewards;
-                        }
-                        
-                        // #2. 비밀번호 동적 클라우드 복원
-                        if (onlineData.parentPassword) {
-                            state.parentPassword = onlineData.parentPassword;
-                        }
-                    }
-                } else {
-                    // 클라우드 데이터가 비어있을 시 초기 데이터 업로드 수립
-                    setDoc(docRef, { children: state.children, rewards: state.rewards, parentPassword: state.parentPassword }).catch(err => {
-                        console.error("최초 클라우드 구조 생성 오류:", err);
-                    });
-                }
-                hideLoadingOverlay();
-                renderChildSelectOptions();
-                initFilterDateOptions();
-                syncDOM();
-            }, (error) => {
-                console.error("NoSQL Firestore 리스너 오류 발생:", error);
-                hideLoadingOverlay();
-                renderChildSelectOptions();
-                initFilterDateOptions();
-                syncDOM();
-            });
+        // 브라우저 캐시 기반 이전 로그인 세션 복구 처리
+        async function checkSavedSession() {
+            const savedUser = localStorage.getItem('magic_planner_user_v61');
+            if (savedUser) {
+                const parsed = JSON.parse(savedUser);
+                await loadAccountData(parsed.id);
+            } else {
+                showAuthGate(true);
+            }
         }
 
-        // Firestore 저장 엔진
+        // ==================== [신규] 로그인 / 회원가입 / 중복검사 / 찾기 비즈니스 엔진 ====================
+        
+        function showAuthGate(show) {
+            const gate = document.getElementById('auth-gate-container');
+            const mainApp = document.getElementById('main-app');
+            if (show) {
+                gate.classList.remove('hidden');
+            } else {
+                gate.classList.add('hidden');
+            }
+        }
+
+        function switchAuthTab(tabName) {
+            const tabs = ['LOGIN', 'REGISTER', 'RECOVER'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`auth-tab-${t.toLowerCase()}`);
+                const form = document.getElementById(`auth-form-${t.toLowerCase()}`);
+                if (btn) btn.className = "flex-1 py-2.5 rounded-xl text-center text-slate-500 hover:text-slate-800 transition";
+                if (form) form.classList.add('hidden');
+            });
+
+            const activeBtn = document.getElementById(`auth-tab-${tabName.toLowerCase()}`);
+            const activeForm = document.getElementById(`auth-form-${tabName.toLowerCase()}`);
+            if (activeBtn) activeBtn.className = "flex-1 py-2.5 rounded-xl text-center bg-white text-slate-800 shadow-sm transition";
+            if (activeForm) activeForm.classList.remove('hidden');
+
+            // 리셋
+            isIdChecked = false;
+            isRecoverVerified = false;
+            const badge = document.getElementById('id-check-badge');
+            if (badge) {
+                badge.className = "text-[10px] mt-1 block text-slate-400";
+                badge.innerText = "아이디 중복 점검을 진행해 주세요.";
+            }
+            document.getElementById('recover-question-area').classList.add('hidden');
+            document.getElementById('recover-step-2').classList.add('hidden');
+        }
+
+        // 아이디 중복 점검 (yoonadmin 포함 차단)
+        async function checkIdDuplication() {
+            const idInput = document.getElementById('register-id');
+            const badge = document.getElementById('id-check-badge');
+            const regId = idInput.value.trim().toLowerCase();
+
+            if (!regId) {
+                showAlert("입력 미달", "체크할 아이디를 작성해 주세요.");
+                return;
+            }
+
+            if (regId === 'yoonadmin') {
+                badge.className = "text-[10px] mt-1 block text-rose-500 font-bold";
+                badge.innerText = "⚠️ 'yoonadmin'은 통합 관리 전용 예약 아이디이므로 사용할 수 없습니다.";
+                isIdChecked = false;
+                return;
+            }
+
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', regId);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    badge.className = "text-[10px] mt-1 block text-rose-500 font-bold";
+                    badge.innerText = "❌ 이미 누군가가 가꾼 마법 아이디입니다. 다른 아이디를 권장해요.";
+                    isIdChecked = false;
+                } else {
+                    badge.className = "text-[10px] mt-1 block text-teal-600 font-bold";
+                    badge.innerText = "✨ 사용 가능한 멋진 마법의 아이디입니다!";
+                    isIdChecked = true;
+                }
+            } else {
+                // 오프라인/로컬 저장 장치 체크
+                const localData = localStorage.getItem(`magic_acc_${regId}`);
+                if (localData) {
+                    badge.className = "text-[10px] mt-1 block text-rose-500 font-bold";
+                    badge.innerText = "❌ 이미 보존된 아이디입니다.";
+                    isIdChecked = false;
+                } else {
+                    badge.className = "text-[10px] mt-1 block text-teal-600 font-bold";
+                    badge.innerText = "✨ 사용 가능합니다. (로컬가동)";
+                    isIdChecked = true;
+                }
+            }
+        }
+
+        // 가입 핸들러
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('register-id').value.trim().toLowerCase();
+            const pw = document.getElementById('register-pw').value.trim();
+            const question = document.getElementById('register-question').value;
+            const answer = document.getElementById('register-answer').value.trim();
+
+            if (!isIdChecked) {
+                showAlert("인증 차단", "가입 전에 우측 [중복 점검] 단추를 반드시 먼저 통과해야 합니다.");
+                return;
+            }
+
+            const newUserDoc = {
+                id: id,
+                password: pw,
+                passwordQuestion: question,
+                passwordAnswer: answer,
+                createdAt: new Date().toISOString().split('T')[0],
+                // 기본 유저 계획 연계 초기화 바인딩
+                ...JSON.parse(JSON.stringify(defaultUserTemplate))
+            };
+
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+                await setDoc(docRef, newUserDoc);
+            } else {
+                localStorage.setItem(`magic_acc_${id}`, JSON.stringify(newUserDoc));
+            }
+
+            showToast("매직랜드 패밀리가 성공적으로 개설되었습니다! 즉시 로그인해 보세요 🎠");
+            switchAuthTab('LOGIN');
+            document.getElementById('login-id').value = id;
+        }
+
+        // 로그인 핸들러
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('login-id').value.trim().toLowerCase();
+            const pw = document.getElementById('login-pw').value.trim();
+
+            // 1. yoonadmin 기본 설정 관리자 통과 처리
+            if (id === 'yoonadmin' && pw === 'yoonadmin0123') {
+                currentUser = { id: 'yoonadmin', role: 'admin', createdAt: '2026-06-06' };
+                localStorage.setItem('magic_planner_user_v61', JSON.stringify(currentUser));
+                
+                // 관리자 패널 보이기용 상태 변경
+                document.getElementById('ptab-global_admin').classList.remove('hidden');
+                
+                showAuthGate(false);
+                showToast("통합 중앙 관리실 관리자(yoonadmin) 권한으로 로그인하였습니다. 👑");
+                
+                // 임의의 자녀 가상 상태 탑재 후 동기화
+                state = JSON.parse(JSON.stringify(defaultUserTemplate));
+                renderChildSelectOptions();
+                syncDOM();
+                return;
+            }
+
+            // 일반 유저 인증 심사
+            let userDoc = null;
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    userDoc = snap.data();
+                }
+            } else {
+                const localData = localStorage.getItem(`magic_acc_${id}`);
+                if (localData) {
+                    userDoc = JSON.parse(localData);
+                }
+            }
+
+            if (userDoc && userDoc.password === pw) {
+                currentUser = userDoc;
+                localStorage.setItem('magic_planner_user_v61', JSON.stringify({ id: currentUser.id }));
+                
+                // 일반 회원은 통합관리자 탭 숨김
+                document.getElementById('ptab-global_admin').classList.add('hidden');
+                
+                showAuthGate(false);
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+                showToast(`반갑습니다, 마법사 [${id}] 패밀리 대원 여러분! 🎡`);
+                
+                await loadAccountData(id);
+            } else {
+                showAlert("인증 에러", "아이디 또는 마법 비밀번호가 올바르지 않습니다. 다시 정렬해 주세요.");
+            }
+        }
+
+        // 비밀번호 찾기 단계 1: 아이디 질문 조회
+        async function verifyRecoverId() {
+            const id = document.getElementById('recover-id').value.trim().toLowerCase();
+            const questionArea = document.getElementById('recover-question-area');
+            const questionText = document.getElementById('recover-question-text');
+
+            if (!id) {
+                showAlert("정보 기입", "질문을 가져올 아이디를 채워주세요.");
+                return;
+            }
+
+            let userDoc = null;
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) userDoc = snap.data();
+            } else {
+                const localData = localStorage.getItem(`magic_acc_${id}`);
+                if (localData) userDoc = JSON.parse(localData);
+            }
+
+            if (userDoc) {
+                questionText.innerText = userDoc.passwordQuestion || "등록된 비밀번호 질문이 없습니다.";
+                questionArea.classList.remove('hidden');
+            } else {
+                showAlert("미등록 정보", "존재하지 않는 마법사 아이디입니다.");
+            }
+        }
+
+        // 비밀번호 찾기 단계 2: 답변 대조 및 변경 창 로드
+        async function verifyRecoverAnswer() {
+            const id = document.getElementById('recover-id').value.trim().toLowerCase();
+            const answer = document.getElementById('recover-answer').value.trim();
+            const step2 = document.getElementById('recover-step-2');
+
+            let userDoc = null;
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) userDoc = snap.data();
+            } else {
+                const localData = localStorage.getItem(`magic_acc_${id}`);
+                if (localData) userDoc = JSON.parse(localData);
+            }
+
+            if (userDoc && userDoc.passwordAnswer === answer) {
+                isRecoverVerified = true;
+                step2.classList.remove('hidden');
+                showToast("인증 성공! 아래에서 변경할 새로운 마법 비밀번호를 지정하세요.");
+            } else {
+                showAlert("인증 오차", "질문에 대한 대답 정답이 맞지 않습니다.");
+            }
+        }
+
+        // 비밀번호 찾기 단계 3: 비밀번호 실제 강제 업데이트
+        async function resetRecoverPassword() {
+            const id = document.getElementById('recover-id').value.trim().toLowerCase();
+            const newPw = document.getElementById('recover-new-pw').value.trim();
+
+            if (!isRecoverVerified) return;
+
+            if (!newPw) {
+                showAlert("공란 오류", "새로운 비밀번호를 적어주세요.");
+                return;
+            }
+
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', id);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    data.password = newPw;
+                    await setDoc(docRef, data);
+                }
+            } else {
+                const localData = localStorage.getItem(`magic_acc_${id}`);
+                if (localData) {
+                    const data = JSON.parse(localData);
+                    data.password = newPw;
+                    localStorage.setItem(`magic_acc_${id}`, JSON.stringify(data));
+                }
+            }
+
+            showToast("마법 패스코드가 갱신되었습니다! 새로운 열쇠로 로그인해 주세요.");
+            switchAuthTab('LOGIN');
+        }
+
+        // 로그아웃
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('magic_planner_user_v61');
+            state = JSON.parse(JSON.stringify(defaultUserTemplate));
+            showAuthGate(true);
+            showToast("매직랜드 모험가 가드 보호 구역에서 퇴장(로그아웃)되었습니다.");
+        }
+
+        // 데이터 복원 로드 처리기
+        async function loadAccountData(userId) {
+            if (userId === 'yoonadmin') return;
+
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', userId);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const onlineData = snap.data();
+                    state.isParentMode = onlineData.isParentMode ?? false;
+                    state.activeChildId = onlineData.activeChildId ?? "";
+                    state.childStatFilter = onlineData.childStatFilter ?? "WEEK";
+                    state.scheduleFilter = onlineData.scheduleFilter ?? "UNCOMPLETED";
+                    state.parentActiveTab = onlineData.parentActiveTab ?? "DASHBOARD";
+                    state.parentPassword = onlineData.parentPassword ?? "1234";
+                    state.children = onlineData.children ?? {};
+                    state.rewards = onlineData.rewards ?? defaultUserTemplate.rewards;
+                }
+            } else {
+                const localData = localStorage.getItem(`magic_acc_${userId}`);
+                if (localData) {
+                    const parsed = JSON.parse(localData);
+                    state.isParentMode = parsed.isParentMode ?? false;
+                    state.activeChildId = parsed.activeChildId ?? "";
+                    state.childStatFilter = parsed.childStatFilter ?? "WEEK";
+                    state.scheduleFilter = parsed.scheduleFilter ?? "UNCOMPLETED";
+                    state.parentActiveTab = parsed.parentActiveTab ?? "DASHBOARD";
+                    state.parentPassword = parsed.parentPassword ?? "1234";
+                    state.children = parsed.children ?? {};
+                    state.rewards = parsed.rewards ?? defaultUserTemplate.rewards;
+                }
+            }
+
+            renderChildSelectOptions();
+            initFilterDateOptions();
+            syncDOM();
+        }
+
+        // NoSQL Firestore / LocalStorage 데이터 저장 통제
         async function saveStateToFirestore() {
-            if (!db || !user) return;
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'planner', 'main');
-            try {
-                await setDoc(docRef, { children: state.children, rewards: state.rewards, parentPassword: state.parentPassword });
-            } catch (error) {
-                console.error("클라우드 데이터 저장 실패:", error);
-                showToast("클라우드 저장 도중 오류가 발생했습니다.", "error");
+            if (!currentUser || currentUser.id === 'yoonadmin') return;
+
+            const updatePayload = {
+                id: currentUser.id,
+                password: currentUser.password,
+                passwordQuestion: currentUser.passwordQuestion,
+                passwordAnswer: currentUser.passwordAnswer,
+                createdAt: currentUser.createdAt,
+                ...state
+            };
+
+            if (isFirebaseActive) {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', currentUser.id);
+                try {
+                    await setDoc(docRef, updatePayload);
+                } catch (error) {
+                    console.error("클라우드 저장 실패:", error);
+                    showToast("클라우드 저장 도중 일시 오류가 발생했습니다.", "error");
+                }
+            } else {
+                localStorage.setItem(`magic_acc_${currentUser.id}`, JSON.stringify(updatePayload));
             }
         }
 
@@ -1039,7 +1399,141 @@
             }
         }
 
-        // ==================== 핵심 커스텀 알림 및 토스트 토글 시스템 ====================
+        // ==================== [신규] 관리자 전용 제어판 비즈니스 모듈 ====================
+        
+        async function loadAllAccountsForAdmin() {
+            const container = document.getElementById('global-admin-accounts-list');
+            if (!container) return;
+
+            let html = "";
+            let list = [];
+
+            if (isFirebaseActive) {
+                try {
+                    const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'accounts');
+                    const snap = await getDocs(colRef);
+                    snap.forEach(d => {
+                        list.push(d.data());
+                    });
+                } catch (e) {
+                    console.error("계정 목록 획득 실패", e);
+                }
+            } else {
+                // 로컬 가동 스택 수집
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('magic_acc_')) {
+                        list.push(JSON.parse(localStorage.getItem(key)));
+                    }
+                }
+            }
+
+            if (list.length === 0) {
+                html = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">가입된 회원 가족이 없습니다.</td></tr>`;
+                container.innerHTML = html;
+                return;
+            }
+
+            list.forEach(acc => {
+                // yoonadmin 자체는 제외
+                if (acc.id === 'yoonadmin') return;
+
+                const cCount = acc.children ? Object.keys(acc.children).length : 0;
+                html += `
+                    <tr class="border-b border-rose-50 hover:bg-rose-50/20 font-semibold text-slate-700">
+                        <td class="p-3 text-rose-800 font-bold"><i class="fa-solid fa-house-chimney-user"></i> ${acc.id}</td>
+                        <td class="p-3 text-slate-400 font-mono">${acc.createdAt || '2026-06-06'}</td>
+                        <td class="p-3 text-slate-500">${acc.passwordQuestion || '질문 없음'}</td>
+                        <td class="p-3 text-slate-800"><span class="px-2 py-0.5 bg-rose-100 text-rose-800 rounded font-bold">${cCount} 명</span></td>
+                        <td class="p-3 text-center space-x-2">
+                            <button onclick="performAdminReset('${acc.id}')" class="text-xs bg-amber-500 text-white font-bold py-1 px-3 rounded-lg hover:bg-amber-600 transition shadow-sm"><i class="fa-solid fa-rotate"></i> 초기화</button>
+                            <button onclick="performAdminDelete('${acc.id}')" class="text-xs bg-rose-600 text-white font-bold py-1 px-3 rounded-lg hover:bg-rose-700 transition shadow-sm"><i class="fa-solid fa-trash-can"></i> 삭제</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 회원정보 자녀/리워드 초기화
+        async function performAdminReset(accId) {
+            showConfirm("패밀리 데이터 초기화", `[${accId}] 회원 패밀리의 자녀 프로필 및 코인 획득 내역을 전체 공백으로 초기화할까요?\n계정 자체는 보존됩니다.`, async () => {
+                if (isFirebaseActive) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', accId);
+                    const snap = await getDoc(docRef);
+                    if (snap.exists()) {
+                        const payload = snap.data();
+                        payload.children = {};
+                        payload.rewards = defaultUserTemplate.rewards;
+                        payload.activeChildId = "";
+                        await setDoc(docRef, payload);
+                    }
+                } else {
+                    const localData = localStorage.getItem(`magic_acc_${accId}`);
+                    if (localData) {
+                        const parsed = JSON.parse(localData);
+                        parsed.children = {};
+                        parsed.rewards = defaultUserTemplate.rewards;
+                        parsed.activeChildId = "";
+                        localStorage.setItem(`magic_acc_${accId}`, JSON.stringify(parsed));
+                    }
+                }
+                showToast(`[${accId}] 패밀리 자원 데이터 초기화가 연동되었습니다.`);
+                loadAllAccountsForAdmin();
+            });
+        }
+
+        // 회원 영구 삭제
+        async function performAdminDelete(accId) {
+            showConfirm("마법 회원 삭제", `[${accId}] 마법 패밀리 계정을 실시간 데이터베이스에서 완전히 파괴(영구 삭제)할까요?`, async () => {
+                if (isFirebaseActive) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'accounts', accId);
+                    await deleteDoc(docRef);
+                } else {
+                    localStorage.removeItem(`magic_acc_${accId}`);
+                }
+                showToast(`[${accId}] 회원의 정보가 정식 삭제되었습니다.`);
+                loadAllAccountsForAdmin();
+            });
+        }
+
+        // ==================== [핵심 개선] 완료 처리 미션 취소 로직 ====================
+        // 완료 상태 해제, 코인 차감, 승인 대기 목록 원상 복귀
+        async function cancelMissionProgress(missionId) {
+            const targetChild = state.children[state.activeChildId];
+            if (!targetChild) return;
+
+            const mission = targetChild.todayMissions.find(m => m.id === missionId);
+            if (!mission || !mission.completed) return;
+
+            showConfirm("학습 완료 취소", `이미 인가 완료된 [${mission.subject}] 완료를 취소할까요?\n지급 및 신청 대기된 별 코인 ${mission.stars}개가 즉시 차감됩니다.`, async () => {
+                
+                // 1. 코인 차감 (보정 가드가 가동하여 최소 0 아래로는 내려가지 않도록 유연 보정)
+                targetChild.stars = Math.max(0, targetChild.stars - (mission.stars || 1));
+
+                // 2. 미션 미완 상태 갱신
+                mission.completed = false;
+                mission.timeSpent = 0;
+                mission.actualRange = "";
+
+                // 3. 자율 미션의 경우 결재 승인 대기 리스트 및 요청에서도 원천 추방
+                if (mission.isCustom) {
+                    mission.isApproved = false;
+                    targetChild.missionRequests = (targetChild.missionRequests || []).filter(r => r.missionId !== missionId);
+                }
+
+                // 4. 오늘 스터디 기록 일지에서 최근 한 건 축출
+                if (targetChild.studyLogs) {
+                    targetChild.studyLogs = targetChild.studyLogs.filter(log => !(log.subject === mission.subject && log.stars === mission.stars));
+                }
+
+                showToast("완료 상태가 정상 취소되었으며 획득 코인이 안전하게 회수되었습니다. ♻️");
+                await saveStateToFirestore();
+                syncDOM();
+            });
+        }
+
         function showToast(message, type = "success") {
             const container = document.getElementById('toast-container');
             if (!container) return;
@@ -1116,13 +1610,11 @@
 
         // ==================== 플래너 핵심 비즈니스 로직 함수 정의 ====================
         
-        // 아바타 썸네일이 자녀 이름 앞에 연동되는 커스텀 드롭다운 구현
         function toggleChildDropdown() {
             const menu = document.getElementById('dropdown-menu-items');
             if (menu) menu.classList.toggle('hidden');
         }
 
-        // 문서 어디든 누르면 드롭다운이 닫히도록 감지
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('custom-child-dropdown');
             const menu = document.getElementById('dropdown-menu-items');
@@ -1135,15 +1627,14 @@
             state.activeChildId = childId;
             const menu = document.getElementById('dropdown-menu-items');
             if (menu) menu.classList.add('hidden');
+            saveStateToFirestore();
             syncDOM();
         }
 
-        // 글로벌 스코프 바인딩 충돌 방지용 호환성 자녀 변경 함수
         function changeActiveChild(childId) {
             selectChildFromDropdown(childId);
         }
 
-        // 드롭다운 및 부모선택 드롭다운 리셋팅
         function renderChildSelectOptions() {
             const dropdownMenu = document.getElementById('dropdown-menu-items');
             const parentSelectEl = document.getElementById('p-form-child');
@@ -1154,7 +1645,15 @@
             let selectOptionsHtml = "";
             let dbOptionsHtml = "";
 
-            Object.values(state.children).forEach(c => {
+            const childList = Object.values(state.children || {});
+            if (childList.length === 0) {
+                dropdownMenu.innerHTML = `<p class="text-xs text-slate-400 p-3 text-center">등록된 모험가가 없습니다.</p>`;
+                parentSelectEl.innerHTML = `<option value="">자녀를 먼저 등록해 주세요</option>`;
+                dbChildSelectEl.innerHTML = `<option value="">자녀를 먼저 등록해 주세요</option>`;
+                return;
+            }
+
+            childList.forEach(c => {
                 const avatarTag = c.photo 
                     ? `<img src="${c.photo}" class="w-5 h-5 rounded-full object-cover shrink-0 border border-slate-200">`
                     : `<div class="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[10px] text-slate-500 shrink-0"><i class="fa-solid fa-face-smile"></i></div>`;
@@ -1175,7 +1674,7 @@
             dbChildSelectEl.innerHTML = dbOptionsHtml;
         }
 
-        // 부모 모드 전환 비밀번호 인증 오버레이 모션
+        // 부모 비밀번호 확인 전 검사기
         function requestParentMode() {
             if (state.isParentMode) {
                 exitParentMode();
@@ -1205,7 +1704,7 @@
             if (!pwInput) return;
             
             const pw = pwInput.value.trim();
-            const targetPassword = state.parentPassword || "1234"; // 클라우드 동기화 비밀번호 매칭
+            const targetPassword = state.parentPassword || "1234";
             if (pw === targetPassword) {
                 closeParentAuthModal();
                 state.isParentMode = true;
@@ -1219,6 +1718,7 @@
                 }
                 
                 switchParentTab('DASHBOARD');
+                saveStateToFirestore();
                 syncDOM();
                 showToast("매직랜드 패스인증이 확인되었습니다! 🎡");
             } else {
@@ -1237,20 +1737,23 @@
                 btn.className = "bg-slate-800 text-white hover:bg-slate-900 font-bold py-2 px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-2 text-sm shrink-0";
             }
             
+            saveStateToFirestore();
             syncDOM();
         }
 
-        // 부모 탭 전환 핸들러 모듈
         function switchParentTab(tabName) {
             state.parentActiveTab = tabName;
             
-            const panels = ['DASHBOARD', 'APPROVAL', 'PLAN', 'REWARDS_MGMT', 'CHILD', 'SECURITY_MGMT'];
+            const panels = ['DASHBOARD', 'APPROVAL', 'PLAN', 'REWARDS_MGMT', 'CHILD', 'SECURITY_MGMT', 'GLOBAL_ADMIN'];
             panels.forEach(p => {
                 const el = document.getElementById(`ppanel-${p.toLowerCase()}`);
                 const tabBtn = document.getElementById(`ptab-${p.toLowerCase()}`);
                 if (el) el.classList.add('hidden');
                 if (tabBtn) {
                     tabBtn.className = "flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800";
+                    if (p === 'GLOBAL_ADMIN') {
+                        tabBtn.className += " border border-rose-200 bg-rose-50/50 text-rose-500";
+                    }
                 }
             });
 
@@ -1258,7 +1761,11 @@
             const activeBtn = document.getElementById(`ptab-${tabName.toLowerCase()}`);
             if (activePanel) activePanel.classList.remove('hidden');
             if (activeBtn) {
-                activeBtn.className = "flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 bg-white text-slate-800 shadow-sm";
+                if (tabName === 'GLOBAL_ADMIN') {
+                    activeBtn.className = "flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-sm";
+                } else {
+                    activeBtn.className = "flex-1 min-w-[80px] py-3 px-3 rounded-xl text-center transition flex items-center justify-center gap-1.5 bg-white text-slate-800 shadow-sm";
+                }
             }
 
             if (tabName === 'DASHBOARD') {
@@ -1267,11 +1774,13 @@
                 renderApprovalHistory();
             } else if (tabName === 'REWARDS_MGMT') {
                 renderParentRewardsStoreTable();
+            } else if (tabName === 'GLOBAL_ADMIN') {
+                loadAllAccountsForAdmin();
             }
+            saveStateToFirestore();
             syncDOM();
         }
 
-        // 결재조회용 연도/월/주차 조건 필터 옵션 초기 설정기
         function initFilterDateOptions() {
             const years = ['2026', '2027'];
             const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
@@ -1294,7 +1803,6 @@
             });
         }
 
-        // 부모 모드 기본 반복 미션 수립 시 별 개수 정의 연동 추가
         async function handleSaveDefaultMission(e) {
             e.preventDefault();
             const childId = document.getElementById('p-form-child').value;
@@ -1303,6 +1811,11 @@
             const range = document.getElementById('p-form-range').value.trim();
             const stars = parseInt(document.getElementById('p-form-stars').value) || 1;
             
+            if (!childId) {
+                showAlert("입력 실패", "자녀 설정을 통해 모험가를 먼저 등록해 주세요.");
+                return;
+            }
+
             const newDefault = {
                 id: Date.now(),
                 day: day,
@@ -1318,6 +1831,7 @@
             
             showToast("매직 기본 계획이 성공적으로 추가되었습니다.");
             await saveStateToFirestore();
+            syncDOM();
         }
 
         async function deleteDefaultMission(childId, missionId) {
@@ -1325,12 +1839,12 @@
                 state.children[childId].defaultMissions = state.children[childId].defaultMissions.filter(m => m.id !== missionId);
                 showToast("성공적으로 계획이 삭제되었습니다.");
                 await saveStateToFirestore();
+                syncDOM();
             });
         }
 
-        // ==================== [Tab 4] 별 포상 상점 직접 관리 CRUD 엔진 (#1 신규 구현) ====================
+        // ==================== 별 포상 상점 직접 관리 CRUD 엔진 ====================
         
-        // 부모 상점 관리 테이블 드로잉
         function renderParentRewardsStoreTable() {
             const container = document.getElementById('parent-rewards-store-table');
             if (!container) return;
@@ -1348,8 +1862,8 @@
                     <tbody>
             `;
 
-            if (state.rewards.length === 0) {
-                tableHtml += `<tr><td colspan="4" class="p-6 text-center text-slate-400">등록된 보상 쿠폰 상품이 없습니다.</td></tr>`;
+            if (!state.rewards || state.rewards.length === 0) {
+                tableHtml += `<tr><td colspan="4" class="p-6 text-center text-slate-400">등록된 보상 쿠폰 상품이 없습니다. 상단 폼을 이용해서 등록해 주세요!</td></tr>`;
             } else {
                 state.rewards.forEach(r => {
                     let displayIcon = "🎫";
@@ -1377,7 +1891,6 @@
             container.innerHTML = tableHtml;
         }
 
-        // 별 포상 저장 (추가/수정 연동)
         async function handleSaveRewardStoreItem(e) {
             e.preventDefault();
             const mode = document.getElementById('reward-form-mode').value;
@@ -1388,11 +1901,12 @@
 
             if (!title) return;
 
-            // 소모코인 유효성 및 최대 3자리 체크 세이프가드
             if (cost < 1 || cost > 999) {
                 showAlert("수량 제한", "드림 코인 소모 개수는 최소 1개부터 최대 999개까지만 정의할 수 있습니다.");
                 return;
             }
+
+            if (!state.rewards) state.rewards = [];
 
             if (mode === "ADD") {
                 const newId = Date.now();
@@ -1414,7 +1928,6 @@
                 }
             }
 
-            // 폼 복원 초기화
             document.getElementById('reward-form-mode').value = "ADD";
             document.getElementById('reward-form-id').value = "";
             document.getElementById('reward-form-title').value = "";
@@ -1426,7 +1939,6 @@
             syncDOM();
         }
 
-        // 포상 아이템 삭제
         async function deleteRewardStoreItem(rewardId) {
             showConfirm("포상 삭제", "해당 포상 상품을 상점에서 정말로 철수할까요?", async () => {
                 state.rewards = state.rewards.filter(r => r.id !== rewardId);
@@ -1437,7 +1949,6 @@
             });
         }
 
-        // 포상 아이템 수정 데이터 셋팅 로더
         function editRewardStoreItem(rewardId) {
             const item = state.rewards.find(r => r.id === rewardId);
             if (!item) return;
@@ -1452,7 +1963,7 @@
             showToast("수정할 포상 정보를 폼에 로드했습니다. 확인 후 수정을 눌러주세요.");
         }
 
-        // ==================== [Tab 6] 비밀번호 관리 프로세스 변경 엔진 (#2 신규 구현) ====================
+        // ==================== 비밀번호 변경 프로세스 변경 엔진 ====================
         async function handleUpdateParentPassword(e) {
             e.preventDefault();
             const currentPw = document.getElementById('pw-form-current').value.trim();
@@ -1485,7 +1996,7 @@
             await saveStateToFirestore();
         }
 
-        // ==================== [자녀 정보 수립/사진 등록 모션] ====================
+        // ==================== 자녀 정보 수립/사진 등록 모션 ====================
         function openChildManageModal(mode, childId = "") {
             const modal = document.getElementById('child-manage-modal');
             const box = document.getElementById('child-manage-box');
@@ -1540,7 +2051,7 @@
             if (!file) return;
 
             if (file.size > 250 * 1024) {
-                showAlert("업로드 실패", "원활한 실시간 클라우드 동기화를 위해 사진은 250KB 이하의 소형 이미지만 업로드할 수 있습니다.");
+                showAlert("업로드 실패", "동기화를 위해 사진은 250KB 이하의 소형 이미지만 업로드할 수 있습니다.");
                 e.target.value = "";
                 return;
             }
@@ -1563,6 +2074,8 @@
             const childIdInput = document.getElementById('child-modal-id').value;
 
             if (!name) return;
+
+            if (!state.children) state.children = {};
 
             if (mode === "ADD") {
                 const newId = `child-${Date.now()}`;
@@ -1610,7 +2123,7 @@
                 return;
             }
 
-            showConfirm("모험가 삭제", `[${target.name}]님의 모든 누적 학습 데이터, 별, 스케줄이 실시간 클라우드에서 영구 삭제됩니다. 계속할까요?`, async () => {
+            showConfirm("모험가 삭제", `[${target.name}]님의 모든 누적 학습 데이터, 별, 스케줄이 영구 삭제됩니다. 계속할까요?`, async () => {
                 delete state.children[childId];
                 if (state.activeChildId === childId) {
                     state.activeChildId = Object.keys(state.children)[0];
@@ -1671,15 +2184,11 @@
             }
         }
 
-        // 자녀 직접 등록 토글 폼 제어
         function toggleChildCustomForm() {
             const form = document.getElementById('child-custom-mission-form');
-            if (form) {
-                form.classList.toggle('hidden');
-            }
+            if (form) form.classList.toggle('hidden');
         }
 
-        // 자녀 직접 추가 미션 등록
         async function handleChildCreateMission(e) {
             e.preventDefault();
             const subject = document.getElementById('child-form-subject').value.trim();
@@ -1711,19 +2220,19 @@
 
             showToast("특별 보너스 미션 등록이 완료되었습니다. 👍");
             await saveStateToFirestore();
+            syncDOM();
         }
 
-        // 자녀 직접 추가 미션 삭제
         async function deleteChildCustomMission(missionId) {
             showConfirm("학습 미션 삭제", "오늘 내가 스스로 세운 이 미션을 삭제할까요?", async () => {
                 const targetChild = state.children[state.activeChildId];
                 targetChild.todayMissions = targetChild.todayMissions.filter(m => m.id !== missionId);
                 showToast("오늘 도전 미션이 성공적으로 삭제되었습니다.");
                 await saveStateToFirestore();
+                syncDOM();
             });
         }
 
-        // 학습 완료 제출 피드백 및 승인 큐 전송
         async function submitMissionProgress(missionId) {
             const minutesEl = document.getElementById(`time-${missionId}`);
             const textEl = document.getElementById(`range-${missionId}`);
@@ -1773,10 +2282,10 @@
                 }
                 
                 await saveStateToFirestore();
+                syncDOM();
             }
         }
 
-        // 자녀 상점 교환 신청 -> 부모 결재 큐 연동
         async function purchaseReward(rewardId) {
             const targetChild = state.children[state.activeChildId];
             const item = state.rewards.find(r => r.id === rewardId);
@@ -1798,6 +2307,7 @@
                     
                     showAlert("보상 교환 요청 완료 🎉", "부모님에게 실시간 쿠폰 심사 요청을 보냈습니다.\n부모님이 수락하시는 즉시 보상이 최종 지급됩니다!");
                     await saveStateToFirestore();
+                    syncDOM();
                 });
             } else {
                 showAlert("별 부족", `보유한 드림 코인이 부족합니다.\n매일 계획된 미션을 완수하여 코인을 획득하세요!\n(부족한 코인: ${item.cost - targetChild.stars}개)`);
@@ -1806,7 +2316,6 @@
 
         // ==================== 결재 관리 실시간 승인 및 반려 이력 데이터 보존 엔진 ====================
 
-        // 별 보상 교환 승인 처리
         async function approveRewardRequest(childId, requestId) {
             const targetChild = state.children[childId];
             const req = targetChild.rewardRequests.find(r => r.id === requestId);
@@ -1828,10 +2337,10 @@
                 targetChild.rewardRequests = targetChild.rewardRequests.filter(r => r.id !== requestId);
                 showToast(`[${targetChild.name}]님의 드림 보상 쿠폰을 성공적으로 발행 승인했습니다.`);
                 await saveStateToFirestore();
+                syncDOM();
             });
         }
 
-        // 별 보상 교환 반려(거절) 처리 -> 별 복구 환불 연동
         async function rejectRewardRequest(childId, requestId) {
             const targetChild = state.children[childId];
             const req = targetChild.rewardRequests.find(r => r.id === requestId);
@@ -1855,10 +2364,10 @@
                 targetChild.rewardRequests = targetChild.rewardRequests.filter(r => r.id !== requestId);
                 showToast("요청이 반려되었으며 소모된 드림 코인이 정상 환불되었습니다.");
                 await saveStateToFirestore();
+                syncDOM();
             });
         }
 
-        // 자녀 직접 추가 미션 승인 및 별 보상 지급 처리
         async function approveCustomMissionRequest(childId, requestId) {
             const targetChild = state.children[childId];
             const req = targetChild.missionRequests.find(r => r.id === requestId);
@@ -1882,7 +2391,6 @@
                 status: "APPROVED",
                 date: todayStr,
                 timestamp: new Date().toLocaleTimeString().substring(0, 5)
-                
             });
 
             targetChild.missionRequests = targetChild.missionRequests.filter(r => r.id !== requestId);
@@ -1893,9 +2401,9 @@
             }, 50);
 
             await saveStateToFirestore();
+            syncDOM();
         }
 
-        // 자녀 직접 추가 미션 반려
         async function rejectCustomMissionRequest(childId, requestId) {
             const targetChild = state.children[childId];
             const req = targetChild.missionRequests.find(r => r.id === requestId);
@@ -1925,10 +2433,10 @@
                 targetChild.missionRequests = targetChild.missionRequests.filter(r => r.id !== requestId);
                 showToast("자녀의 미션 승인 요청이 반려되었습니다.");
                 await saveStateToFirestore();
+                syncDOM();
             });
         }
 
-        // 자녀 통계 수치 필터 변경
         function setChildStatFilter(filterMode) {
             state.childStatFilter = filterMode;
             const modes = ['WEEK', 'MONTH', 'YEAR'];
@@ -1945,7 +2453,6 @@
             renderChildDashboardStats();
         }
 
-        // 일정 필터 변경
         function setScheduleFilter(filterMode) {
             state.scheduleFilter = filterMode;
             const modes = ['UNCOMPLETED', 'COMPLETED', 'ALL'];
@@ -1962,7 +2469,6 @@
             renderSchedulesList();
         }
 
-        // 미래 일정 생성
         async function addFutureSchedule(e) {
             e.preventDefault();
             const category = document.getElementById('form-sched-category').value;
@@ -1982,9 +2488,9 @@
             document.getElementById('form-sched-content').value = "";
             showToast("새로운 일정이 등록되었습니다!");
             await saveStateToFirestore();
+            syncDOM();
         }
 
-        // 미래 일정 완료 체크
         async function toggleScheduleComplete(schedId) {
             const targetChild = state.children[state.activeChildId];
             const item = targetChild.schedules.find(s => s.id === schedId);
@@ -1995,6 +2501,7 @@
                     showToast("목표 일정을 달성했습니다! 👏");
                 }
                 await saveStateToFirestore();
+                syncDOM();
             }
         }
 
@@ -2008,19 +2515,44 @@
             });
         }
 
-        // ==================== 실시간 동기화 DOM 렌더링 동화 핵심 루틴 ====================
+        // ==================== 실시간 동기화 DOM 렌더링 엔진 ====================
         function syncDOM() {
+            if (!currentUser) return;
+
+            // 앱 껍데기 보이기 제어
+            const mainApp = document.getElementById('main-app');
+            if (mainApp) mainApp.classList.remove('hidden');
+
             if (!state.children) {
                 state.children = {};
             }
-            if (!state.children[state.activeChildId]) {
-                const keys = Object.keys(state.children);
-                if (keys.length > 0) {
-                    state.activeChildId = keys[0];
-                } else {
-                    console.warn("바인딩할 자녀 데이터가 없습니다.");
-                    return;
+            
+            const childKeys = Object.keys(state.children || {});
+            const emptyStateEl = document.getElementById('child-empty-state');
+            const activeContentEl = document.getElementById('child-active-content');
+
+            if (childKeys.length === 0) {
+                if (emptyStateEl) emptyStateEl.classList.remove('hidden');
+                if (activeContentEl) activeContentEl.classList.add('hidden');
+                
+                document.getElementById('global-star-count').innerText = "0";
+                const dropdownSelectedName = document.getElementById('dropdown-selected-name');
+                if (dropdownSelectedName) dropdownSelectedName.innerText = "모험가 없음";
+                
+                const dropdownSelectedAvatar = document.getElementById('dropdown-selected-avatar');
+                if (dropdownSelectedAvatar) dropdownSelectedAvatar.innerHTML = `<i class="fa-solid fa-face-smile text-[10px]"></i>`;
+                
+                if (state.isParentMode) {
+                    renderParentView();
                 }
+                return;
+            } else {
+                if (emptyStateEl) emptyStateEl.classList.add('hidden');
+                if (activeContentEl) activeContentEl.classList.remove('hidden');
+            }
+
+            if (!state.children[state.activeChildId]) {
+                state.activeChildId = childKeys[0];
             }
 
             const activeChild = state.children[state.activeChildId];
@@ -2083,13 +2615,11 @@
             }
         }
 
-        // 기간별 학업성취도 리포트 렌더러
         function renderChildDashboardStats() {
             const activeChild = state.children[state.activeChildId];
             if (!activeChild) return;
 
-            const filterKey = (state.childStatFilter || 'WEEK').toLowerCase(); // week, month, year
-            
+            const filterKey = (state.childStatFilter || 'WEEK').toLowerCase();
             const history = activeChild.history || {
                 week: { totalCount: 0, totalTime: 0, completedCount: 0 },
                 month: { totalCount: 0, totalTime: 0, completedCount: 0 },
@@ -2108,7 +2638,6 @@
             if (avgPercentEl) avgPercentEl.innerText = `${avgPercent}%`;
         }
 
-        // 미래 시험/숙제 리스트 렌더러
         function renderSchedulesList() {
             const activeChild = state.children[state.activeChildId];
             const listEl = document.getElementById('child-schedules-list');
@@ -2142,7 +2671,7 @@
             listEl.innerHTML = html;
         }
 
-        // 오늘의 미션 렌더러
+        // [수정사항 반영] 미션 리스트 렌더러에 '미션 취소' 기능 추가 연동
         function renderTodayMissionsList() {
             const activeChild = state.children[state.activeChildId];
             const listEl = document.getElementById('today-missions-list');
@@ -2150,7 +2679,7 @@
             const missions = activeChild.todayMissions || [];
             
             if(missions.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs">오늘 설정된 기본 드림 미션이 없습니다. 우측 상단의 직접 만들기 버튼으로 오늘 학습을 설계해 보세요!</div>`;
+                listEl.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs">오늘 설정된 기본 드림 미션이 없습니다. 직접 만들기 버튼으로 오늘 학습을 설계해 보세요!</div>`;
                 return;
             }
             
@@ -2176,6 +2705,11 @@
                                     </div>
                                     <p class="text-slate-600 font-medium mt-1">💡 결과: <b>${m.actualRange}</b> (${m.timeSpent}분 공부 완료)</p>
                                     <p class="text-[11px] text-amber-600 font-bold mt-1">${starStr} 코인 ${earnableStars}개 지급 ${isAwaiting ? '대기 중' : '완료'}</p>
+                                    
+                                    <!-- [신규 기능] 자녀 완료 미션 취소 단추 추가 연동 -->
+                                    <button onclick="cancelMissionProgress(${m.id})" class="mt-2 text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 text-[10px] bg-rose-50 border border-rose-100 px-2 py-1 rounded-lg transition">
+                                        <i class="fa-solid fa-rotate-left"></i> 미션 수행 취소하기 (코인 반환)
+                                    </button>
                                 </div>
                             </div>
                             <span class="px-3 py-1.5 ${isAwaiting ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'} rounded-lg font-bold self-start sm:self-auto flex items-center gap-1">
@@ -2186,7 +2720,6 @@
                 } else {
                     html += `
                         <div id="mission-card-${m.id}" class="p-4 bg-white border border-indigo-50 rounded-2xl space-y-3 text-xs shadow-sm relative">
-                            <!-- 자녀 직접 추가 미션에 대한 자녀 삭제 단추 -->
                             ${m.isCustom ? `
                                 <button onclick="deleteChildCustomMission(${m.id})" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 transition">
                                     <i class="fa-solid fa-circle-xmark text-lg"></i>
@@ -2228,12 +2761,16 @@
             listEl.innerHTML = html;
         }
 
-        // 별 보상 상점 목록 렌더러
         function renderStarRewardsStore() {
             const listEl = document.getElementById('star-rewards-store-list');
             if (!listEl) return;
             let html = "";
             
+            if (!state.rewards || state.rewards.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-6 border border-dashed border-orange-100 rounded-2xl text-slate-400 text-xs">부모 모드의 [별 포상 상점 관리]에서 선물을 등록해 주세요!</div>`;
+                return;
+            }
+
             state.rewards.forEach(r => {
                 let displayIcon = "🎫";
                 if (r.icon === "fa-ice-cream") displayIcon = "🍦";
@@ -2264,65 +2801,39 @@
             listEl.innerHTML = html;
         }
 
-        // 부모 모드 뷰 종합 렌더러 (탭 분할 및 아바타 연동)
+        // 부모 모드 뷰 종합 렌더러
         function renderParentView() {
             const childListContainer = document.getElementById('parent-child-list-container');
             if (childListContainer) {
                 let cardsHtml = "";
-                Object.values(state.children).forEach(c => {
-                    const avatarHtml = c.photo 
-                        ? `<img src="${c.photo}" class="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0">`
-                        : `<div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-slate-100 flex items-center justify-center text-indigo-500 text-lg shrink-0"><i class="fa-solid fa-face-smile"></i></div>`;
-                    
-                    cardsHtml += `
-                        <div class="p-4 rounded-3xl border border-slate-200 bg-slate-50 shadow-sm flex items-center justify-between gap-3 hover:bg-white transition duration-200">
-                            <div class="flex items-center gap-3 overflow-hidden">
-                                ${avatarHtml}
-                                <div class="overflow-hidden">
-                                    <h4 class="font-black text-slate-800 text-xs truncate">${c.name}</h4>
-                                    <p class="text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-coins"></i> 코인 ${c.stars}개 보유</p>
+                const childrenArray = Object.values(state.children || {});
+                
+                if (childrenArray.length === 0) {
+                    cardsHtml = `<div class="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold bg-slate-50">등록된 자녀 대원이 없습니다. 새 대원 등록을 통해 첫 모험가를 만들어 보세요!</div>`;
+                } else {
+                    childrenArray.forEach(c => {
+                        const avatarHtml = c.photo 
+                            ? `<img src="${c.photo}" class="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0">`
+                            : `<div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-slate-100 flex items-center justify-center text-indigo-500 text-lg shrink-0"><i class="fa-solid fa-face-smile"></i></div>`;
+                        
+                        cardsHtml += `
+                            <div class="p-4 rounded-3xl border border-slate-200 bg-slate-50 shadow-sm flex items-center justify-between gap-3 hover:bg-white transition duration-200">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    ${avatarHtml}
+                                    <div class="overflow-hidden">
+                                        <h4 class="font-black text-slate-800 text-xs truncate">${c.name}</h4>
+                                        <p class="text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-coins"></i> 코인 ${c.stars}개 보유</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button onclick="openChildManageModal('EDIT', '${c.id}')" class="text-xs bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-pen-to-square"></i> 수정</button>
+                                    <button onclick="deleteChild('${c.id}')" class="text-xs bg-white text-rose-500 hover:bg-rose-50 border border-rose-200 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-user-minus"></i> 삭제</button>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <button onclick="openChildManageModal('EDIT', '${c.id}')" class="text-xs bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-pen-to-square"></i> 수정</button>
-                                <button onclick="deleteChild('${c.id}')" class="text-xs bg-white text-rose-500 hover:bg-rose-50 border border-rose-200 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-user-minus"></i> 삭제</button>
-                            </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
+                }
                 childListContainer.innerHTML = cardsHtml;
-            }
-
-            const dashContainer = document.getElementById('parent-dashboard-container');
-            if (dashContainer) {
-                let dashHtml = "";
-                Object.values(state.children).forEach(c => {
-                    const totalMissionsCount = c.todayMissions ? c.todayMissions.length : 0;
-                    const completedCount = c.todayMissions ? c.todayMissions.filter(m => m.completed).length : 0;
-                    const todayMins = c.todayMissions ? c.todayMissions.reduce((acc, curr) => acc + (curr.timeSpent || 0), 0) : 0;
-                    const scheduleLeft = c.schedules ? c.schedules.filter(s => !s.completed).length : 0;
-                    const avatarImgHtml = c.photo
-                        ? `<img src="${c.photo}" class="w-8 h-8 rounded-full object-cover border border-slate-200 shrink-0">`
-                        : `<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-xs shrink-0"><i class="fa-solid fa-face-smile"></i></div>`;
-                    
-                    dashHtml += `
-                        <div class="p-4 rounded-2xl border border-slate-200 bg-slate-50 shadow-inner">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-2">
-                                    ${avatarImgHtml}
-                                    <h4 class="font-black text-slate-800 text-sm">자녀: [${c.name}]</h4>
-                                </div>
-                                <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">⭐ 보유 코인: ${c.stars}개</span>
-                            </div>
-                            <ul class="space-y-1.5 text-xs text-slate-600">
-                                <li>• 금일 미션 달성도: <b class="text-slate-900">${completedCount} / ${totalMissionsCount} 건</b></li>
-                                <li>• 오늘 총 누적 학습 시간: <b class="text-indigo-600">${todayMins} 분</b></li>
-                                <li>• 미완료 알림판 일정: <b class="text-rose-600">${scheduleLeft} 건</b></li>
-                            </ul>
-                        </div>
-                    `;
-                });
-                dashContainer.innerHTML = dashHtml;
             }
 
             renderApprovalRequests();
@@ -2333,7 +2844,7 @@
                 let tableHtml = `
                     <table class="w-full text-left border-collapse text-xs mt-2">
                         <thead>
-                            <tr class="border-b border-slate-200 bg-slate-100 text-slate-500 font-bold">
+                            <tr class="border-b border-orange-100 bg-amber-50/50 text-slate-500 font-bold">
                                 <th class="p-2.5">자녀이름</th>
                                 <th class="p-2.5">요일</th>
                                 <th class="p-2.5">과목</th>
@@ -2346,7 +2857,7 @@
                 `;
                 
                 let hasData = false;
-                Object.values(state.children).forEach(c => {
+                Object.values(state.children || {}).forEach(c => {
                     const defaults = c.defaultMissions || [];
                     defaults.forEach(m => {
                         hasData = true;
@@ -2374,14 +2885,13 @@
             }
         }
 
-        // 승인 요청 실시간 대기 리스트 빌더
         function renderApprovalRequests() {
             const parentRewardReqEl = document.getElementById('parent-reward-requests-list');
             if (parentRewardReqEl) {
                 let rewardHtml = "";
                 let hasRewardReq = false;
 
-                Object.values(state.children).forEach(c => {
+                Object.values(state.children || {}).forEach(c => {
                     const reqs = c.rewardRequests || [];
                     reqs.forEach(r => {
                         hasRewardReq = true;
@@ -2412,7 +2922,7 @@
                 let missionHtml = "";
                 let hasMissionReq = false;
 
-                Object.values(state.children).forEach(c => {
+                Object.values(state.children || {}).forEach(c => {
                     const reqs = c.missionRequests || [];
                     reqs.forEach(r => {
                         hasMissionReq = true;
@@ -2440,7 +2950,6 @@
             }
         }
 
-        // 연도/월/주차별 데이터 쿼리 필터가 포함된 승인결과 내역 렌더러
         function renderApprovalHistory() {
             const rYear = document.getElementById('hist-reward-year').value;
             const rMonth = document.getElementById('hist-reward-month').value;
@@ -2451,7 +2960,7 @@
                 let rewardHistHtml = "";
                 let count = 0;
 
-                Object.values(state.children).forEach(c => {
+                Object.values(state.children || {}).forEach(c => {
                     const history = c.approvalHistory ? c.approvalHistory.filter(h => h.type === "REWARD") : [];
                     const filtered = filterHistoryByDate(history, rYear, rMonth, rWeek);
 
@@ -2490,7 +2999,7 @@
                 let missionHistHtml = "";
                 let count = 0;
 
-                Object.values(state.children).forEach(c => {
+                Object.values(state.children || {}).forEach(c => {
                     const history = c.approvalHistory ? c.approvalHistory.filter(h => h.type === "MISSION") : [];
                     const filtered = filterHistoryByDate(history, mYear, mMonth, mWeek);
 
@@ -2521,7 +3030,6 @@
             }
         }
 
-        // 주간 결재 쿼리 기간별 추출 헬퍼 함수
         function filterHistoryByDate(historyArray, targetYear, targetMonth, targetWeek) {
             return historyArray.filter(item => {
                 const [year, month, dateStr] = item.date.split('-');
@@ -2540,9 +3048,28 @@
             });
         }
 
-        // 부모 대시보드 통계 & 차트 필터 계산 프로세스
         function updateParentDashboard() {
-            const childId = document.getElementById('db-filter-child').value;
+            const childSelectEl = document.getElementById('db-filter-child');
+            if (!childSelectEl || !childSelectEl.value) {
+                document.getElementById('db-summary-time').innerHTML = `0 <span class="text-sm font-bold text-slate-500">분</span>`;
+                document.getElementById('db-summary-missions').innerText = `0 / 0 건`;
+                document.getElementById('db-summary-percent').innerText = `0%`;
+                renderDistributionChart([]);
+                renderAchievementChart([]);
+                
+                const opinionTextEl = document.getElementById('coaching-opinion-text');
+                const gradeEl = document.getElementById('coaching-grade');
+                const gradeSubEl = document.getElementById('coaching-grade-sub');
+                if (opinionTextEl && gradeEl && gradeSubEl) {
+                    gradeEl.innerText = "대기";
+                    gradeEl.className = "text-3xl font-black tracking-tight text-slate-400 child-font";
+                    gradeSubEl.innerText = "모험가 없음";
+                    opinionTextEl.innerHTML = `🎡 등록된 자녀 모험가가 없습니다. 자녀 설정에서 자녀를 생성하면 분석 보고서가 가동됩니다.`;
+                }
+                return;
+            }
+
+            const childId = childSelectEl.value;
             const targetYear = document.getElementById('db-filter-year').value;
             const targetMonth = document.getElementById('db-filter-month').value;
             const targetWeek = document.getElementById('db-filter-week').value;
@@ -2583,7 +3110,6 @@
             generateWeeklyAiCoaching(child, targetYear, targetMonth);
         }
 
-        // 과목 공부 시간 분배 차트 (도넛 차트)
         function renderDistributionChart(logs) {
             const ctx = document.getElementById('chart-subject-distribution');
             if (!ctx) return;
@@ -2641,7 +3167,6 @@
             });
         }
 
-        // 일자별 미션 완료율 추이 차트 (바 차트)
         function renderAchievementChart(logs) {
             const ctx = document.getElementById('chart-achievement-rate');
             if (!ctx) return;
@@ -2714,13 +3239,12 @@
             });
         }
 
-        // 주간단위 밸런스 점검 및 일요일 자동 리프레쉬 분석엔진
         function generateWeeklyAiCoaching(child, targetYear, targetMonth) {
             const now = new Date();
             const currentDay = now.getDay();
             const diffToSunday = currentDay;
             const targetSundayDate = new Date(now);
-            targetSundayDate.setDate(now.getDate() - diffToSunday); // 최근 완수 일요일로 지정
+            targetSundayDate.setDate(now.getDate() - diffToSunday);
 
             const sYear = targetSundayDate.getFullYear();
             const sMonth = String(targetSundayDate.getMonth() + 1).padStart(2, '0');
@@ -2729,12 +3253,12 @@
 
             const sundayEl = document.getElementById('db-analysis-sunday');
             if (sundayEl) {
-                sundayEl.innerText = `최근 주간 분석 수행일자: ${sundayFormattedStr} (일요일 기준 데이터 분석)`;
+                sundayEl.innerText = `최근 주간 분석 수행일자: ${sundayFormattedStr} (일요일 기준 분석)`;
             }
 
             const startRange = new Date(targetSundayDate);
             const endRange = new Date(targetSundayDate);
-            endRange.setDate(startRange.getDate() + 6); // 일요일부터 토요일까지 7일
+            endRange.setDate(startRange.getDate() + 6);
 
             const weeklyLogs = (child.studyLogs || []).filter(log => {
                 const logDate = new Date(log.date);
@@ -2757,7 +3281,7 @@
                 gradeEl.innerText = "대기";
                 gradeEl.className = "text-3xl font-black tracking-tight text-slate-400 child-font";
                 gradeSubEl.innerText = "분석 데이터 부족";
-                opinionTextEl.innerHTML = `👦👧 <b>[${child.name}]님</b>의 일요일 주간 학습 성취 기록이 감지되지 않았습니다. 아이들이 미션 완료 인증을 하고 공부 기록을 축적하면 고성능 인공지능 분석 가이드가 즉시 생성됩니다.`;
+                opinionTextEl.innerHTML = `👦👧 <b>[${child.name}]님</b>의 성취 기록이 감지되지 않았습니다. 아이들이 미션 완료 인증을 하고 공부 기록을 축적하면 분석 가이드가 즉시 가동됩니다.`;
                 return;
             }
 
@@ -2777,12 +3301,12 @@
                 gradeEl.innerText = "편중 주의";
                 gradeEl.className = "text-3xl font-black tracking-tight text-rose-500 child-font";
                 gradeSubEl.innerText = "과목 편중 심각";
-                opinionTextEl.innerHTML = `⚠️ <b>[${child.name}]님</b>은 이번 주 <b>${highestSubject}</b> 과목의 공부 비중이 전체의 <b>${Math.round(biasRatio * 100)}%</b>를 차지하여 다소 편중된 상태입니다. 다른 과목들도 균형 있게 학습할 수 있도록 격려해 주세요!`;
+                opinionTextEl.innerHTML = `⚠️ <b>[${child.name}]님</b>은 이번 주 <b>${highestSubject}</b> 과목 공부 비중이 전체의 <b>${Math.round(biasRatio * 100)}%</b>를 차지하여 다소 편중된 상태입니다. 균형 있게 공부할 수 있도록 도와주세요!`;
             } else if (completedRatio < 0.5) {
                 gradeEl.innerText = "분발 필요";
                 gradeEl.className = "text-3xl font-black tracking-tight text-amber-500 child-font";
                 gradeSubEl.innerText = "성취율 미흡";
-                opinionTextEl.innerHTML = `⚠️ <b>[${child.name}]님</b>은 계획한 미션의 완료율이 <b>${Math.round(completedRatio * 100)}%</b>로 다소 낮습니다. 과제 분량을 줄이거나 난이도를 조절하여 작은 성공을 자주 경험하게 도와주세요!`;
+                opinionTextEl.innerHTML = `⚠️ <b>[${child.name}]님</b>은 계획한 미션 완료율이 <b>${Math.round(completedRatio * 100)}%</b>로 다소 낮습니다. 과제 분량을 조금 줄여서 성취감을 느끼게 해주세요!`;
             } else {
                 gradeEl.innerText = "매우 안정";
                 gradeEl.className = "text-3xl font-black tracking-tight text-teal-400 child-font";
@@ -2791,24 +3315,16 @@
             }
         }
 
-        // ==================== 이벤트 리스너 통합 설정 바인딩 (이중화 구축) ====================
+        // ==================== 이벤트 리스너 통합 설정 바인딩 ====================
         let domEventsInitialized = false;
         function initDOMEvents() {
             if (domEventsInitialized) return;
             
-            // 부모모드 토글 버튼 감지
             const toggleBtn = document.getElementById('role-toggle-btn');
             if (toggleBtn) {
                 toggleBtn.addEventListener('click', requestParentMode);
             }
 
-            // 부모모드 나가기 버튼 감지
-            const exitBtn = document.getElementById('parent-exit-btn');
-            if (exitBtn) {
-                exitBtn.addEventListener('click', exitParentMode);
-            }
-
-            // 비밀번호 인증 모달 버튼 감지
             const authCancelBtn = document.getElementById('parent-auth-cancel-btn');
             if (authCancelBtn) {
                 authCancelBtn.addEventListener('click', closeParentAuthModal);
@@ -2819,7 +3335,6 @@
                 authSubmitBtn.addEventListener('click', submitParentPassword);
             }
 
-            // 비밀번호 입력 인풋창에서 엔터 키 이벤트 등록
             const pwInput = document.getElementById('parent-password-input');
             if (pwInput) {
                 pwInput.addEventListener('keydown', (e) => {
@@ -2830,7 +3345,6 @@
                 });
             }
 
-            // 자녀 등록/수정 모달 사진 찾기 버튼 연동
             const photoTrigger = document.getElementById('child-modal-photo-trigger');
             const photoInput = document.getElementById('child-modal-photo-input');
             if (photoTrigger && photoInput) {
@@ -2838,7 +3352,6 @@
                 photoInput.addEventListener('change', handlePhotoFileSelect);
             }
 
-            // 자녀 관리 모달 닫기 버튼 연동
             const childCloseBtn = document.getElementById('child-modal-close-btn');
             if (childCloseBtn) {
                 childCloseBtn.addEventListener('click', closeChildManageModal);
@@ -2847,15 +3360,11 @@
             domEventsInitialized = true;
         }
 
-        // DOM 생성 완료 이벤트 가로채기 연동
         document.addEventListener('DOMContentLoaded', () => {
             initDOMEvents();
         });
 
-        // 즉시 이중 안전 실행
         initDOMEvents();
-
-        // Firebase 기동
         runFirebaseSetup();
     </script>
 </body>
