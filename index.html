@@ -701,6 +701,10 @@
                                 <input type="text" id="p-form-subject" placeholder="예: 초등수학 디딤돌" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 font-bold">
                             </div>
                             <div>
+                                <label class="block text-slate-500 font-bold mb-1">학습 내용</label>
+                                <input type="text" id="p-form-content" placeholder="예: 1단원 예습, 문제 풀이 중심" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 font-bold">
+                            </div>
+                            <div>
                                 <label class="block text-slate-500 font-bold mb-1">기본 목표 분량</label>
                                 <input type="text" id="p-form-range" placeholder="예: 3페이지 풀기" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 font-bold">
                             </div>
@@ -1783,6 +1787,7 @@
             const childId = document.getElementById('p-form-child').value;
             const day = document.getElementById('p-form-day').value;
             const subject = document.getElementById('p-form-subject').value.trim();
+            const content = document.getElementById('p-form-content').value.trim();
             const range = document.getElementById('p-form-range').value.trim();
             const stars = parseInt(document.getElementById('p-form-stars').value) || 1;
             
@@ -1795,12 +1800,14 @@
                 id: Date.now(),
                 day: day,
                 subject: subject,
+                content: content,
                 range: range,
                 stars: stars
             };
             
             state.children[childId].defaultMissions.push(newDefault);
             document.getElementById('p-form-subject').value = "";
+            document.getElementById('p-form-content').value = "";
             document.getElementById('p-form-range').value = "";
             document.getElementById('p-form-stars').value = "1";
             
@@ -2641,6 +2648,7 @@
                         activeChild.todayMissions.push({
                             id: Date.now() + Math.random(),
                             subject: d.subject,
+                            content: d.content || "",
                             range: d.range,
                             stars: d.stars || 1,
                             completed: false,
@@ -2740,6 +2748,7 @@
                                         <span class="text-slate-400 line-through">목표: ${m.range}</span>
                                         ${m.isCustom ? '<span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded font-black text-[9px]">모험도전</span>' : ''}
                                     </div>
+                                    <p class="text-[12px] text-slate-500 mt-1">학습 내용: ${m.content || '-'}</p>
                                     <p class="text-slate-600 font-medium mt-1">💡 결과: <b>${m.actualRange}</b> (${m.timeSpent}분 공부 완료)</p>
                                     <p class="text-[11px] text-amber-600 font-bold mt-1">${starStr} 코인 ${earnableStars}개 지급 ${isAwaiting ? '대기 중' : '완료'}</p>
                                 </div>
@@ -2772,6 +2781,7 @@
                                         [${m.subject}] 
                                         <span class="text-xs font-normal text-slate-500 ml-1">목표: ${m.range}</span>
                                     </h4>
+                                    <p class="text-[12px] text-slate-500 mt-1">학습 내용: ${m.content || '-'}</p>
                                     ${m.isCustom ? '<span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded font-black text-[9px]">자녀도전</span>' : ''}
                                 </div>
                                 
@@ -2886,6 +2896,7 @@
                                 <th class="p-2.5">자녀이름</th>
                                 <th class="p-2.5">요일</th>
                                 <th class="p-2.5">과목</th>
+                                <th class="p-2.5">학습 내용</th>
                                 <th class="p-2.5">기본 할 일 범위</th>
                                 <th class="p-2.5">성공 시 별</th>
                                 <th class="p-2.5 text-center">관리</th>
@@ -2904,6 +2915,7 @@
                                 <td class="p-2.5 font-bold text-slate-700">${c.name}</td>
                                 <td class="p-2.5"><span class="px-2 py-0.5 bg-violet-100 text-violet-800 font-bold rounded">${m.day}요일</span></td>
                                 <td class="p-2.5 font-medium text-slate-800">${m.subject}</td>
+                                <td class="p-2.5 text-slate-500">${m.content || '-'}</td>
                                 <td class="p-2.5 text-slate-500">${m.range}</td>
                                 <td class="p-2.5 font-bold text-amber-600">⭐ 별 ${m.stars || 1}개</td>
                                 <td class="p-2.5 text-center">
