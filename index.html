@@ -376,12 +376,16 @@
                                 <!-- 자녀 직접 추가 미션 수립 폼 박스 -->
                                 <div id="child-custom-mission-form" class="hidden bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl mb-6 text-xs transition duration-300">
                                     <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-1.5">🎟️ 오늘 내가 직접 도전할 보너스 미션 등록하기</h4>
-                                    <form onsubmit="handleChildCreateMission(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <form onsubmit="handleChildCreateMission(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
                                         <div>
                                             <label class="block text-slate-500 font-bold mb-1">도전 과목</label>
                                             <input type="text" id="child-form-subject" placeholder="예: 독서, 영어공부" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
                                         </div>
                                         <div class="sm:col-span-2">
+                                            <label class="block text-slate-500 font-bold mb-1">학습 내용</label>
+                                            <input type="text" id="child-form-content" placeholder="예: 단어 암기 20개, 수학 문제 10개" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
+                                        </div>
+                                        <div>
                                             <label class="block text-slate-500 font-bold mb-1">도전 목표 분량</label>
                                             <input type="text" id="child-form-range" placeholder="예: 동화책 재미있게 읽고 독서 기록하기" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
                                         </div>
@@ -2181,15 +2185,17 @@
         async function handleChildCreateMission(e) {
             e.preventDefault();
             const subject = document.getElementById('child-form-subject').value.trim();
+            const content = document.getElementById('child-form-content').value.trim();
             const range = document.getElementById('child-form-range').value.trim();
             const stars = parseInt(document.getElementById('child-form-stars').value) || 1;
 
-            if (!subject || !range) return;
+            if (!subject || !content || !range) return;
 
             const targetChild = state.children[state.activeChildId];
             const newMission = {
                 id: Date.now(),
                 subject: subject,
+                content: content,
                 range: range,
                 stars: stars,
                 completed: false,
@@ -2203,6 +2209,7 @@
             targetChild.todayMissions.push(newMission);
 
             document.getElementById('child-form-subject').value = "";
+            document.getElementById('child-form-content').value = "";
             document.getElementById('child-form-range').value = "";
             document.getElementById('child-form-stars').value = "1";
             toggleChildCustomForm();
@@ -2246,6 +2253,7 @@
                 targetChild.studyLogs.push({
                     date: todayStr,
                     subject: mission.subject,
+                    content: mission.content || "",
                     timeSpent: mins,
                     completed: true,
                     stars: mission.stars
@@ -2257,6 +2265,7 @@
                         id: Date.now(),
                         missionId: mission.id,
                         subject: mission.subject,
+                        content: mission.content || "",
                         range: mission.range,
                         actualRange: txt,
                         timeSpent: mins,
