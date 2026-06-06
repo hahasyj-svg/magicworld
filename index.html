@@ -943,12 +943,12 @@
         // ==========================================
         // 🚨 [매우 중요] 외부 배포 및 여러 기기 간 동기화 설정 방법
         // 다른 기기(모바일 등)와 동기화를 원하시면 아래 firebaseConfig에 본인의 Firebase 정보를 넣어주세요.
+        // 이 앱은 Firestore 기반이므로 Realtime Database 구성은 필요하지 않습니다.
         // 비워둘 경우, 자동으로 로컬 브라우저 저장소(LocalStorage) 모드로 동작합니다.
         // ==========================================
          const firebaseConfig = {
             apiKey: "AIzaSyB49O7-2HxWvdvCEOWz42LnAThRO15FT5Q",
             authDomain: "study-plan-for-yoons.firebaseapp.com",
-            databaseURL: "https://study-plan-for-yoons-default-rtdb.firebaseio.com",
             projectId: "study-plan-for-yoons",
             storageBucket: "study-plan-for-yoons.firebasestorage.app",
             messagingSenderId: "790674461804",
@@ -1049,10 +1049,12 @@
 
             try {
                 let config = null;
-                if (yourFirebaseConfig) {
+                if (typeof yourFirebaseConfig !== 'undefined' && yourFirebaseConfig) {
                     config = yourFirebaseConfig;
                 } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
                     config = JSON.parse(__firebase_config);
+                } else if (typeof firebaseConfig !== 'undefined' && firebaseConfig) {
+                    config = firebaseConfig;
                 }
 
                 if (!config) {
