@@ -408,6 +408,22 @@
 
                                 <div id="today-missions-list" class="space-y-4"></div>
                             </div>
+
+                            <!-- 자녀 신청 및 결재 상태 확인 영역 -->
+                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="p-3 bg-slate-100 text-slate-700 rounded-2xl"><i class="fa-solid fa-user-check text-lg"></i></span>
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">내 신청 및 결재 상태</h3>
+                                        <p class="text-xs text-slate-400">부모에게 제출한 드림코인 신청과 결재 결과를 확인할 수 있어요.</p>
+                                    </div>
+                                </div>
+                                <div id="child-request-status-panel" class="space-y-4 text-xs">
+                                    <div id="child-pending-reward-requests" class="bg-slate-50 rounded-2xl p-4 border border-slate-100"></div>
+                                    <div id="child-pending-mission-requests" class="bg-slate-50 rounded-2xl p-4 border border-slate-100"></div>
+                                    <div id="child-approval-history" class="bg-slate-50 rounded-2xl p-4 border border-slate-100"></div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 우측 1개 컬럼: 드림 코인 상점 보상 구매 스페이스 -->
@@ -2319,9 +2335,16 @@
 
         async function purchaseReward(rewardId) {
             const targetChild = state.children[state.activeChildId];
-            const item = state.rewards.find(r => r.id === rewardId);
-            
-            if(!item) return;
+            if (!targetChild) {
+                showAlert("신청 오류", "선택된 자녀 정보가 없습니다. 자녀를 다시 선택해 주세요.");
+                return;
+            }
+
+            const item = state.rewards.find(r => String(r.id) === String(rewardId));
+            if(!item) {
+                showAlert("신청 오류", "선택한 보상을 찾을 수 없습니다. 다시 시도해 주세요.");
+                return;
+            }
             
             if(targetChild.stars >= item.cost) {
                 showConfirm("드림 코인 교환", `[${item.title}] 상품을 코인 ${item.cost}개로 교환 신청하시겠습니까?\n신청 즉시 코인이 차감되며 부모님의 승인 처리가 연동됩니다.`, async () => {
@@ -2645,6 +2668,7 @@
             renderSchedulesList();
             renderTodayMissionsList();
             renderStarRewardsStore();
+            renderChildApprovalPanel();
             
             if(state.isParentMode) {
                 renderParentView();
@@ -2864,13 +2888,68 @@
                                 </p>
                             </div>
                         </div>
-                        <button onclick="purchaseReward(${r.id})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-2.5 py-1.5 rounded-xl shadow-sm transition shrink-0">
+                                <button type="button" onclick="purchaseReward('${r.id}')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-2.5 py-1.5 rounded-xl shadow-sm transition shrink-0">
                             교환
                         </button>
                     </div>
                 `;
             });
             listEl.innerHTML = html;
+        }
+
+        function renderChildApprovalPanel() {
+            const panelReward = document.getElementById('child-pending-reward-requests');
+            const panelMission = document.getElementById('child-pending-mission-requests');
+            const panelHistory = document.getElementById('child-approval-history');
+            const activeChild = state.children[state.activeChildId];
+
+            if (!panelReward || !panelMission || !panelHistory || !activeChild) {
+                return;
+            }
+
+            const pendingRewards = activeChild.rewardRequests || [];
+            const pendingMissions = activeChild.missionRequests || [];
+            const historyItems = activeChild.approvalHistory || [];
+
+            panelReward.innerHTML = `
+                <div class="font-bold text-slate-800 mb-2">📩 제출된 드림코인 신청</div>
+                ${pendingRewards.length === 0 ? `<div class="text-slate-500">신청된 보상 교환 내역이 없습니다.</div>` : pendingRewards.map(r => `
+                    <div class="rounded-2xl border border-amber-100 bg-amber-50 p-3 mb-2 text-slate-700">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-sm font-bold">${r.title}</div>
+                            <span class="text-[10px] text-amber-700 bg-amber-100 px-2 py-1 rounded-full">대기중</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-1">코인 ${r.cost}개 | 신청 시간: ${r.timestamp || '-'} </div>
+                    </div>
+                `).join('')}
+            `;
+
+            panelMission.innerHTML = `
+                <div class="font-bold text-slate-800 mb-2">📝 부모님 검토 대기 중인 도전 미션</div>
+                ${pendingMissions.length === 0 ? `<div class="text-slate-500">제출한 도전 미션이 없습니다.</div>` : pendingMissions.map(r => `
+                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-3 mb-2 text-slate-700">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-sm font-bold">[${r.subject}] ${r.range}</div>
+                            <span class="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">대기중</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-1">학습 내용: ${r.content || '-'} | 코드 코인: ${r.stars}개</div>
+                    </div>
+                `).join('')}
+            `;
+
+            panelHistory.innerHTML = `
+                <div class="font-bold text-slate-800 mb-2">📜 결재 결과 및 이력</div>
+                ${historyItems.length === 0 ? `<div class="text-slate-500">아직 결재 이력이 없습니다.</div>` : historyItems.map(h => `
+                    <div class="rounded-2xl border ${h.status === 'APPROVED' ? 'border-teal-200 bg-teal-50' : 'border-rose-200 bg-rose-50'} p-3 mb-2 text-slate-700">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-sm font-bold">${h.type === 'REWARD' ? h.title : `[${h.subject}] ${h.range}`}</div>
+                            <span class="text-[10px] ${h.status === 'APPROVED' ? 'text-teal-700 bg-teal-100' : 'text-rose-700 bg-rose-100'} px-2 py-1 rounded-full">${h.status === 'APPROVED' ? '승인됨' : '반려됨'}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-1">${h.type === 'REWARD' ? `코인 ${h.cost}개` : `학습 내용: ${h.content || h.range}`}</div>
+                        <div class="text-[10px] text-slate-400 mt-1">${h.date || '-'} ${h.timestamp ? '(' + h.timestamp + ')' : ''}</div>
+                    </div>
+                `).join('')}
+            `;
         }
 
         function renderParentView() {
