@@ -1635,6 +1635,10 @@
                 return;
             }
 
+            if (!state.activeChildId || !state.children[state.activeChildId]) {
+                state.activeChildId = childList[0]?.id || "";
+            }
+
             childList.forEach(c => {
                 const avatarTag = c.photo 
                     ? `<img src="${c.photo}" class="w-5 h-5 rounded-full object-cover shrink-0 border border-slate-200">`
@@ -1654,6 +1658,11 @@
             dropdownMenu.innerHTML = menuHtml;
             parentSelectEl.innerHTML = selectOptionsHtml;
             dbChildSelectEl.innerHTML = dbOptionsHtml;
+
+            if (state.activeChildId) {
+                parentSelectEl.value = state.activeChildId;
+                dbChildSelectEl.value = state.activeChildId;
+            }
         }
 
         function requestParentMode() {
@@ -1846,16 +1855,17 @@
                 tableHtml += `<tr><td colspan="4" class="p-6 text-center text-slate-400">등록된 보상 쿠폰 상품이 없습니다. 상단 폼을 이용해서 등록해 주세요!</td></tr>`;
             } else {
                 state.rewards.forEach(r => {
-                    let displayIcon = "🎫";
-                    if (r.icon === "fa-ice-cream") displayIcon = "🍦";
-                    else if (r.icon === "fa-gamepad") displayIcon = "🎮";
-                    else if (r.icon === "fa-book-open") displayIcon = "📚";
-                    else if (r.icon === "fa-gift") displayIcon = "🧸";
-                    else if (r.icon === "fa-pizza-slice") displayIcon = "🍕";
+                    let displayIcon = `<i class="fa-solid ${r.icon}"></i>`;
+                    if (r.icon === "fa-ticket") displayIcon = `<i class="fa-solid fa-ticket"></i>`;
+                    else if (r.icon === "fa-ice-cream") displayIcon = `<i class="fa-solid fa-ice-cream"></i>`;
+                    else if (r.icon === "fa-gamepad") displayIcon = `<i class="fa-solid fa-gamepad"></i>`;
+                    else if (r.icon === "fa-book-open") displayIcon = `<i class="fa-solid fa-book-open"></i>`;
+                    else if (r.icon === "fa-gift") displayIcon = `<i class="fa-solid fa-gift"></i>`;
+                    else if (r.icon === "fa-pizza-slice") displayIcon = `<i class="fa-solid fa-pizza-slice"></i>`;
 
                     tableHtml += `
                         <tr class="border-b border-slate-100 hover:bg-orange-50/30">
-                            <td class="p-2.5 text-lg font-bold">${displayIcon} <span class="text-[10px] text-slate-400 font-mono">(${r.icon})</span></td>
+                            <td class="p-2.5 text-lg font-bold">${displayIcon}</td>
                             <td class="p-2.5 font-bold text-slate-700">${r.title}</td>
                             <td class="p-2.5 font-black text-amber-600">⭐ ${r.cost} 코인</td>
                             <td class="p-2.5 text-center space-x-2">
@@ -2536,6 +2546,9 @@
             if (!state.children) {
                 state.children = {};
             }
+
+            // 자녀 선택 UI 및 부모 모드 자녀 대상 셀렉트 옵션 동기화
+            renderChildSelectOptions();
             
             const childKeys = Object.keys(state.children || {});
             const emptyStateEl = document.getElementById('child-empty-state');
