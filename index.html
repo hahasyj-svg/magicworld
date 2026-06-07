@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>환상의 매직랜드 해피 플래너 (Ver 6.1-synced)</title>
+    <title>My study planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -52,6 +52,15 @@
                 filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.2));
             }
         }
+        
+        /* 모바일 스크롤바 숨김 최적화 (갤럭시 S24 가로 스크롤 영역) */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
         .flying-coin {
             position: fixed;
             z-index: 9999;
@@ -64,18 +73,12 @@
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col transition-colors duration-300" id="app-body">
 
-    <!-- 동기화 상태를 알려주는 상단 인디케이터 배너 -->
-    <div id="sync-status-banner" class="bg-amber-500 text-white text-center py-1.5 px-4 text-xs font-bold flex items-center justify-center gap-2 shadow-inner transition-colors duration-300">
-        <span class="animate-pulse">🔄</span>
-        <span id="sync-status-text">매직 클라우드 상태를 점검하고 있습니다...</span>
-    </div>
-
     <!-- ==================== 1. 로그인 / 회원가입 게이트웨이 화면 ==================== -->
     <div id="auth-gateway" class="flex-grow flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-xl border border-orange-100 text-center space-y-6">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-xl border border-orange-100 text-center space-y-6">
             <span class="text-6xl animate-bounce block">🎡</span>
             <div>
-                <h2 class="text-2xl font-black text-slate-800">매직랜드 해피 게이트</h2>
+                <h2 class="text-2xl font-black text-slate-800">My special magic gate</h2>
                 <p class="text-xs text-slate-500 mt-1">우리 가족만의 실시간 드림 성장 계획을 시작해 보세요!</p>
             </div>
 
@@ -96,7 +99,7 @@
 
             <!-- 회원가입 폼 -->
             <div id="register-section" class="hidden space-y-3 text-left">
-                <h3 class="font-bold text-sm text-slate-700 mb-2">🎈 신규 패밀리 모험가 등록</h3>
+                <h3 class="font-bold text-sm text-slate-700 mb-2">🎈 신규 패밀리 대원 등록</h3>
                 <form id="register-form" onsubmit="handleUserRegister(event)" class="space-y-3 text-xs font-semibold text-slate-600">
                     <div>
                         <label class="block text-slate-500 mb-1 font-bold">패밀리 ID (영문/숫자)</label>
@@ -181,7 +184,7 @@
                     </div>
                     <div>
                         <h1 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
-                            <span class="text-orange-600"><i class="fa-solid fa-wand-magic-sparkles"></i> 매직랜드 해피 플래너</span>
+                            <span class="text-orange-600"><i class="fa-solid fa-wand-magic-sparkles"></i> My special magic planner</span>
                             <span id="current-family-badge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 flex items-center gap-1">
                                 <i class="fa-solid fa-house-chimney-user"></i> family
                             </span>
@@ -190,9 +193,9 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto mt-2 sm:mt-0">
                     <!-- 드림코인 카운터 지표 -->
-                    <div id="global-star-container" class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-2 flex items-center gap-2 shadow-sm transition-all duration-300">
+                <div id="global-star-container" class="bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 sm:gap-2 shadow-sm transition-all duration-300">
                         <span class="text-amber-500 text-lg animate-bounce"><i class="fa-solid fa-coins"></i></span>
                         <span class="text-xs font-bold text-slate-600">내 드림 코인:</span>
                         <span class="text-lg font-black text-amber-600 child-font" id="global-star-count">0</span>
@@ -201,7 +204,7 @@
 
                     <!-- 자녀 대원 선택 드롭다운 셀렉터 -->
                     <div class="relative inline-block text-left" id="custom-child-dropdown">
-                        <button onclick="toggleChildDropdown()" id="dropdown-active-btn" class="bg-slate-100 hover:bg-orange-50 hover:text-orange-700 text-slate-700 font-bold py-2 px-4 rounded-xl flex items-center gap-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 shrink-0 shadow-sm transition">
+                    <button onclick="toggleChildDropdown()" id="dropdown-active-btn" class="bg-slate-100 hover:bg-orange-50 hover:text-orange-700 text-slate-700 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 shrink-0 shadow-sm transition">
                             <span id="dropdown-selected-avatar" class="w-5 h-5 rounded-full overflow-hidden bg-orange-200 flex items-center justify-center text-[10px] text-orange-600 shrink-0"></span>
                             <span id="dropdown-selected-name" class="font-bold text-xs">놀이공원 입장 패스</span>
                             <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
@@ -211,13 +214,13 @@
                     </div>
 
                     <!-- 부모 모드 전환 단추 -->
-                    <button id="role-toggle-btn" class="bg-slate-800 text-white hover:bg-slate-900 font-bold py-2 px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-2 text-sm shrink-0">
+                <button id="role-toggle-btn" class="bg-slate-800 text-white hover:bg-slate-900 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0">
                         <i class="fa-solid fa-lock"></i>
                         <span>부모 모드로 전환</span>
                     </button>
 
                     <!-- 로그아웃 단추 -->
-                    <button onclick="handleUserLogout()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold p-2.5 rounded-xl shadow-sm transition text-sm">
+                <button onclick="handleUserLogout()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold p-2 sm:p-2.5 rounded-xl shadow-sm transition text-xs sm:text-sm">
                         <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
@@ -235,7 +238,7 @@
                     <span class="text-7xl animate-bounce block">🎠</span>
                     <h3 class="text-2xl font-black text-slate-800">매직랜드에 오신 것을 환영합니다!</h3>
                     <p class="text-sm text-slate-500 leading-relaxed">
-                        아직 등록된 매직랜드 모험가(자녀)가 없습니다.<br>
+                        아직 등록된 매직랜드 대원(자녀)가 없습니다.<br>
                         우측 상단의 <b class="text-slate-900">[부모 모드로 전환]</b> 버튼을 눌러 관리자 인증 후,<br>
                     <b class="text-orange-600">[자녀 설정]</b> 및 <b class="text-orange-600">[코인 포상 상점 관리]</b> 탭에서<br> 자녀와 리워드 목록을 가장 먼저 등록해 주세요!<br>
                         <span class="text-xs text-orange-500 font-bold block mt-3 bg-orange-50 py-2.5 rounded-xl border border-orange-100/50">(부모 모드 초기 비밀번호: 1234)</span>
@@ -262,32 +265,32 @@
                                     <p class="text-sm text-orange-100 mt-1">자녀모드 학습 계획, 코인 상점, 성취도 조회를 탭으로 편리하게 이용해요.</p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
-                                <button onclick="showTodayTasksDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full lg:w-auto">
+                            <button onclick="showTodayTasksDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
                                     <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">📝 오늘할일</p>
                                     <p class="text-2xl font-black child-font text-white" id="child-header-today-tasks">0</p>
                                 </button>
-                                <button onclick="showTodayCompletedDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                            <button onclick="showTodayCompletedDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
                                     <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">✅ 오늘완료</p>
                                     <p class="text-2xl font-black child-font text-lime-200" id="child-header-today-completed">0</p>
                                 </button>
-                                <button onclick="showTodayCoinsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                            <button onclick="showTodayCoinsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
                                     <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">🪙 오늘코인</p>
                                     <p class="text-2xl font-black child-font text-amber-200" id="child-header-today-coins">0</p>
                                 </button>
-                                <button onclick="showWeekExamsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                            <button onclick="showWeekExamsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
                                     <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">📚 이번주 시험 및 숙제</p>
-                                    <p class="text-2xl font-black child-font text-rose-200" id="child-header-week-exams">0</p>
+                                       <p class="text-2xl font-black child-font text-rose-200" id="child-header-week-exams">0</p>
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm font-bold text-slate-700">
-                            <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-3 rounded-2xl bg-orange-500 text-white shadow-sm">학습계획관리</button>
-                            <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition">코인상점</button>
-                            <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition">학업성취도 조회</button>
+                    <div class="grid grid-cols-3 gap-2 sm:gap-3 text-xs sm:text-sm font-bold text-slate-700">
+                        <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center">학습계획</button>
+                        <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center">코인상점</button>
+                        <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center">성취도</button>
                         </div>
                     </div>
 
@@ -297,17 +300,17 @@
                                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
                                     <div class="flex items-center justify-between gap-3 mb-4">
                                         <div>
-                                            <h3 class="font-bold text-lg text-slate-800">월별 달력</h3>
+                                            <h3 class="font-bold text-lg text-slate-800">🗓️ 이달의 주요 일정</h3>
                                             <p class="text-xs text-slate-400">중요 일정과 숙제를 한눈에 확인하고, 추가 버튼으로 일정판을 엽니다.</p>
                                         </div>
                                         <button onclick="openScheduleModal()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-2xl text-xs transition shadow-sm flex items-center gap-2">
                                             <i class="fa-solid fa-plus"></i> 일정 추가
                                         </button>
                                     </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-2xl mb-4 border border-slate-100">
-                                        <button onclick="changeCalendarMonth(-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
-                                        <h4 class="font-black text-slate-800 text-lg" id="monthly-calendar-title"></h4>
-                                        <button onclick="changeCalendarMonth(1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
+                                <div class="flex items-center justify-between bg-slate-50 p-1.5 sm:p-2 rounded-2xl mb-4 border border-slate-100">
+                                    <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left text-xs sm:text-base"></i></button>
+                                    <h4 class="font-black text-slate-800 text-base sm:text-lg" id="monthly-calendar-title"></h4>
+                                    <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-base"></i></button>
                                     </div>
                                     <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-2 text-[11px]"></div>
                                     <div id="calendar-event-preview" class="mt-4 grid gap-3"></div>
@@ -317,13 +320,24 @@
                                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
                                     <div class="flex items-center justify-between gap-3 mb-4">
                                         <div>
-                                            <h3 class="font-bold text-lg text-slate-800">오늘의 해피드림 미션</h3>
+                                            <h3 class="font-bold text-lg text-slate-800">🎯 오늘의 체크리스트</h3>
                                             <p class="text-xs text-slate-400">오늘 완료해야 할 목표를 확인하고 드림코인을 모아요.</p>
                                         </div>
                                         <button onclick="toggleChildCustomForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2">
                                             <i class="fa-solid fa-circle-plus"></i> 직접 추가
                                         </button>
                                     </div>
+                                    <!-- AI 응원 메시지 영역 (학습 계획) -->
+                                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 shadow-sm border border-emerald-100 mb-4 flex items-center gap-4">
+                                        <div class="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-500 text-xl shadow-inner shrink-0">
+                                            <i class="fa-solid fa-robot animate-bounce"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-[11px] font-black text-emerald-500 mb-0.5 tracking-wide">AI 선생님의 응원</h4>
+                                            <p class="text-sm font-bold text-slate-700" id="plan-ai-cheer-message">매일매일 조금씩 자라나는 모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
+                                        </div>
+                                    </div>
+                                    
                                     <!-- 오늘의 미션 직접추가 폼 -->
                                     <div id="child-custom-mission-form" class="hidden bg-emerald-50 border border-emerald-200 rounded-3xl p-4 mb-4">
                                         <form onsubmit="handleChildCreateMission(event)" class="space-y-3">
@@ -370,7 +384,7 @@
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
                                 <div class="flex items-center justify-between gap-3 mb-4">
                                     <div>
-                                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-store text-amber-500"></i> 드림코인 상점</h3>
+                                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><span class="animate-bounce inline-block text-xl">🎪</span> 드림코인 상점 <span class="animate-pulse text-amber-400 text-xl">✨</span></h3>
                                         <p class="text-xs text-slate-400">코인을 사용하여 바로 교환 신청할 수 있어요.</p>
                                     </div>
                                     <div class="text-right text-xs text-slate-500">
@@ -384,7 +398,7 @@
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
                                 <div class="flex items-center justify-between gap-3 mb-4">
                                     <div>
-                                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-list-check text-indigo-500"></i> 드림코인 신청내역</h3>
+                                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><span class="animate-bounce inline-block text-xl">📦</span> 드림코인 신청내역 <span class="animate-pulse text-indigo-400 text-xl">✨</span></h3>
                                         <p class="text-xs text-slate-400">교환신청, 배송중, 배송완료 상태를 탭으로 확인해요.</p>
                                     </div>
                                 </div>
@@ -427,14 +441,13 @@
                         </div>
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <div class="flex items-center justify-between mb-6">
-                                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-sky-500"></i> 학습 완료율</h3>
-                                    <select id="completion-rate-filter" onchange="renderChildAchievementCharts()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 font-bold text-slate-500 focus:outline-none">
-                                        <option value="TODAY">오늘</option>
-                                        <option value="WEEK" selected>이번주</option>
-                                        <option value="MONTH">이번달</option>
-                                        <option value="YEAR">올해</option>
-                                    </select>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-sky-500"></i> 내가 완료한 학습</h3>
+                                    <div class="flex gap-2 text-center text-xs text-slate-500">
+                                        <button onclick="setChartFilter('completion', 'WEEK')" id="filter-completion-week" class="py-1.5 px-3 rounded-xl bg-sky-500 text-white font-bold transition">이번주</button>
+                                        <button onclick="setChartFilter('completion', 'MONTH')" id="filter-completion-month" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">이번달</button>
+                                        <button onclick="setChartFilter('completion', 'YEAR')" id="filter-completion-year" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">올해</button>
+                                    </div>
                                 </div>
                                 <div class="flex flex-col items-center">
                                     <div class="relative w-48 h-48 mb-4">
@@ -451,31 +464,51 @@
                                 </div>
                             </div>
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                            <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-book-open-reader text-indigo-500"></i> 과목별 학습 현황</h3>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-book-open-reader text-indigo-500"></i> 내가 완료한 과목별 학습</h3>
+                                    <div class="flex gap-2 text-center text-xs text-slate-500">
+                                        <button onclick="setChartFilter('subject', 'WEEK')" id="filter-subject-week" class="py-1.5 px-3 rounded-xl bg-indigo-500 text-white font-bold transition">이번주</button>
+                                        <button onclick="setChartFilter('subject', 'MONTH')" id="filter-subject-month" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">이번달</button>
+                                        <button onclick="setChartFilter('subject', 'YEAR')" id="filter-subject-year" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">올해</button>
+                                    </div>
+                                </div>
                                 <div class="relative w-full h-80">
                                     <canvas id="achievement-subject-chart"></canvas>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mt-6">
-                            <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-coins text-amber-500"></i> 기간별 코인 획득</h3>
-                            <div class="flex gap-2 text-center text-xs mb-4 text-slate-500">
-                                <button onclick="setChildPeriodFilter('WEEK')" id="period-btn-week" class="py-2 px-4 rounded-2xl bg-orange-500 text-white font-bold transition">이번주</button>
-                                <button onclick="setChildPeriodFilter('MONTH')" id="period-btn-month" class="py-2 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 font-bold transition">이번달</button>
-                                <button onclick="setChildPeriodFilter('YEAR')" id="period-btn-year" class="py-2 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 font-bold transition">올해</button>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+                                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-coins text-amber-500"></i> 내가 성취한 드림코인</h3>
+                                <div class="flex gap-2 text-center text-xs text-slate-500">
+                                    <button onclick="setChartFilter('coin', 'WEEK')" id="filter-coin-week" class="py-1.5 px-3 rounded-xl bg-amber-500 text-white font-bold transition">이번주</button>
+                                    <button onclick="setChartFilter('coin', 'MONTH')" id="filter-coin-month" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">이번달</button>
+                                    <button onclick="setChartFilter('coin', 'YEAR')" id="filter-coin-year" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">올해</button>
+                                </div>
                             </div>
                             <div class="relative w-full h-64">
                                 <canvas id="achievement-coin-chart"></canvas>
                             </div>
                         </div>
+
+                        <!-- AI 응원 메시지 영역 -->
+                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-3xl p-4 shadow-sm border border-indigo-100 mt-6 flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-2xl bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-500 text-xl shadow-inner shrink-0">
+                                <i class="fa-solid fa-robot animate-bounce"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-[11px] font-black text-indigo-400 mb-0.5 tracking-wide">AI 선생님의 응원</h4>
+                                <p class="text-sm font-bold text-slate-700" id="child-ai-cheer-message">매일매일 조금씩 자라나는 모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="schedule-calendar-modal" onclick="if(event.target === this) closeScheduleModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[210] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-                        <div class="bg-white rounded-3xl p-6 max-w-3xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative" id="schedule-calendar-box">
+                    <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-3xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[90vh] overflow-y-auto" id="schedule-calendar-box">
                             <button onclick="closeScheduleModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
                             <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-4">
                                 <div>
-                                    <h3 class="text-xl font-black text-slate-800">중요 일정 및 숙제 알림판</h3>
+                                <h3 class="text-lg sm:text-xl font-black text-slate-800">중요 일정 및 숙제 알림판</h3>
                                     <p class="text-xs text-slate-500 mt-1">기한별로 등록된 일정을 달력에서 확인하고 각 날짜에 카테고리 아이콘과 메모를 표시합니다.</p>
                                 </div>
                                 <div class="text-xs text-slate-500">등록된 일정은 달력의 해당 날짜에 아이콘과 텍스트로 표시됩니다.</div>
@@ -505,10 +538,10 @@
                                     <button type="button" onclick="closeScheduleModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl px-4 py-3 text-sm shadow-sm transition">취소</button>
                                 </div>
                             </form>
-                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-2xl mb-4 border border-slate-100 mt-4">
-                                <button onclick="changeCalendarMonth(-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
-                                <h4 class="font-black text-slate-800 text-lg" id="modal-calendar-title"></h4>
-                                <button onclick="changeCalendarMonth(1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
+                        <div class="flex items-center justify-between bg-slate-50 p-1.5 sm:p-2 rounded-2xl mb-4 border border-slate-100 mt-4">
+                            <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left text-xs sm:text-base"></i></button>
+                            <h4 class="font-black text-slate-800 text-base sm:text-lg" id="modal-calendar-title"></h4>
+                            <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-base"></i></button>
                             </div>
                             <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-2 text-[11px]"></div>
                             <div id="schedule-calendar-items" class="mt-4 space-y-3"></div>
@@ -622,23 +655,9 @@
             <!-- ==================== 부모 모드 전용 대시보드 및 설정 관리 창 ==================== -->
             <div id="parent-view" class="space-y-8 hidden">
                 <!-- 부모 모드 공통 상단 배너 -->
-                <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <span class="p-4 bg-slate-800 text-amber-400 text-3xl rounded-2xl border border-slate-700 shadow-inner shrink-0">
-                            <i class="fa-solid fa-user-gear"></i>
-                        </span>
-                        <div>
-                            <h2 class="text-xl sm:text-2xl font-black">매직랜드 통합 관리자실 🎡</h2>
-                        <p class="text-xs text-slate-400">자녀별 기본 플랜 관리, 코인 보상 관리, 동적 결재 승인을 통합 제어합니다.</p>
-                        </div>
-                    </div>
-                    <button onclick="exitParentMode()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-2 shrink-0">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> 부모 모드 나가기
-                    </button>
-                </div>
 
                 <!-- 부모 모드 전용 탭 네비게이션 -->
-                <div class="flex flex-wrap border-b border-slate-200 bg-slate-100 p-1.5 rounded-2xl max-w-5xl mx-auto text-[11px] font-bold gap-1 shadow-sm justify-center">
+            <div class="flex overflow-x-auto hide-scrollbar whitespace-nowrap snap-x border-b border-slate-200 bg-slate-100 p-1.5 rounded-2xl max-w-5xl mx-auto text-[11px] font-bold gap-1 shadow-sm justify-start sm:justify-center">
                     <button onclick="switchParentTab('DASHBOARD')" id="ptab-dashboard" class="flex-1 min-w-[80px] py-3 px-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 bg-white text-slate-800 shadow-sm">
                         <i class="fa-solid fa-chart-pie text-[14px]"></i> 성과 리포트
                     </button>
@@ -727,7 +746,7 @@
                                 </div>
                             </div>
 
-                            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-100">
+                            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-3 sm:p-4 rounded-3xl border border-slate-100">
                                 <div class="flex flex-col items-center justify-center p-2 bg-white rounded-2xl border border-slate-100 h-64">
                                     <h5 class="text-xs font-black text-slate-700 mb-2">🎨 교과별 공부시간 투입분포</h5>
                                     <div class="relative w-full h-48">
@@ -920,7 +939,7 @@
                             </div>
                         </form>
 
-                        <div id="parent-default-missions-table" class="overflow-x-auto"></div>
+                    <div id="parent-default-missions-table" class="overflow-x-auto hide-scrollbar"></div>
                     </div>
                 </div>
 
@@ -966,7 +985,7 @@
                             </div>
                         </form>
 
-                        <div id="parent-rewards-store-table" class="overflow-x-auto"></div>
+                    <div id="parent-rewards-store-table" class="overflow-x-auto hide-scrollbar"></div>
                     </div>
                 </div>
 
@@ -977,12 +996,12 @@
                             <div class="flex items-center gap-3">
                                 <span class="p-3 bg-teal-50 text-teal-600 rounded-2xl"><i class="fa-solid fa-users-gear text-lg"></i></span>
                                 <div>
-                                    <h3 class="font-bold text-lg text-slate-800">매직랜드 입장 모험가 설정</h3>
-                                    <p class="text-xs text-slate-400">모험가들의 입장 썸네일을 직접 업로드하여 플래너 모든 화면에 실시간 동기화합니다.</p>
+                                    <h3 class="font-bold text-lg text-slate-800">매직랜드 입장 대원 설정</h3>
+                                    <p class="text-xs text-slate-400">대원들의 입장 썸네일을 직접 업로드하여 플래너 모든 화면에 실시간 동기화합니다.</p>
                                 </div>
                             </div>
                             <button onclick="openChildManageModal('ADD')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center gap-2 shadow-sm shrink-0">
-                                <i class="fa-solid fa-user-plus"></i> 새 모험가 등록
+                                <i class="fa-solid fa-user-plus"></i> 새 대원 등록
                             </button>
                         </div>
                         
@@ -1033,7 +1052,7 @@
                             <span class="p-3 bg-rose-100 text-rose-600 rounded-2xl"><i class="fa-solid fa-screwdriver-wrench text-lg"></i></span>
                             <div>
                                 <h3 class="font-bold text-lg text-slate-800">🛠️ 매직랜드 중앙 시스템 총괄 관리실</h3>
-                                <p class="text-xs text-slate-400">전체 가입된 모험가 패밀리 정보를 확인하고 초기화 및 관리감독을 처리합니다.</p>
+                                <p class="text-xs text-slate-400">전체 가입된 대원 패밀리 정보를 확인하고 초기화 및 관리감독을 처리합니다.</p>
                             </div>
                         </div>
 
@@ -1060,7 +1079,7 @@
         </main>
 
         <footer class="bg-white border-t border-slate-100 py-4 text-center text-xs text-slate-400 mt-12">
-            <p>&copy; 2026 환상의 매직랜드 해피 플래너 시스템 (Ver 6.1-synced). All Rights Reserved.</p>
+           <p>&copy; 2026 My special magic planner. All Rights Reserved.</p>
         </footer>
     </div>
 
@@ -1092,16 +1111,22 @@
     <!-- 자녀 등록 / 수정 전용 우주 커스텀 모달 -->
     <div id="child-manage-modal" onclick="if(event.target === this) closeChildManageModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="child-manage-box">
-            <h3 class="text-lg font-black text-slate-800 mb-2" id="child-modal-title">매직랜드 입장 모험가 설정</h3>
-            <p class="text-xs text-slate-400 mb-4 leading-relaxed">모험가의 이름과 사진(입장 패스포트 프로필)을 등록해 주세요.</p>
+            <h3 class="text-lg font-black text-slate-800 mb-2" id="child-modal-title">매직랜드 입장 대원 설정</h3>
+            <p class="text-xs text-slate-400 mb-4 leading-relaxed">대원의 이름과 사진(입장 패스포트 프로필)을 등록해 주세요.</p>
             
             <form id="child-manage-form" onsubmit="saveChildData(event)" class="space-y-4 text-xs">
                 <input type="hidden" id="child-modal-mode" value="ADD">
                 <input type="hidden" id="child-modal-id" value="">
                 
-                <div>
-                    <label class="block text-slate-500 font-bold mb-1">모험가 이름</label>
-                    <input type="text" id="child-modal-name" placeholder="예: 시윤, 서윤, 찬우" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold text-slate-700">
+                <div class="flex gap-2">
+                    <div class="flex-grow">
+                    <label class="block text-slate-500 font-bold mb-1">대원 이름</label>
+                        <input type="text" id="child-modal-name" placeholder="예: 시윤, 서윤, 찬우" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold text-slate-700">
+                    </div>
+                    <div class="w-1/3">
+                        <label class="block text-slate-500 font-bold mb-1">정렬 순서</label>
+                        <input type="number" id="child-modal-order" placeholder="순서 (예: 1)" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold text-slate-700 text-center">
+                    </div>
                 </div>
                 
                 <div>
@@ -1223,6 +1248,7 @@
         window.showCompletionDetail = showCompletionDetail;
         window.closeCompletionDetail = closeCompletionDetail;
         window.renderChildAchievementCharts = renderChildAchievementCharts;
+        window.setChartFilter = setChartFilter;
         
         window.openSubjectManageModal = openSubjectManageModal;
         window.closeSubjectManageModal = closeSubjectManageModal;
@@ -1298,6 +1324,20 @@
             rewards: []
         };
 
+        let childChartFilters = {
+            completion: 'WEEK',
+            subject: 'WEEK',
+            coin: 'WEEK'
+        };
+
+        function getSortedChildren() {
+            return Object.values(state.children || {}).sort((a, b) => {
+                const orderA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 999;
+                const orderB = (b.order !== undefined && b.order !== null && b.order !== '') ? Number(b.order) : 999;
+                return orderA - orderB;
+            });
+        }
+
         // 로컬 가상 클라우드 데이터베이션(오프라인 모드 세션)
         let localDB = JSON.parse(localStorage.getItem('magic_land_local_db')) || {};
 
@@ -1306,8 +1346,6 @@
 
         // 🟢 Firebase 연동 시작
         async function runFirebaseSetup() {
-            const banner = document.getElementById('sync-status-banner');
-            const bannerText = document.getElementById('sync-status-text');
 
             try {
                 let config = null;
@@ -1337,18 +1375,9 @@
                 user = auth.currentUser;
                 isOfflineMode = false;
 
-                if (banner && bannerText) {
-                    banner.className = "bg-emerald-600 text-white text-center py-1.5 px-4 text-xs font-bold flex items-center justify-center gap-2 shadow-inner transition-colors duration-300";
-                    bannerText.innerText = "🟢 매직랜드 실시간 클라우드 동기화 모드 가동 중 (기기간 동기화 활성화)";
-                }
-
             } catch (err) {
                 console.warn("DB 연결 실패 -> 오프라인 기기 모드 실행:", err);
                 isOfflineMode = true;
-                if (banner && bannerText) {
-                    banner.className = "bg-amber-600 text-white text-center py-1.5 px-4 text-xs font-bold flex items-center justify-center gap-2 shadow-inner transition-colors duration-300";
-                    bannerText.innerHTML = "⚠️ <b>로컬 오프라인 모드</b> 작동 중 (가입정보가 이 기기에만 저장됩니다. 여러 기기 연동을 위해 코드 상단에 Firebase 설정을 입력하세요)";
-                }
             }
 
             // 자동 로그인 복구 시도
@@ -1407,6 +1436,14 @@
                 return;
             }
 
+            const applyInitialSettings = () => {
+                state.childActiveTab = "PLAN";
+                const childList = getSortedChildren();
+                if (childList.length > 0) {
+                    state.activeChildId = childList[0].id;
+                }
+            };
+
             if (isOfflineMode) {
                 const data = localDB[uid];
                 if (data && data.state) {
@@ -1415,6 +1452,7 @@
                 } else {
                     initDefaultStateForUser();
                 }
+                applyInitialSettings();
                 syncDOM();
                 return;
             }
@@ -1430,10 +1468,12 @@
                     initDefaultStateForUser();
                     await saveStateToFirestore();
                 }
+                applyInitialSettings();
                 syncDOM();
             } catch (error) {
                 console.error("클라우드 정보 수신 에러:", error);
                 initDefaultStateForUser();
+                applyInitialSettings();
                 syncDOM();
             }
         }
@@ -1898,9 +1938,9 @@
             let selectOptionsHtml = "";
             let dbOptionsHtml = "";
 
-            const childList = Object.values(state.children || {});
+            const childList = getSortedChildren();
             if (childList.length === 0) {
-                dropdownMenu.innerHTML = `<p class="text-xs text-slate-400 p-3 text-center">등록된 모험가가 없습니다.</p>`;
+            dropdownMenu.innerHTML = `<p class="text-xs text-slate-400 p-3 text-center">등록된 대원이 없습니다.</p>`;
                 parentSelectEl.innerHTML = `<option value="">자녀를 먼저 등록해 주세요</option>`;
                 dbChildSelectEl.innerHTML = `<option value="">자녀를 먼저 등록해 주세요</option>`;
                 return;
@@ -1918,12 +1958,12 @@
                 menuHtml += `
                     <button onclick="selectChildFromDropdown('${c.id}')" class="w-full text-left px-4 py-2.5 hover:bg-slate-50 flex items-center gap-2.5 text-xs font-bold text-slate-700 transition">
                         ${avatarTag}
-                        <span>모험가: ${c.name}</span>
+                    <span>대원: ${c.name}</span>
                     </button>
                 `;
 
-                selectOptionsHtml += `<option value="${c.id}">모험가: ${c.name}</option>`;
-                dbOptionsHtml += `<option value="${c.id}">모험가: ${c.name}</option>`;
+            selectOptionsHtml += `<option value="${c.id}">대원: ${c.name}</option>`;
+            dbOptionsHtml += `<option value="${c.id}">대원: ${c.name}</option>`;
             });
             
             dropdownMenu.innerHTML = menuHtml;
@@ -2286,6 +2326,7 @@
             const box = document.getElementById('child-manage-box');
             const titleEl = document.getElementById('child-modal-title');
             const nameInput = document.getElementById('child-modal-name');
+            const orderInput = document.getElementById('child-modal-order');
             const modeInput = document.getElementById('child-modal-mode');
             const idInput = document.getElementById('child-modal-id');
             const previewEl = document.getElementById('child-modal-photo-preview');
@@ -2294,22 +2335,25 @@
             if (!modal || !box) return;
 
             nameInput.value = "";
+            if (orderInput) orderInput.value = "";
             fileInput.value = "";
             currentPhotoBase64 = "";
             previewEl.innerHTML = `<i class="fa-solid fa-face-smile"></i>`;
 
             if (mode === "ADD") {
-                titleEl.innerText = "🎡 매직랜드 새 모험가 임명";
+            titleEl.innerText = "🎡 매직랜드 새 대원 임명";
                 modeInput.value = "ADD";
                 idInput.value = "";
+                if (orderInput) orderInput.value = Object.keys(state.children || {}).length + 1;
             } else if (mode === "EDIT" && childId) {
-                titleEl.innerText = "✏️ 모험가 프로필 정보 수정";
+            titleEl.innerText = "✏️ 대원 프로필 정보 수정";
                 modeInput.value = "EDIT";
                 idInput.value = childId;
                 
                 const target = state.children[childId];
                 if (target) {
                     nameInput.value = target.name;
+                    if (orderInput) orderInput.value = target.order || 1;
                     if (target.photo) {
                         currentPhotoBase64 = target.photo;
                         previewEl.innerHTML = `<img src="${target.photo}" class="w-full h-full object-cover">`;
@@ -2355,6 +2399,8 @@
             e.preventDefault();
             const mode = document.getElementById('child-modal-mode').value;
             const name = document.getElementById('child-modal-name').value.trim();
+            const orderInput = document.getElementById('child-modal-order');
+            const order = orderInput ? (parseInt(orderInput.value) || 1) : 1;
             const childIdInput = document.getElementById('child-modal-id').value;
 
             if (!name) return;
@@ -2366,6 +2412,7 @@
                 state.children[newId] = {
                     id: newId,
                     name: name,
+                    order: order,
                     photo: currentPhotoBase64 || `https://placehold.co/150x150/fb923c/ffffff?text=${encodeURIComponent(name.substring(0,2))}`,
                     stars: 0,
                     schedules: [],
@@ -2382,13 +2429,14 @@
                     approvalHistory: []
                 };
                 state.activeChildId = newId;
-                showToast(`모험가 [${name}]님이 매직랜드 패스를 임명받았습니다! 🎡`);
+            showToast(`대원 [${name}]님이 매직랜드 패스를 임명받았습니다! 🎡`);
             } else if (mode === "EDIT" && childIdInput) {
                 const target = state.children[childIdInput];
                 if (target) {
                     target.name = name;
+                    target.order = order;
                     target.photo = currentPhotoBase64 || target.photo;
-                    showToast(`모험가 [${name}]님의 입장 정보가 정상 변경되었습니다.`);
+                showToast(`대원 [${name}]님의 입장 정보가 정상 변경되었습니다.`);
                 }
             }
 
@@ -2407,10 +2455,11 @@
                 return;
             }
 
-            showConfirm("모험가 삭제", `[${target.name}]님의 모든 누적 학습 데이터, 코인, 스케줄이 실시간 클라우드에서 영구 삭제됩니다. 계속할까요?`, async () => {
+        showConfirm("대원 삭제", `[${target.name}]님의 모든 누적 학습 데이터, 코인, 스케줄이 실시간 클라우드에서 영구 삭제됩니다. 계속할까요?`, async () => {
                 delete state.children[childId];
                 if (state.activeChildId === childId) {
-                    state.activeChildId = Object.keys(state.children)[0];
+                    const childList = getSortedChildren();
+                    state.activeChildId = childList.length > 0 ? childList[0].id : "";
                 }
                 showToast("성공적으로 회원 삭제가 완료되었습니다.");
                 renderChildSelectOptions();
@@ -2835,6 +2884,34 @@
             renderChildPlanReport();
         }
 
+        function setChartFilter(chartType, period) {
+            childChartFilters[chartType] = period;
+            
+            const periods = ['week', 'month', 'year'];
+            let activeBgClass = 'bg-slate-500';
+            if (chartType === 'completion') activeBgClass = 'bg-sky-500';
+            else if (chartType === 'subject') activeBgClass = 'bg-indigo-500';
+            else if (chartType === 'coin') activeBgClass = 'bg-amber-500';
+
+            periods.forEach(p => {
+                const btn = document.getElementById(`filter-${chartType}-${p}`);
+                if (btn) {
+                    if (p.toUpperCase() === period) {
+                        btn.className = `py-1.5 px-3 rounded-xl ${activeBgClass} text-white font-bold transition`;
+                    } else {
+                        btn.className = `py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 text-slate-500 font-bold transition`;
+                    }
+                }
+            });
+
+            const activeChild = state.children[state.activeChildId];
+            if (activeChild) {
+                if (chartType === 'completion') renderCompletionChart(activeChild);
+                else if (chartType === 'subject') renderSubjectChart(activeChild);
+                else if (chartType === 'coin') renderCoinChartByPeriod(activeChild);
+            }
+        }
+
         // 상단 대시보드 팝업 함수들
         function showTodayTasksDetail() {
             const modal = document.getElementById('today-tasks-detail-modal');
@@ -3098,7 +3175,7 @@
             const activeChild = state.children[state.activeChildId];
             if (!modal || !activeChild) return;
             
-            const filter = document.getElementById('completion-rate-filter')?.value || 'WEEK';
+            const filter = childChartFilters.completion || 'WEEK';
             const now = new Date();
             let startDate, endDate;
             
@@ -3106,10 +3183,7 @@
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             };
             
-            if (filter === 'TODAY') {
-                startDate = toLocalIsoString(now);
-                endDate = startDate;
-            } else if (filter === 'WEEK') {
+            if (filter === 'WEEK') {
                 startDate = toLocalIsoString(getWeekStart(now));
                 const end = new Date(getWeekStart(now));
                 end.setDate(end.getDate() + 6);
@@ -3124,21 +3198,15 @@
             }
 
             let items = [];
-            if (filter === 'TODAY') {
-                const todayStr = new Date().toISOString().split('T')[0];
-                const tMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
-                items = tMissions.map(m => ({ date: todayStr, subject: m.subject, content: m.content, completed: m.completed }));
-            } else {
-                const logs = (activeChild.studyLogs || []).filter(log => {
-                    return log.date >= startDate && log.date <= endDate;
-                });
-                items = logs.map(m => ({ date: m.date, subject: m.subject, content: m.content, completed: m.completed }));
-                
-                const todayStr = new Date().toISOString().split('T')[0];
-                if (todayStr >= startDate && todayStr <= endDate) {
-                    const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
-                    tMissions.forEach(m => items.push({ date: todayStr, subject: m.subject, content: m.content, completed: false }));
-                }
+            const logs = (activeChild.studyLogs || []).filter(log => {
+                return log.date >= startDate && log.date <= endDate;
+            });
+            items = logs.map(m => ({ date: m.date, subject: m.subject, content: m.content, completed: m.completed }));
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (todayStr >= startDate && todayStr <= endDate) {
+                const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
+                tMissions.forEach(m => items.push({ date: todayStr, subject: m.subject, content: m.content, completed: false }));
             }
 
             if (mode === 'COMPLETED') {
@@ -3223,8 +3291,8 @@
                 if (panel) panel.classList.toggle('hidden', id !== tabName);
                 if (button) {
                     button.className = id === tabName
-                        ? 'py-3 rounded-2xl bg-orange-500 text-white shadow-sm'
-                        : 'py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition';
+            ? 'py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center'
+            : 'py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center';
                 }
             });
             const selectedTab = document.getElementById('child-header-selected-tab');
@@ -3420,18 +3488,18 @@
                 return acc;
             }, {});
 
-                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-                let html = weekdays.map(day => `<div class="text-center font-bold text-slate-400 mb-2">${day}</div>`).join('');
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            let html = weekdays.map(day => `<div class="text-center text-[10px] sm:text-[11px] font-bold text-slate-400 mb-1 sm:mb-2">${day}</div>`).join('');
 
             for (let i = 0; i < firstDay; i++) {
-                html += '<div class="min-h-[80px] rounded-3xl border border-slate-100 bg-slate-50"></div>';
+            html += '<div class="min-h-[60px] sm:min-h-[80px] rounded-2xl sm:rounded-3xl border border-slate-100 bg-slate-50"></div>';
             }
             for (let day = 1; day <= lastDate; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const items = scheduleByDate[dateStr] || [];
                 html += `
-                    <div onclick="setScheduleFormDate('${dateStr}')" class="min-h-[80px] rounded-3xl p-3 border ${items.length ? 'border-orange-200 bg-orange-50' : 'border-slate-100 bg-slate-50'} text-[11px] cursor-pointer hover:border-orange-400 transition">
-                        <div class="flex items-center justify-between mb-2">
+                <div onclick="setScheduleFormDate('${dateStr}')" class="min-h-[60px] sm:min-h-[80px] rounded-2xl sm:rounded-3xl p-1.5 sm:p-3 border ${items.length ? 'border-orange-200 bg-orange-50' : 'border-slate-100 bg-slate-50'} text-[10px] sm:text-[11px] cursor-pointer hover:border-orange-400 transition">
+                    <div class="flex items-center justify-between mb-1 sm:mb-2">
                             <span class="font-bold text-slate-700">${day}</span>
                             ${items.length ? `<span class="text-[10px] text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
                         </div>
@@ -3709,10 +3777,46 @@
             renderCompletionChart(activeChild);
             renderCoinChartByPeriod(activeChild);
             renderSubjectChart(activeChild);
+            renderAiCheerMessage(activeChild);
+        }
+
+        function renderAiCheerMessage(activeChild) {
+            const msgEl = document.getElementById('child-ai-cheer-message');
+            const planMsgEl = document.getElementById('plan-ai-cheer-message');
+            if (!activeChild) return;
+
+            const now = new Date();
+            const weekStart = getWeekStart(now);
+            const toLocalIsoString = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            const weekStartStr = toLocalIsoString(weekStart);
+
+            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
+            const logs = (activeChild.studyLogs || []).filter(log => log.date >= weekStartStr);
+
+            const completed = logs.filter(l => l.completed).length;
+            const total = logs.length;
+            const rate = total > 0 ? (completed / total) : 0;
+            const earnedCoins = logs.filter(l => l.completed && !pendingIds.includes(String(l.missionId))).reduce((sum, l) => sum + (l.stars || 0), 0);
+
+            let message = "";
+            if (rate >= 0.8 && total > 0) {
+                message = `우와! 이번 주 학습 달성률이 엄청나요! 🚀 끝까지 파이팅!`;
+            } else if (earnedCoins >= 15) {
+                message = `코인이 쑥쑥 쌓이고 있어요! 🪙✨ 상점에서 멋진 선물을 골라볼까요?`;
+            } else if (total > 0 && rate >= 0.5) {
+                message = `차근차근 꾸준히 잘하고 있어요! 📚 조금만 더 힘내볼까요?`;
+            } else if (total > 0 && rate < 0.5) {
+                message = `어려운 점이 있나요? 괜찮아요! 천천히 하나씩 해나가면 다 할 수 있어요. 💪`;
+            } else {
+                message = `매일매일 쑥쑥 성장하는 ${activeChild.name} 대원이 최고예요! 🎡 오늘도 파이팅!`;
+            }
+
+            if (msgEl) msgEl.innerText = message;
+            if (planMsgEl) planMsgEl.innerText = message;
         }
 
         function renderCompletionChart(activeChild) {
-            const filter = document.getElementById('completion-rate-filter')?.value || 'WEEK';
+            const filter = childChartFilters.completion || 'WEEK';
             const now = new Date();
             let startDate, endDate;
             
@@ -3720,10 +3824,7 @@
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             };
             
-            if (filter === 'TODAY') {
-                startDate = toLocalIsoString(now);
-                endDate = startDate;
-            } else if (filter === 'WEEK') {
+            if (filter === 'WEEK') {
                 startDate = toLocalIsoString(getWeekStart(now));
                 const end = new Date(getWeekStart(now));
                 end.setDate(end.getDate() + 6);
@@ -3740,25 +3841,18 @@
             let completed = 0;
             let total = 0;
 
-            if (filter === 'TODAY') {
-                const todayStr = new Date().toISOString().split('T')[0];
-                const tMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
-                total = tMissions.length;
-                completed = tMissions.filter(m => m.completed).length;
-            } else {
-                const logs = (activeChild.studyLogs || []).filter(log => {
-                    return log.date >= startDate && log.date <= endDate;
-                });
-                const todayStr = new Date().toISOString().split('T')[0];
-                const includesToday = todayStr >= startDate && todayStr <= endDate;
-                
-                completed = logs.filter(l => l.completed).length;
-                total = logs.length;
+            const logs = (activeChild.studyLogs || []).filter(log => {
+                return log.date >= startDate && log.date <= endDate;
+            });
+            const todayStr = new Date().toISOString().split('T')[0];
+            const includesToday = todayStr >= startDate && todayStr <= endDate;
+            
+            completed = logs.filter(l => l.completed).length;
+            total = logs.length;
 
-                if (includesToday) {
-                    const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
-                    total += tMissions.length;
-                }
+            if (includesToday) {
+                const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
+                total += tMissions.length;
             }
             
             document.getElementById('stat-completion-ratio').innerText = String(completed);
@@ -3809,7 +3903,7 @@
 
         function renderCoinChartByPeriod(activeChild) {
             if (!activeChild) return;
-            const filter = document.getElementById('coin-rate-filter')?.value || 'WEEK';
+            const filter = childChartFilters.coin || 'WEEK';
             const now = new Date();
             let startDate, labels = [];
             
@@ -3898,7 +3992,7 @@
         function renderSubjectChart(activeChild) {
             if (!activeChild) return;
             
-            const filter = document.getElementById('subject-rate-filter')?.value || 'WEEK';
+            const filter = childChartFilters.subject || 'WEEK';
             const now = new Date();
             let startDate, endDate;
             
@@ -3906,10 +4000,7 @@
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             };
             
-            if (filter === 'TODAY') {
-                startDate = toLocalIsoString(now);
-                endDate = startDate;
-            } else if (filter === 'WEEK') {
+            if (filter === 'WEEK') {
                 startDate = toLocalIsoString(getWeekStart(now));
                 const end = new Date(getWeekStart(now));
                 end.setDate(end.getDate() + 6);
@@ -3925,30 +4016,20 @@
             
             const subjectData = {};
             
-            if (filter === 'TODAY') {
-                const todayStr = toLocalIsoString(now);
-                const tMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
-                tMissions.forEach(m => {
+            const logs = (activeChild.studyLogs || []).filter(log => log.date >= startDate && log.date <= endDate);
+            logs.forEach(log => {
+                if (!subjectData[log.subject]) subjectData[log.subject] = { completed: 0, total: 0 };
+                subjectData[log.subject].total++;
+                if (log.completed) subjectData[log.subject].completed++;
+            });
+            
+            const todayStr = toLocalIsoString(now);
+            if (todayStr >= startDate && todayStr <= endDate) {
+                const uncompletedToday = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
+                uncompletedToday.forEach(m => {
                     if (!subjectData[m.subject]) subjectData[m.subject] = { completed: 0, total: 0 };
                     subjectData[m.subject].total++;
-                    if (m.completed) subjectData[m.subject].completed++;
                 });
-            } else {
-                const logs = (activeChild.studyLogs || []).filter(log => log.date >= startDate && log.date <= endDate);
-                logs.forEach(log => {
-                    if (!subjectData[log.subject]) subjectData[log.subject] = { completed: 0, total: 0 };
-                    subjectData[log.subject].total++;
-                    if (log.completed) subjectData[log.subject].completed++;
-                });
-                
-                const todayStr = toLocalIsoString(now);
-                if (todayStr >= startDate && todayStr <= endDate) {
-                    const uncompletedToday = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
-                    uncompletedToday.forEach(m => {
-                        if (!subjectData[m.subject]) subjectData[m.subject] = { completed: 0, total: 0 };
-                        subjectData[m.subject].total++;
-                    });
-                }
             }
             
             const subjects = Object.keys(subjectData);
@@ -4204,11 +4285,11 @@
             // 자녀 선택 UI 및 부모 모드 자녀 대상 셀렉트 옵션 동기화
             renderChildSelectOptions();
             
-            const childKeys = Object.keys(state.children || {});
+            const childList = getSortedChildren();
             const emptyStateEl = document.getElementById('child-empty-state');
             const activeContentEl = document.getElementById('child-active-content');
 
-            if (childKeys.length === 0) {
+            if (childList.length === 0) {
                 if (emptyStateEl) emptyStateEl.classList.remove('hidden');
                 if (activeContentEl) activeContentEl.classList.add('hidden');
                 
@@ -4229,7 +4310,7 @@
             }
 
             if (!state.children[state.activeChildId]) {
-                state.activeChildId = childKeys[0];
+                state.activeChildId = childList[0].id;
             }
 
             const activeChild = state.children[state.activeChildId];
@@ -4417,6 +4498,8 @@
             const activeChild = state.children[state.activeChildId];
             const listEl = document.getElementById('today-missions-list');
             if (!listEl) return;
+            
+            renderAiCheerMessage(activeChild);
             const missions = activeChild.todayMissions || [];
             
             if(missions.length === 0) {
@@ -4666,10 +4749,10 @@
             const childListContainer = document.getElementById('parent-child-list-container');
             if (childListContainer) {
                 let cardsHtml = "";
-                const childrenArray = Object.values(state.children || {});
+                const childrenArray = getSortedChildren();
                 
                 if (childrenArray.length === 0) {
-                    cardsHtml = `<div class="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold bg-slate-50">등록된 자녀 대원이 없습니다. 새 대원 등록을 통해 첫 모험가를 만들어 보세요!</div>`;
+                cardsHtml = `<div class="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold bg-slate-50">등록된 자녀 대원이 없습니다. 새 대원 등록을 통해 첫 대원을 만들어 보세요!</div>`;
                 } else {
                     childrenArray.forEach(c => {
                         const avatarHtml = c.photo 
@@ -4947,8 +5030,8 @@
                 if (opinionTextEl && gradeEl && gradeSubEl) {
                     gradeEl.innerText = "대기";
                     gradeEl.className = "text-3xl font-black tracking-tight text-slate-400 child-font";
-                    gradeSubEl.innerText = "모험가 없음";
-                    opinionTextEl.innerHTML = `🎡 아직 등록된 모험가 대원이 없습니다. 자녀 관리실에서 자녀를 새로 생성하면 AI 매직랜드 진단 리포트가 여기에 렌더링됩니다.`;
+            gradeSubEl.innerText = "대원 없음";
+            opinionTextEl.innerHTML = `🎡 아직 등록된 대원이 없습니다. 자녀 관리실에서 자녀를 새로 생성하면 AI 매직랜드 진단 리포트가 여기에 렌더링됩니다.`;
                 }
                 return;
             }
