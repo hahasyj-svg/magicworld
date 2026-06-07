@@ -248,7 +248,7 @@
                         <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl">
                             <i class="fa-solid fa-carousels">🎡</i>
                         </div>
-                        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                             <div class="flex items-center gap-4">
                                 <div id="welcome-child-avatar-container" class="w-16 h-16 rounded-2xl overflow-hidden bg-white/20 border-2 border-white/40 flex items-center justify-center text-3xl shadow-md shrink-0">
                                     <i class="fa-solid fa-face-smile"></i>
@@ -256,191 +256,298 @@
                                 <div>
                                     <span id="today-full-date-sentence" class="text-sm text-yellow-200 font-bold block mb-1">매직랜드 투데이 위클리</span>
                                     <h2 class="text-2xl sm:text-3xl font-black flex items-center gap-2">
-                                        안녕하세요, <span id="welcome-child-name" class="underline decoration-yellow-300 decoration-wavy">대원</span>님! Welcome! 🎉
+                                        안녕하세요, <span id="welcome-child-name" class="underline decoration-yellow-300 decoration-wavy">대원</span>님! 🎉
                                     </h2>
+                                    <p class="text-sm text-orange-100 mt-1">자녀모드 학습 계획, 코인 상점, 성취도 조회를 탭으로 편리하게 이용해요.</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 self-start md:self-auto">
-                                <div class="text-center">
-                                    <p class="text-xs uppercase tracking-wider text-orange-100">오늘 완료 미션</p>
-                                    <p class="text-2xl font-black child-font" id="today-completed-ratio">0/0</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
+                                <button onclick="showTodayTasksDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">📝 오늘할일</p>
+                                    <p class="text-2xl font-black child-font text-white" id="child-header-today-tasks">0</p>
+                                </button>
+                                <button onclick="showTodayCompletedDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">✅ 오늘완료</p>
+                                    <p class="text-2xl font-black child-font text-lime-200" id="child-header-today-completed">0</p>
+                                </button>
+                                <button onclick="showTodayCoinsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">🪙 오늘코인</p>
+                                    <p class="text-2xl font-black child-font text-amber-200" id="child-header-today-coins">0</p>
+                                </button>
+                                <button onclick="showWeekExamsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-3xl p-4 text-center transition transform hover:scale-105 cursor-pointer">
+                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">📚 이주시험</p>
+                                    <p class="text-2xl font-black child-font text-rose-200" id="child-header-week-exams">0</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm font-bold text-slate-700">
+                            <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-3 rounded-2xl bg-orange-500 text-white shadow-sm">학습계획관리</button>
+                            <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition">코인상점</button>
+                            <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition">학업성취도 조회</button>
+                        </div>
+                    </div>
+
+                    <div id="child-tab-plan" class="space-y-6">
+                        <div class="flex flex-col gap-6">
+                            <div class="space-y-4">
+                                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                    <div class="flex items-center justify-between gap-3 mb-4">
+                                        <div>
+                                            <h3 class="font-bold text-lg text-slate-800">월별 달력</h3>
+                                            <p class="text-xs text-slate-400">중요 일정과 숙제를 한눈에 확인하고, 추가 버튼으로 일정판을 엽니다.</p>
+                                        </div>
+                                        <button onclick="openScheduleModal()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-2xl text-xs transition shadow-sm flex items-center gap-2">
+                                            <i class="fa-solid fa-plus"></i> 일정 추가
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-2xl mb-4 border border-slate-100">
+                                        <button onclick="changeCalendarMonth(-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
+                                        <h4 class="font-black text-slate-800 text-lg" id="monthly-calendar-title"></h4>
+                                        <button onclick="changeCalendarMonth(1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
+                                    </div>
+                                    <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-2 text-[11px]"></div>
+                                    <div id="calendar-event-preview" class="mt-4 grid gap-3"></div>
                                 </div>
-                                <div class="w-[1px] h-10 bg-white/20"></div>
-                                <div class="text-center">
-                                    <p class="text-xs uppercase tracking-wider text-orange-100">오늘 성취도</p>
-                                    <p class="text-2xl font-black text-yellow-200 child-font" id="today-success-percent">0%</p>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                    <div class="flex items-center justify-between gap-3 mb-4">
+                                        <div>
+                                            <h3 class="font-bold text-lg text-slate-800">오늘의 해피드림 미션</h3>
+                                            <p class="text-xs text-slate-400">오늘 완료해야 할 목표를 확인하고 드림코인을 모아요.</p>
+                                        </div>
+                                        <button onclick="toggleChildCustomForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2">
+                                            <i class="fa-solid fa-circle-plus"></i> 직접 추가
+                                        </button>
+                                    </div>
+                                    <!-- 오늘의 미션 직접추가 폼 -->
+                                    <div id="child-custom-mission-form" class="hidden bg-emerald-50 border border-emerald-200 rounded-3xl p-4 mb-4">
+                                        <form onsubmit="handleChildCreateMission(event)" class="space-y-3">
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 mb-1">과목</label>
+                                                <input type="text" id="child-form-subject" placeholder="예: 영어, 수학, 과학" required class="w-full bg-white border border-slate-200 rounded-2xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold text-slate-600 mb-1">내용</label>
+                                                <input type="text" id="child-form-content" placeholder="예: 수학 문제 풀기, 영어 암기" required class="w-full bg-white border border-slate-200 rounded-2xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <div>
+                                                    <label class="block text-xs font-bold text-slate-600 mb-1">진도범위</label>
+                                                    <input type="text" id="child-form-range" placeholder="예: P.10~20" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-bold text-slate-600 mb-1">코인 보상</label>
+                                                    <input type="number" id="child-form-stars" value="1" min="1" max="50" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-2xl text-xs transition shadow-sm">저장하기</button>
+                                                <button type="button" onclick="toggleChildCustomForm()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-4 py-2 rounded-2xl text-xs transition">닫기</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div id="today-missions-list" class="space-y-4"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 자녀 모드 메인 레이아웃 (그리드 분할) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        
-                        <!-- 좌측 2개 컬럼 -->
-                        <div class="lg:col-span-2 space-y-6">
-                            
-                            <!-- 나의 누적 학업성취도 리포트 -->
+                    <div id="child-tab-store" class="space-y-6 hidden">
+                        <div class="grid grid-cols-1 xl:grid-cols-[1.4fr_0.85fr] gap-6">
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <span class="p-3 bg-teal-50 text-teal-600 rounded-2xl"><i class="fa-solid fa-chart-pie text-lg"></i></span>
-                                        <div>
-                                            <h3 class="font-bold text-lg text-slate-800">나의 누적 학업성취도 리포트</h3>
-                                            <p class="text-xs text-slate-400">학습성과와 드림코인 획득 내역을 한눈에 살펴보세요.</p>
-                                        </div>
+                                <div class="flex items-center justify-between gap-3 mb-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">드림코인 상점</h3>
+                                        <p class="text-xs text-slate-400">코인을 사용하여 바로 교환 신청할 수 있어요.</p>
                                     </div>
-                                    <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                                        <button onclick="setChildStatFilter('WEEK')" id="cstat-filter-week" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 shadow-sm transition">이번 주</button>
-                                        <button onclick="setChildStatFilter('MONTH')" id="cstat-filter-month" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">이번 달</button>
-                                        <button onclick="setChildStatFilter('YEAR')" id="cstat-filter-year" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">올해 누적</button>
+                                    <div class="text-right text-xs text-slate-500">
+                                        <p>내 드림 코인</p>
+                                        <p class="text-2xl font-black text-amber-500 child-font" id="child-store-star-count">0</p>
                                     </div>
                                 </div>
-                                
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                    <div class="p-2">
-                                        <p class="text-xs text-slate-400 font-medium mb-1">총 수행 미션</p>
-                                        <p class="text-xl font-bold text-slate-700" id="stat-total-count">0건</p>
+                                <div id="child-store-reward-list" class="space-y-3"></div>
+                            </div>
+                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                <div class="flex items-center justify-between gap-3 mb-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800">드림코인 신청내역</h3>
+                                        <p class="text-xs text-slate-400">교환신청, 배송중, 배송완료 상태를 탭으로 확인해요.</p>
                                     </div>
-                                    <div class="p-2 border-y sm:border-y-0 sm:border-x border-slate-200">
-                                        <p class="text-xs text-slate-400 font-medium mb-1">총 공부 시간</p>
-                                        <p class="text-xl font-bold text-indigo-600" id="stat-total-time">0분</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mb-4 text-xs font-bold">
+                                    <button id="store-status-btn-requested" onclick="setChildStoreStatusFilter('REQUESTED')" class="py-2 px-3 rounded-2xl bg-orange-500 text-white">교환신청</button>
+                                    <button id="store-status-btn-shipping" onclick="setChildStoreStatusFilter('SHIPPING')" class="py-2 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition">배송중</button>
+                                    <button id="store-status-btn-delivered" onclick="setChildStoreStatusFilter('DELIVERED')" class="py-2 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition">배송완료</button>
+                                </div>
+                                <div id="store-delivered-filters" class="hidden flex flex-wrap gap-2 mb-4 text-xs text-slate-500">
+                                    <select id="delivered-filter-year" class="bg-slate-100 border border-slate-200 rounded-2xl px-3 py-2" onchange="renderChildStoreStatusList()"></select>
+                                    <select id="delivered-filter-month" class="bg-slate-100 border border-slate-200 rounded-2xl px-3 py-2" onchange="renderChildStoreStatusList()"></select>
+                                </div>
+                                <div id="child-store-request-list" class="space-y-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="child-tab-achievement" class="space-y-6 hidden">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="rounded-3xl bg-gradient-to-br from-amber-100 to-yellow-50 p-4 border border-amber-200 text-center">
+                                <p class="text-xs text-amber-700 font-bold">이번주 획득</p>
+                                <p class="text-2xl font-black text-amber-600 mt-1" id="stat-weekly-earned-coins">0</p>
+                                <p class="text-[10px] text-amber-600">개</p>
+                            </div>
+                            <div class="rounded-3xl bg-gradient-to-br from-emerald-100 to-green-50 p-4 border border-emerald-200 text-center">
+                                <p class="text-xs text-emerald-700 font-bold">누적 획득</p>
+                                <p class="text-2xl font-black text-emerald-600 mt-1" id="stat-total-earned-coins">0</p>
+                                <p class="text-[10px] text-emerald-600">개</p>
+                            </div>
+                            <div class="rounded-3xl bg-gradient-to-br from-rose-100 to-pink-50 p-4 border border-rose-200 text-center">
+                                <p class="text-xs text-rose-700 font-bold">사용 코인</p>
+                                <p class="text-2xl font-black text-rose-600 mt-1" id="stat-used-coins">0</p>
+                                <p class="text-[10px] text-rose-600">개</p>
+                            </div>
+                            <div class="rounded-3xl bg-gradient-to-br from-blue-100 to-cyan-50 p-4 border border-blue-200 text-center">
+                                <p class="text-xs text-blue-700 font-bold">잔여 코인</p>
+                                <p class="text-2xl font-black text-blue-600 mt-1" id="stat-remaining-coins">0</p>
+                                <p class="text-[10px] text-blue-600">개</p>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                <h3 class="font-bold text-lg text-slate-800 mb-6">학습 완료율</h3>
+                                <div class="flex flex-col items-center">
+                                    <div class="relative w-48 h-48 mb-4">
+                                        <canvas id="achievement-completion-chart"></canvas>
                                     </div>
-                                    <div class="p-2">
-                                        <p class="text-xs text-slate-400 font-medium mb-1">평균 미션 완수율</p>
-                                        <p class="text-xl font-bold text-emerald-600" id="stat-average-percent">0%</p>
+                                    <div class="text-center">
+                                        <p class="text-xs text-slate-500 mb-2">계획 대비 완료 건수</p>
+                                        <p class="text-2xl font-black text-slate-800"><span id="stat-completion-ratio">0</span>/<span id="stat-completion-total">0</span></p>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- 미래 일정 및 메모 보드 -->
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <span class="p-3 bg-pink-50 text-pink-600 rounded-2xl"><i class="fa-solid fa-bell text-lg"></i></span>
-                                        <div>
-                                            <h3 class="font-bold text-lg text-slate-800">중요 일정 및 숙제 알림판</h3>
-                                            <p class="text-xs text-slate-400">잊지 말고 기억해야 할 일들을 기록판에 적어주세요.</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                                        <button onclick="setScheduleFilter('UNCOMPLETED')" id="sched-filter-uncompleted" class="px-3 py-1.5 rounded-lg bg-white text-slate-800 shadow-sm transition">미완료</button>
-                                        <button onclick="setScheduleFilter('COMPLETED')" id="sched-filter-completed" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">완료된 것</button>
-                                        <button onclick="setScheduleFilter('ALL')" id="sched-filter-all" class="px-3 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">전체</button>
-                                    </div>
+                                <h3 class="font-bold text-lg text-slate-800 mb-4">기간별 코인 획득</h3>
+                                <div class="grid grid-cols-3 gap-2 text-center text-xs mb-4 text-slate-500">
+                                    <button onclick="setChildPeriodFilter('WEEK')" id="period-btn-week" class="py-2 px-2 rounded-2xl bg-orange-500 text-white font-bold transition">이번주</button>
+                                    <button onclick="setChildPeriodFilter('MONTH')" id="period-btn-month" class="py-2 px-2 rounded-2xl bg-slate-100 hover:bg-slate-200 font-bold transition">이번달</button>
+                                    <button onclick="setChildPeriodFilter('YEAR')" id="period-btn-year" class="py-2 px-2 rounded-2xl bg-slate-100 hover:bg-slate-200 font-bold transition">올해</button>
                                 </div>
-
-                                <form onsubmit="addFutureSchedule(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4 text-xs">
-                                    <div>
-                                        <label class="block text-slate-500 font-bold mb-1">카테고리</label>
-                                        <select id="form-sched-category" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400 font-bold">
-                                            <option value="시험">📝 시험</option>
-                                            <option value="숙제">📚 숙제</option>
-                                            <option value="준비물">🎨 준비물</option>
-                                            <option value="행사">🎡 행사</option>
-                                        </select>
-                                    </div>
-                                    <div class="sm:col-span-2">
-                                        <label class="block text-slate-500 font-bold mb-1">메모 내용</label>
-                                        <input type="text" id="form-sched-content" placeholder="예: 구구단 3단 외우기, 가위와 풀 준비" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-                                    </div>
-                                    <div>
-                                        <label class="block text-slate-500 font-bold mb-1">목표 기한</label>
-                                        <div class="flex gap-1">
-                                            <input type="date" id="form-sched-duedate" required class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
-                                            <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white font-bold px-3 rounded-xl transition shrink-0"><i class="fa-solid fa-plus"></i></button>
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <div id="child-schedules-list" class="space-y-2 max-h-[220px] overflow-y-auto pr-1"></div>
-                            </div>
-
-                            <!-- 오늘의 학습 미션 리스트 -->
-                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                                    <div class="flex items-center gap-3">
-                                        <span class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><i class="fa-solid fa-calendar-day text-lg"></i></span>
-                                        <div>
-                                            <h3 class="font-bold text-lg text-slate-800">오늘의 해피 드림 미션</h3>
-                                            <p class="text-xs text-slate-400">오늘 완료해야 하는 매직 미션 카드입니다. 완료하고 드림코인을 적립하세요!</p>
-                                        </div>
-                                    </div>
-                                    <!-- 자녀 직접 추가 미션 수립 폼 트리거 -->
-                                    <button onclick="toggleChildCustomForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto shrink-0">
-                                        <i class="fa-solid fa-circle-plus"></i>
-                                        <span>오늘 미션 직접 만들기</span>
-                                    </button>
-                                </div>
-
-                                <!-- 자녀 직접 추가 미션 수립 폼 박스 -->
-                                <div id="child-custom-mission-form" class="hidden bg-emerald-50/50 border border-emerald-100 p-4 rounded-2xl mb-6 text-xs transition duration-300">
-                                    <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-1.5">🎟️ 오늘 내가 직접 도전할 보너스 미션 등록하기</h4>
-                                    <form onsubmit="handleChildCreateMission(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                                        <div>
-                                            <label class="block text-slate-500 font-bold mb-1">도전 과목</label>
-                                            <input type="text" id="child-form-subject" placeholder="예: 독서, 영어공부" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
-                                        </div>
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-slate-500 font-bold mb-1">학습 내용</label>
-                                            <input type="text" id="child-form-content" placeholder="예: 단어 암기 20개, 수학 문제 10개" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
-                                        </div>
-                                        <div>
-                                            <label class="block text-slate-500 font-bold mb-1">도전 목표 분량</label>
-                                            <input type="text" id="child-form-range" placeholder="예: 동화책 재미있게 읽고 독서 기록하기" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2">
-                                        </div>
-                                        <div>
-                                            <label class="block text-slate-500 font-bold mb-1">도전 보상 코인</label>
-                                            <div class="flex gap-1.5">
-                                                <select id="child-form-stars" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 font-bold text-amber-600">
-                                                    <option value="1">🪙 코인 1개</option>
-                                                    <option value="2">🪙🪙 코인 2개</option>
-                                                    <option value="3">🪙🪙🪙 코인 3개</option>
-                                                    <option value="4">🪙🪙🪙🪙 코인 4개</option>
-                                                    <option value="5">🪙🪙🪙🪙🪙 코인 5개</option>
-                                                </select>
-                                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 rounded-xl transition shrink-0"><i class="fa-solid fa-check"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <p class="text-[10px] text-slate-400 mt-2"><i class="fa-solid fa-circle-info"></i> 스스로 제안한 특별 보너스 미션은 부모님이 확인 후 승인해야 최종 드림 코인이 지급됩니다.</p>
-                                </div>
-
-                                <div id="today-missions-list" class="space-y-4"></div>
-                            </div>
-
-                            <!-- 자녀 신청 및 결재 상태 확인 영역 -->
-                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <span class="p-3 bg-slate-100 text-slate-700 rounded-2xl"><i class="fa-solid fa-user-check text-lg"></i></span>
-                                    <div>
-                                        <h3 class="font-bold text-lg text-slate-800">내 신청 및 결재 상태</h3>
-                                        <p class="text-xs text-slate-400">부모에게 제출한 드림코인 신청과 결재 결과를 확인할 수 있어요.</p>
-                                    </div>
-                                </div>
-                                <div id="child-request-status-panel" class="space-y-4 text-xs">
-                                    <div id="child-pending-reward-requests" class="bg-slate-50 rounded-2xl p-4 border border-slate-100"></div>
-                                    <div id="child-pending-mission-requests" class="bg-slate-50 rounded-2xl p-4 border border-slate-100"></div>
-                                    <div id="child-approval-history" class="bg-slate-50 rounded-2xl p-4 border border-slate-100"></div>
+                                <div class="relative w-full h-64">
+                                    <canvas id="achievement-coin-chart"></canvas>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 우측 1개 컬럼: 드림 코인 상점 보상 구매 스페이스 -->
-                        <div class="space-y-6">
-                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 sticky top-24">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <span class="p-3 bg-amber-50 text-amber-500 rounded-2xl"><i class="fa-solid fa-store text-lg"></i></span>
-                                    <div>
-                                        <h3 class="font-bold text-lg text-slate-800">드림 코인 상점</h3>
-                                        <p class="text-xs text-slate-400">열심히 모은 코인을 마법 패스 쿠폰으로 바꾸어 사용하세요!</p>
-                                    </div>
-                                </div>
-
-                                <div id="star-rewards-store-list" class="space-y-3 max-h-[550px] overflow-y-auto pr-1"></div>
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                            <h3 class="font-bold text-lg text-slate-800 mb-4">과목별 학습 현황</h3>
+                            <div class="relative w-full h-80">
+                                <canvas id="achievement-subject-chart"></canvas>
                             </div>
                         </div>
+                    </div>
 
+                    <div id="schedule-calendar-modal" onclick="if(event.target === this) closeScheduleModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[210] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+                        <div class="bg-white rounded-3xl p-6 max-w-3xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative" id="schedule-calendar-box">
+                            <button onclick="closeScheduleModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-4">
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-800">중요 일정 및 숙제 알림판</h3>
+                                    <p class="text-xs text-slate-500 mt-1">기한별로 등록된 일정을 달력에서 확인하고 각 날짜에 카테고리 아이콘과 메모를 표시합니다.</p>
+                                </div>
+                                <div class="text-xs text-slate-500">등록된 일정은 달력의 해당 날짜에 아이콘과 텍스트로 표시됩니다.</div>
+                            </div>
+                            <form onsubmit="handleSaveSchedule(event)" class="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-4 text-xs">
+                                <input type="hidden" id="form-sched-mode" value="ADD">
+                                <input type="hidden" id="form-sched-id" value="">
+                                <div>
+                                    <label class="block text-slate-500 font-bold mb-1">카테고리</label>
+                                    <select id="form-sched-category" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                                        <option value="시험">📝 시험</option>
+                                        <option value="숙제">📚 숙제</option>
+                                        <option value="준비물">🎨 준비물</option>
+                                        <option value="행사">🎡 행사</option>
+                                    </select>
+                                </div>
+                                <div class="lg:col-span-2">
+                                    <label class="block text-slate-500 font-bold mb-1">메모 내용</label>
+                                    <input type="text" id="form-sched-content" placeholder="예: 내일 발표 준비, 영어 숙제" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-500 font-bold mb-1">기한</label>
+                                    <input type="date" id="form-sched-duedate" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none">
+                                </div>
+                                <div class="col-span-full lg:col-auto flex gap-2">
+                                    <button type="submit" id="schedule-submit-btn" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl px-4 py-3 text-sm shadow-sm transition">등록</button>
+                                    <button type="button" onclick="closeScheduleModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl px-4 py-3 text-sm shadow-sm transition">취소</button>
+                                </div>
+                            </form>
+                            <div class="flex items-center justify-between bg-slate-50 p-2 rounded-2xl mb-4 border border-slate-100 mt-4">
+                                <button onclick="changeCalendarMonth(-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left"></i></button>
+                                <h4 class="font-black text-slate-800 text-lg" id="modal-calendar-title"></h4>
+                                <button onclick="changeCalendarMonth(1)" class="w-10 h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                            <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-2 text-[11px]"></div>
+                            <div id="schedule-calendar-items" class="mt-4 space-y-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- 상세 정보 팝업: 오늘의 할일 -->
+                    <div id="today-tasks-detail-modal" onclick="if(event.target === this) closeTodayTasksDetail()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[220] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+                        <div class="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-800">📝 오늘의 할일</h3>
+                                    <p class="text-xs text-slate-500 mt-1">오늘 완료해야 할 모든 미션을 확인하세요.</p>
+                                </div>
+                                <button onclick="closeTodayTasksDetail()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div id="today-tasks-detail-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- 상세 정보 팝업: 오늘 완료 -->
+                    <div id="today-completed-detail-modal" onclick="if(event.target === this) closeTodayCompletedDetail()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[220] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+                        <div class="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-800">✅ 오늘 완료한 미션</h3>
+                                    <p class="text-xs text-slate-500 mt-1">오늘 완료한 모든 미션을 확인하세요.</p>
+                                </div>
+                                <button onclick="closeTodayCompletedDetail()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div id="today-completed-detail-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- 상세 정보 팝업: 오늘 획득한 코인 -->
+                    <div id="today-coins-detail-modal" onclick="if(event.target === this) closeTodayCoinsDetail()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[220] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+                        <div class="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-800">🪙 오늘 획득한 코인</h3>
+                                    <p class="text-xs text-slate-500 mt-1">오늘 획득한 모든 코인을 확인하세요.</p>
+                                </div>
+                                <button onclick="closeTodayCoinsDetail()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div id="today-coins-detail-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
+                    <!-- 상세 정보 팝업: 이번주 시험 -->
+                    <div id="week-exams-detail-modal" onclick="if(event.target === this) closeWeekExamsDetail()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[220] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+                        <div class="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-800">📚 이번주 시험</h3>
+                                    <p class="text-xs text-slate-500 mt-1">이번주 예정된 모든 시험을 확인하세요.</p>
+                                </div>
+                                <button onclick="closeWeekExamsDetail()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div id="week-exams-detail-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -891,7 +998,7 @@
 
 
     <!-- ==================== 버그 및 충돌 방지 커스텀 다이얼로그 모달 모듈 ==================== -->
-    <div id="custom-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div id="custom-modal" onclick="if(event.target === this) closeCustomModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="custom-modal-box">
             <h3 class="text-lg font-black text-slate-800 mb-2" id="custom-modal-title">알림</h3>
             <p class="text-xs text-slate-500 mb-6 leading-relaxed" id="custom-modal-message">내용</p>
@@ -902,7 +1009,7 @@
     </div>
 
     <!-- 커스텀 패스워드 입력 전용 모달 -->
-    <div id="parent-auth-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div id="parent-auth-modal" onclick="if(event.target === this) closeParentAuthModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="parent-auth-box">
             <h3 class="text-lg font-black text-slate-800 mb-2">🎡 매직랜드 관리실 인증</h3>
             <p class="text-xs text-slate-400 mb-4 leading-relaxed">비밀번호를 입력하여 관리자 화면으로 진입합니다.</p>
@@ -915,7 +1022,7 @@
     </div>
 
     <!-- 자녀 등록 / 수정 전용 우주 커스텀 모달 -->
-    <div id="child-manage-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div id="child-manage-modal" onclick="if(event.target === this) closeChildManageModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="child-manage-box">
             <h3 class="text-lg font-black text-slate-800 mb-2" id="child-modal-title">매직랜드 입장 모험가 설정</h3>
             <p class="text-xs text-slate-400 mb-4 leading-relaxed">모험가의 이름과 사진(입장 패스포트 프로필)을 등록해 주세요.</p>
@@ -990,17 +1097,38 @@
         window.exitParentMode = exitParentMode;
         window.setChildStatFilter = setChildStatFilter;
         window.setScheduleFilter = setScheduleFilter;
-        window.addFutureSchedule = addFutureSchedule;
+        window.handleSaveSchedule = handleSaveSchedule;
+        window.editSchedule = editSchedule;
         window.toggleScheduleComplete = toggleScheduleComplete;
         window.deleteSchedule = deleteSchedule;
         window.submitMissionProgress = submitMissionProgress;
         window.cancelMissionProgress = cancelMissionProgress; // 신규: 완료 미션 취소 기능
         window.purchaseReward = purchaseReward;
+        window.cancelRewardRequest = cancelRewardRequest;
+        window.markRewardDelivered = markRewardDelivered;
         window.handleSaveDefaultMission = handleSaveDefaultMission;
         window.deleteDefaultMission = deleteDefaultMission;
         window.closeCustomModal = closeCustomModal;
         window.switchParentTab = switchParentTab;
         window.renderApprovalHistory = renderApprovalHistory;
+        window.switchChildTab = switchChildTab;
+        window.openScheduleModal = openScheduleModal;
+        window.closeScheduleModal = closeScheduleModal;
+        window.setScheduleFormDate = setScheduleFormDate;
+        window.changeCalendarMonth = changeCalendarMonth;
+        window.setChildStoreStatusFilter = setChildStoreStatusFilter;
+        window.cancelRewardRequest = cancelRewardRequest;
+        window.markRewardDelivered = markRewardDelivered;
+        window.showTodayTasksDetail = showTodayTasksDetail;
+        window.closeTodayTasksDetail = closeTodayTasksDetail;
+        window.showTodayCompletedDetail = showTodayCompletedDetail;
+        window.closeTodayCompletedDetail = closeTodayCompletedDetail;
+        window.showTodayCoinsDetail = showTodayCoinsDetail;
+        window.closeTodayCoinsDetail = closeTodayCoinsDetail;
+        window.showWeekExamsDetail = showWeekExamsDetail;
+        window.closeWeekExamsDetail = closeWeekExamsDetail;
+        window.setChildPeriodFilter = setChildPeriodFilter;
+        window.deleteSchedule = deleteSchedule;
         window.toggleChildCustomForm = toggleChildCustomForm;
         window.handleChildCreateMission = handleChildCreateMission;
         window.deleteChildCustomMission = deleteChildCustomMission;
@@ -1043,6 +1171,8 @@
         // 차트 인스턴스 전역 보관함
         let distChartInstance = null;
         let achChartInstance = null;
+        let completionChartInstance = null;
+        let subjectChartInstance = null;
 
         // 임시 사진 데이터 보관함
         let currentPhotoBase64 = "";
@@ -1055,7 +1185,9 @@
         let state = {
             isParentMode: false,
             activeChildId: "",
+            childActiveTab: "PLAN",
             childStatFilter: "WEEK",
+            childPeriodFilter: "WEEK",
             scheduleFilter: "UNCOMPLETED",
             parentActiveTab: "DASHBOARD",
             parentPassword: "1234",
@@ -1065,6 +1197,9 @@
 
         // 로컬 가상 클라우드 데이터베이션(오프라인 모드 세션)
         let localDB = JSON.parse(localStorage.getItem('magic_land_local_db')) || {};
+
+        let currentCalYear = new Date().getFullYear();
+        let currentCalMonth = new Date().getMonth();
 
         // 🟢 Firebase 연동 시작
         async function runFirebaseSetup() {
@@ -1173,6 +1308,7 @@
                 const data = localDB[uid];
                 if (data && data.state) {
                     state = data.state;
+                    normalizeState(state);
                 } else {
                     initDefaultStateForUser();
                 }
@@ -1186,15 +1322,7 @@
                 const snap = await getDoc(docRef);
                 if (snap.exists() && snap.data().state) {
                     state = snap.data().state;
-                    
-                    // 스키마 에러 방지용 가드
-                    Object.keys(state.children || {}).forEach(cid => {
-                        if (!state.children[cid].rewardRequests) state.children[cid].rewardRequests = [];
-                        if (!state.children[cid].missionRequests) state.children[cid].missionRequests = [];
-                        if (!state.children[cid].approvalHistory) state.children[cid].approvalHistory = [];
-                        if (!state.children[cid].studyLogs) state.children[cid].studyLogs = [];
-                        if (!state.children[cid].todayMissions) state.children[cid].todayMissions = [];
-                    });
+                    normalizeState(state);
                 } else {
                     initDefaultStateForUser();
                     await saveStateToFirestore();
@@ -1207,11 +1335,29 @@
             }
         }
 
+        function normalizeState(st) {
+            if (!st) return;
+            if (st.rewards && !Array.isArray(st.rewards)) {
+                st.rewards = Object.values(st.rewards).filter(Boolean);
+            } else if (!st.rewards) {
+                st.rewards = [];
+            }
+            Object.keys(st.children || {}).forEach(cid => {
+                const c = st.children[cid];
+                const arrFields = ['rewardRequests', 'missionRequests', 'approvalHistory', 'studyLogs', 'todayMissions', 'schedules', 'defaultMissions'];
+                arrFields.forEach(f => {
+                    if (!c[f]) c[f] = [];
+                    else if (!Array.isArray(c[f])) c[f] = Object.values(c[f]).filter(Boolean);
+                });
+            });
+        }
+
         // 기본 상태 초기화 (신규 생성 패밀리용)
         function initDefaultStateForUser() {
             state = {
                 isParentMode: false,
                 activeChildId: "",
+                childActiveTab: "PLAN",
                 childStatFilter: "WEEK",
                 scheduleFilter: "UNCOMPLETED",
                 parentActiveTab: "DASHBOARD",
@@ -1848,7 +1994,7 @@
 
         async function deleteDefaultMission(childId, missionId) {
             showConfirm("기본 플랜 삭제", "해당 요일의 기본 반복 계획을 목록에서 삭제할까요?", async () => {
-                state.children[childId].defaultMissions = state.children[childId].defaultMissions.filter(m => m.id !== missionId);
+                state.children[childId].defaultMissions = state.children[childId].defaultMissions.filter(m => String(m.id) !== String(missionId));
                 showToast("성공적으로 계획이 삭제되었습니다.");
                 await saveStateToFirestore();
                 syncDOM();
@@ -1930,7 +2076,7 @@
                 });
                 showToast("새 포상 상품이 코인상점에 공식 등록되었습니다!");
             } else if (mode === "EDIT") {
-                const item = state.rewards.find(r => r.id === parseInt(rewardId));
+                const item = state.rewards.find(r => String(r.id) === String(rewardId));
                 if (item) {
                     item.title = title;
                     item.cost = cost;
@@ -1952,7 +2098,7 @@
 
         async function deleteRewardStoreItem(rewardId) {
             showConfirm("포상 삭제", "해당 포상 상품을 상점에서 정말로 철수할까요?", async () => {
-                state.rewards = state.rewards.filter(r => r.id !== rewardId);
+                state.rewards = state.rewards.filter(r => String(r.id) !== String(rewardId));
                 showToast("포상 상품이 삭제 처리되었습니다.");
                 renderParentRewardsStoreTable();
                 await saveStateToFirestore();
@@ -1961,7 +2107,7 @@
         }
 
         function editRewardStoreItem(rewardId) {
-            const item = state.rewards.find(r => r.id === rewardId);
+            const item = state.rewards.find(r => String(r.id) === String(rewardId));
             if (!item) return;
 
             document.getElementById('reward-form-mode').value = "EDIT";
@@ -2219,7 +2365,8 @@
                 isCustom: true,
                 isApproved: false,
                 timeSpent: 0,
-                actualRange: ""
+                actualRange: "",
+                date: new Date().toISOString().split('T')[0]
             };
 
             if (!targetChild.todayMissions) targetChild.todayMissions = [];
@@ -2239,7 +2386,7 @@
         async function deleteChildCustomMission(missionId) {
             showConfirm("학습 미션 삭제", "오늘 내가 스스로 세운 이 미션을 삭제할까요?", async () => {
                 const targetChild = state.children[state.activeChildId];
-                targetChild.todayMissions = targetChild.todayMissions.filter(m => m.id !== missionId);
+                targetChild.todayMissions = targetChild.todayMissions.filter(m => String(m.id) !== String(missionId));
                 showToast("오늘 도전 미션이 성공적으로 삭제되었습니다.");
                 await saveStateToFirestore();
                 syncDOM();
@@ -2304,13 +2451,13 @@
         // 🚨 [신규 기능] 완료 미션 취소 기능 (드림 코인 회수 및 롤백 연동)
         async function cancelMissionProgress(missionId) {
             const targetChild = state.children[state.activeChildId];
-            const mission = targetChild.todayMissions.find(m => m.id === missionId);
+            const mission = targetChild.todayMissions.find(m => String(m.id) === String(missionId));
             if (!mission || !mission.completed) return;
 
             showConfirm("미션 완료 취소", `정말 완료한 [${mission.subject}] 미션을 취소할까요?\n미션 완료 취소 시 지급되었던 드림 코인 ${mission.stars}개가 회수됩니다.`, async () => {
                 // 부모 승인 대기중인 자율도전 과제인 경우
                 if (mission.isCustom && !mission.isApproved) {
-                    targetChild.missionRequests = (targetChild.missionRequests || []).filter(r => r.missionId !== missionId);
+                    targetChild.missionRequests = (targetChild.missionRequests || []).filter(r => String(r.missionId) !== String(missionId));
                 } else {
                     // 코인 차감 (마이너스 별 방지 최저 보장선 0)
                     targetChild.stars = Math.max(0, targetChild.stars - mission.stars);
@@ -2370,7 +2517,7 @@
 
         async function approveRewardRequest(childId, requestId) {
             const targetChild = state.children[childId];
-            const req = targetChild.rewardRequests.find(r => r.id === requestId);
+            const req = targetChild.rewardRequests.find(r => String(r.id) === String(requestId));
             if (!req) return;
 
             showConfirm("쿠폰 교환 승인", `[${targetChild.name}]님의 [${req.title}] 쿠폰 수령을 공식 수락합니까?`, async () => {
@@ -2386,7 +2533,7 @@
                     timestamp: new Date().toLocaleTimeString().substring(0, 5)
                 });
 
-                targetChild.rewardRequests = targetChild.rewardRequests.filter(r => r.id !== requestId);
+                targetChild.rewardRequests = targetChild.rewardRequests.filter(r => String(r.id) !== String(requestId));
                 showToast(`[${targetChild.name}]님의 드림 보상 쿠폰을 성공적으로 발행 승인했습니다.`);
                 await saveStateToFirestore();
                 syncDOM();
@@ -2395,7 +2542,7 @@
 
         async function rejectRewardRequest(childId, requestId) {
             const targetChild = state.children[childId];
-            const req = targetChild.rewardRequests.find(r => r.id === requestId);
+            const req = targetChild.rewardRequests.find(r => String(r.id) === String(requestId));
             if (!req) return;
 
             showConfirm("쿠폰 교환 반려", `이 요청을 거절하고 차감된 드림 코인 ${req.cost}개를 자녀에게 돌려주시겠습니까?`, async () => {
@@ -2413,7 +2560,7 @@
                     timestamp: new Date().toLocaleTimeString().substring(0, 5)
                 });
 
-                targetChild.rewardRequests = targetChild.rewardRequests.filter(r => r.id !== requestId);
+                targetChild.rewardRequests = targetChild.rewardRequests.filter(r => String(r.id) !== String(requestId));
                 showToast("요청이 반려되었으며 소모된 드림 코인이 정상 환불되었습니다.");
                 await saveStateToFirestore();
                 syncDOM();
@@ -2422,10 +2569,10 @@
 
         async function approveCustomMissionRequest(childId, requestId) {
             const targetChild = state.children[childId];
-            const req = targetChild.missionRequests.find(r => r.id === requestId);
+            const req = targetChild.missionRequests.find(r => String(r.id) === String(requestId));
             if (!req) return;
 
-            const mission = targetChild.todayMissions.find(m => m.id === req.missionId);
+            const mission = targetChild.todayMissions.find(m => String(m.id) === String(req.missionId));
             if (mission) {
                 mission.isApproved = true;
             }
@@ -2445,7 +2592,7 @@
                 timestamp: new Date().toLocaleTimeString().substring(0, 5)
             });
 
-            targetChild.missionRequests = targetChild.missionRequests.filter(r => r.id !== requestId);
+            targetChild.missionRequests = targetChild.missionRequests.filter(r => String(r.id) !== String(requestId));
             showToast(`[${targetChild.name}]님의 수율 도전 과제가 승인되어 코인 ${req.stars}개가 적립되었습니다!`);
             
             setTimeout(() => {
@@ -2458,11 +2605,11 @@
 
         async function rejectCustomMissionRequest(childId, requestId) {
             const targetChild = state.children[childId];
-            const req = targetChild.missionRequests.find(r => r.id === requestId);
+            const req = targetChild.missionRequests.find(r => String(r.id) === String(requestId));
             if (!req) return;
 
             showConfirm("미션 최종 반려", `대원의 미션 완료 내용이 불충분하여 반려하시겠습니까?\n(미션이 미완료 상태로 다시 변경됩니다.)`, async () => {
-                const mission = targetChild.todayMissions.find(m => m.id === req.missionId);
+                const mission = targetChild.todayMissions.find(m => String(m.id) === String(req.missionId));
                 if (mission) {
                     mission.completed = false;
                     mission.timeSpent = 0;
@@ -2482,7 +2629,7 @@
                     timestamp: new Date().toLocaleTimeString().substring(0, 5)
                 });
 
-                targetChild.missionRequests = targetChild.missionRequests.filter(r => r.id !== requestId);
+                targetChild.missionRequests = targetChild.missionRequests.filter(r => String(r.id) !== String(requestId));
                 showToast("자녀의 미션 승인 요청이 반려되었습니다.");
                 await saveStateToFirestore();
                 syncDOM();
@@ -2502,7 +2649,868 @@
                     }
                 }
             });
-            renderChildDashboardStats();
+            renderChildPlanReport();
+        }
+
+        // 상단 대시보드 팝업 함수들
+        function showTodayTasksDetail() {
+            const modal = document.getElementById('today-tasks-detail-modal');
+            const activeChild = state.children[state.activeChildId];
+            if (!modal || !activeChild) return;
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            const todayMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
+            
+            const listEl = document.getElementById('today-tasks-detail-list');
+            if (todayMissions.length === 0) {
+                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">오늘 할일이 없습니다.</div>';
+            } else {
+                listEl.innerHTML = todayMissions.map(m => `
+                    <div class="rounded-3xl border ${m.completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'} p-4 text-xs">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-800">${m.subject}</p>
+                                <p class="text-slate-500 text-[11px] mt-1">${m.content} | 범위: ${m.range}</p>
+                            </div>
+                            <span class="text-xs font-bold ${m.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2 py-1 rounded-full">${m.completed ? '✓ 완료' : '대기중'}</span>
+                        </div>
+                        <p class="text-[11px] text-amber-600 font-bold">🪙 ${m.stars || 0}개</p>
+                    </div>
+                `).join('');
+            }
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeTodayTasksDetail() {
+            const modal = document.getElementById('today-tasks-detail-modal');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showTodayCompletedDetail() {
+            const modal = document.getElementById('today-completed-detail-modal');
+            const activeChild = state.children[state.activeChildId];
+            if (!modal || !activeChild) return;
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            const completedMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && m.completed);
+            
+            const listEl = document.getElementById('today-completed-detail-list');
+            if (completedMissions.length === 0) {
+                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">완료한 미션이 없습니다.</div>';
+            } else {
+                listEl.innerHTML = completedMissions.map(m => `
+                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-xs">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-800">${m.subject}</p>
+                                <p class="text-slate-500 text-[11px] mt-1">${m.content}</p>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">✓ 완료</span>
+                        </div>
+                        <p class="text-[11px] text-amber-600 font-bold">🪙 ${m.stars || 0}개 획득</p>
+                    </div>
+                `).join('');
+            }
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeTodayCompletedDetail() {
+            const modal = document.getElementById('today-completed-detail-modal');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showTodayCoinsDetail() {
+            const modal = document.getElementById('today-coins-detail-modal');
+            const activeChild = state.children[state.activeChildId];
+            if (!modal || !activeChild) return;
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            const completedMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && m.completed);
+            const totalCoins = completedMissions.reduce((sum, m) => sum + (m.stars || 0), 0);
+            
+            const listEl = document.getElementById('today-coins-detail-list');
+            if (completedMissions.length === 0) {
+                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">오늘 획득한 코인이 없습니다.</div>';
+            } else {
+                listEl.innerHTML = `
+                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800 text-center mb-4">
+                        💰 오늘 총 ${totalCoins}개 획득!
+                    </div>
+                    ${completedMissions.map(m => `
+                        <div class="rounded-3xl border border-slate-200 bg-white p-4 text-xs">
+                            <div class="flex items-start justify-between gap-2 mb-1">
+                                <p class="font-bold text-slate-800">${m.subject}: ${m.content}</p>
+                                <span class="text-sm font-bold text-amber-600">🪙 ${m.stars || 0}개</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+            }
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeTodayCoinsDetail() {
+            const modal = document.getElementById('today-coins-detail-modal');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function showWeekExamsDetail() {
+            const modal = document.getElementById('week-exams-detail-modal');
+            const activeChild = state.children[state.activeChildId];
+            if (!modal || !activeChild) return;
+            
+            const weekStart = getWeekStart(new Date());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            
+            const rawSchedules = activeChild.schedules || [];
+            const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
+            const weekExams = schedulesArray.filter(s => {
+                const schedDate = new Date(s.duedate);
+                return schedDate >= weekStart && schedDate <= weekEnd && s.category === '시험';
+            });
+            
+            const listEl = document.getElementById('week-exams-detail-list');
+            if (weekExams.length === 0) {
+                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 시험이 없습니다.</div>';
+            } else {
+                listEl.innerHTML = weekExams.map(s => `
+                    <div class="rounded-3xl border border-rose-200 bg-rose-50 p-4 text-xs">
+                        <div class="flex items-start justify-between gap-2 mb-1">
+                            <div>
+                                <p class="font-bold text-slate-800">📝 ${s.content}</p>
+                                <p class="text-slate-500 text-[11px] mt-1">기한: ${s.duedate}</p>
+                            </div>
+                            <span class="text-xs font-bold text-rose-600 bg-rose-100 px-2 py-1 rounded-full">${s.completed ? '✓ 완료' : '예정'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeWeekExamsDetail() {
+            const modal = document.getElementById('week-exams-detail-modal');
+            if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function updateChildHeaderDashboard(activeChild) {
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            // 오늘 할일 건수
+            const todayMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
+            document.getElementById('child-header-today-tasks').innerText = String(todayMissions.length);
+            
+            // 오늘 완료 건수
+            const completedToday = todayMissions.filter(m => m.completed).length;
+            document.getElementById('child-header-today-completed').innerText = String(completedToday);
+            
+            // 오늘 획득한 코인
+            const coinsEarnedToday = todayMissions
+                .filter(m => m.completed)
+                .reduce((sum, m) => sum + (m.stars || 0), 0);
+            document.getElementById('child-header-today-coins').innerText = String(coinsEarnedToday);
+            
+            // 이번주 시험 건수
+            const weekStart = getWeekStart(new Date());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            
+            const rawSchedules = activeChild.schedules || [];
+            const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
+            const weekExams = schedulesArray.filter(s => {
+                const schedDate = new Date(s.duedate);
+                return schedDate >= weekStart && schedDate <= weekEnd && s.category === '시험';
+            });
+            document.getElementById('child-header-week-exams').innerText = String(weekExams.length);
+        }
+
+
+        function switchChildTab(tabName) {
+            state.childActiveTab = tabName;
+            const tabs = ['PLAN', 'STORE', 'ACHIEVEMENT'];
+            tabs.forEach(id => {
+                const panel = document.getElementById(`child-tab-${id.toLowerCase()}`);
+                const button = document.getElementById(`child-tab-btn-${id.toLowerCase()}`);
+                if (panel) panel.classList.toggle('hidden', id !== tabName);
+                if (button) {
+                    button.className = id === tabName
+                        ? 'py-3 rounded-2xl bg-orange-500 text-white shadow-sm'
+                        : 'py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition';
+                }
+            });
+            const selectedTab = document.getElementById('child-header-selected-tab');
+            if (selectedTab) {
+                selectedTab.innerText = tabName === 'PLAN' ? '학습계획관리' : tabName === 'STORE' ? '코인상점' : '학업성취도 조회';
+            }
+            if (tabName === 'PLAN') {
+                renderChildPlanReport();
+                renderScheduleCalendar();
+                renderTodayMissionsList();
+            } else if (tabName === 'STORE') {
+                renderStarRewardsStore();
+                renderChildStoreStatusList();
+            } else if (tabName === 'ACHIEVEMENT') {
+                renderChildAchievementStats();
+                renderChildAchievementCharts();
+            }
+        }
+
+        function openScheduleModal(dateStr = "") {
+            const modal = document.getElementById('schedule-calendar-modal');
+            const box = document.getElementById('schedule-calendar-box');
+            if (!modal || !box) return;
+            renderScheduleCalendarModal();
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            box.classList.remove('scale-95');
+            
+            if (typeof dateStr === 'string' && dateStr) {
+                const dateInput = document.getElementById('form-sched-duedate');
+                if (dateInput) {
+                    dateInput.value = dateStr;
+                    dateInput.focus();
+                }
+            }
+        }
+
+        function setScheduleFormDate(dateStr) {
+            const dateInput = document.getElementById('form-sched-duedate');
+            if (dateInput) {
+                dateInput.value = dateStr;
+                dateInput.focus();
+            }
+        }
+
+        function closeScheduleModal() {
+            const modal = document.getElementById('schedule-calendar-modal');
+            const box = document.getElementById('schedule-calendar-box');
+            if (!modal || !box) return;
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            box.classList.add('scale-95');
+            resetScheduleForm();
+        }
+
+        function resetScheduleForm() {
+            const modeInput = document.getElementById('form-sched-mode');
+            const idInput = document.getElementById('form-sched-id');
+            const categoryInput = document.getElementById('form-sched-category');
+            const contentInput = document.getElementById('form-sched-content');
+            const duedateInput = document.getElementById('form-sched-duedate');
+            const btn = document.getElementById('schedule-submit-btn');
+            
+            if(modeInput) modeInput.value = "ADD";
+            if(idInput) idInput.value = "";
+            if(categoryInput) categoryInput.value = "시험";
+            if(contentInput) contentInput.value = "";
+            if(duedateInput) duedateInput.value = "";
+            if(btn) btn.innerText = "등록";
+        }
+
+        function editSchedule(schedId) {
+            const targetChild = state.children[state.activeChildId];
+            if (!targetChild) return;
+            const rawSchedules = targetChild.schedules || [];
+            const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
+            
+            const item = schedulesArray.find(s => String(s.id) === String(schedId));
+            if (!item) return;
+
+            document.getElementById('form-sched-mode').value = "EDIT";
+            document.getElementById('form-sched-id').value = item.id;
+            document.getElementById('form-sched-category').value = item.category || "시험";
+            document.getElementById('form-sched-content').value = item.content || "";
+            document.getElementById('form-sched-duedate').value = item.duedate || "";
+            document.getElementById('schedule-submit-btn').innerText = "수정";
+
+            openScheduleModal();
+        }
+
+        function changeCalendarMonth(offset) {
+            currentCalMonth += offset;
+            if (currentCalMonth < 0) {
+                currentCalMonth = 11;
+                currentCalYear--;
+            } else if (currentCalMonth > 11) {
+                currentCalMonth = 0;
+                currentCalYear++;
+            }
+            renderScheduleCalendar();
+            renderScheduleCalendarModal();
+        }
+
+        function renderScheduleCalendar() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            const year = currentCalYear;
+            const month = currentCalMonth;
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('monthly-calendar-grid');
+            if (!grid) return;
+
+            const titleEl = document.getElementById('monthly-calendar-title');
+            if (titleEl) titleEl.innerText = `${year}년 ${month + 1}월`;
+
+            const rawSchedules = activeChild.schedules || [];
+            const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
+
+            const scheduleByDate = schedulesArray.reduce((acc, item) => {
+                if (!item.duedate) return acc;
+                if (!acc[item.duedate]) acc[item.duedate] = [];
+                acc[item.duedate].push(item);
+                return acc;
+            }, {});
+
+                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                let html = weekdays.map(day => `<div class="text-center font-bold text-slate-400 mb-2">${day}</div>`).join('');
+
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="min-h-[90px] rounded-3xl border border-slate-100 bg-slate-50"></div>';
+            }
+            for (let day = 1; day <= lastDate; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const items = scheduleByDate[dateStr] || [];
+                html += `
+                    <div onclick="openScheduleModal('${dateStr}')" class="min-h-[90px] rounded-3xl p-3 border ${items.length ? 'border-orange-200 bg-orange-50' : 'border-slate-100 bg-slate-50'} text-[11px] cursor-pointer hover:border-orange-400 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-700">${day}</span>
+                            ${items.length ? `<span class="text-[10px] text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
+                        </div>
+                        ${items.slice(0, 2).map(item => `<div class="flex items-center gap-2 text-[10px] text-slate-600 mb-1"><span>${getCategoryIcon(item.category)}</span><span class="truncate">${item.content}</span></div>`).join('')}
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+
+            const preview = document.getElementById('calendar-event-preview');
+            if (!preview) return;
+                
+            const monthSchedules = schedulesArray.filter(s => {
+                if (!s.duedate) return false;
+                const [y, m] = s.duedate.split('-');
+                return parseInt(y) === year && parseInt(m) === month + 1;
+            });
+
+            if (monthSchedules.length === 0) {
+                preview.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">해당 월에 등록된 일정이 없습니다.</div>';
+                return;
+            }
+            preview.innerHTML = monthSchedules
+                .sort((a, b) => (a.duedate || '').localeCompare(b.duedate || ''))
+                .map(item => `
+                    <div class="rounded-3xl p-3 bg-white border border-slate-100 text-xs">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-2 text-slate-700 font-bold">${getCategoryIcon(item.category)} ${item.category}</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-slate-400">${item.duedate}</span>
+                                <button onclick="editSchedule(${item.id})" class="text-slate-300 hover:text-indigo-500 transition text-xs"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteSchedule(${item.id})" class="text-slate-300 hover:text-rose-500 transition text-xs"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-slate-500 truncate">${item.content}</p>
+                    </div>
+                `).join('');
+        }
+
+        function renderScheduleCalendarModal() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            const year = currentCalYear;
+            const month = currentCalMonth;
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('schedule-calendar-grid-modal');
+            if (!grid) return;
+
+            const titleEl = document.getElementById('modal-calendar-title');
+            if (titleEl) titleEl.innerText = `${year}년 ${month + 1}월`;
+
+            const rawSchedules = activeChild.schedules || [];
+            const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
+
+            const scheduleByDate = schedulesArray.reduce((acc, item) => {
+                if (!item.duedate) return acc;
+                if (!acc[item.duedate]) acc[item.duedate] = [];
+                acc[item.duedate].push(item);
+                return acc;
+            }, {});
+
+                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                let html = weekdays.map(day => `<div class="text-center font-bold text-slate-400 mb-2">${day}</div>`).join('');
+
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="min-h-[80px] rounded-3xl border border-slate-100 bg-slate-50"></div>';
+            }
+            for (let day = 1; day <= lastDate; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const items = scheduleByDate[dateStr] || [];
+                html += `
+                    <div onclick="setScheduleFormDate('${dateStr}')" class="min-h-[80px] rounded-3xl p-3 border ${items.length ? 'border-orange-200 bg-orange-50' : 'border-slate-100 bg-slate-50'} text-[11px] cursor-pointer hover:border-orange-400 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-700">${day}</span>
+                            ${items.length ? `<span class="text-[10px] text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
+                        </div>
+                        ${items.slice(0, 2).map(item => `<div class="flex items-center gap-2 text-[10px] text-slate-600 mb-1"><span>${getCategoryIcon(item.category)}</span><span class="truncate">${item.content}</span></div>`).join('')}
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+
+            const itemsEl = document.getElementById('schedule-calendar-items');
+            if (!itemsEl) return;
+                
+            const monthSchedules = schedulesArray.filter(s => {
+                if (!s.duedate) return false;
+                const [y, m] = s.duedate.split('-');
+                return parseInt(y) === year && parseInt(m) === month + 1;
+            });
+
+            if (monthSchedules.length === 0) {
+                itemsEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">해당 월에 등록된 일정이 없습니다.</div>';
+                return;
+            }
+            itemsEl.innerHTML = monthSchedules
+                .sort((a, b) => (a.duedate || '').localeCompare(b.duedate || ''))
+                .map(item => `
+                    <div class="rounded-3xl border border-slate-100 bg-white p-4 text-xs">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center gap-2 font-bold text-slate-800">${getCategoryIcon(item.category)} ${item.category}</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] text-slate-500">${item.duedate}</span>
+                                <button onclick="editSchedule(${item.id})" class="text-slate-400 hover:text-indigo-600 transition text-sm"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteSchedule(${item.id})" class="text-slate-400 hover:text-rose-600 transition text-sm"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-slate-500">${item.content}</p>
+                    </div>
+                `).join('');
+        }
+
+        function setChildStoreStatusFilter(status) {
+            state.childStoreStatusFilter = status;
+            const modes = ['REQUESTED', 'SHIPPING', 'DELIVERED'];
+            modes.forEach(mode => {
+                const btn = document.getElementById(`store-status-btn-${mode.toLowerCase()}`);
+                if (btn) {
+                    btn.className = mode === status
+                        ? 'py-2 px-3 rounded-2xl bg-orange-500 text-white'
+                        : 'py-2 px-3 rounded-2xl bg-slate-100 hover:bg-slate-200 transition';
+                }
+            });
+            const deliveredFilters = document.getElementById('store-delivered-filters');
+            if (deliveredFilters) deliveredFilters.classList.toggle('hidden', status !== 'DELIVERED');
+            renderChildStoreStatusList();
+        }
+
+        function renderChildStoreStatusList() {
+            const activeChild = state.children[state.activeChildId];
+            const listEl = document.getElementById('child-store-request-list');
+            if (!activeChild || !listEl) return;
+            const status = state.childStoreStatusFilter || 'REQUESTED';
+            let requests = (activeChild.rewardRequests || []).filter(req => req.status === status);
+            if (status === 'DELIVERED') {
+                const yearEl = document.getElementById('delivered-filter-year');
+                const monthEl = document.getElementById('delivered-filter-month');
+                if (yearEl && monthEl) {
+                    populateDeliveredFilters(yearEl, monthEl);
+                    const selectedYear = yearEl.value;
+                    const selectedMonth = monthEl.value;
+                    requests = requests.filter(req => {
+                        const [y, m] = req.deliveredAt ? req.deliveredAt.split('-') : req.requestedOn.split('-');
+                        return y === selectedYear && m === selectedMonth;
+                    });
+                }
+            }
+            if (requests.length === 0) {
+                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">선택한 상태에 해당하는 신청 내역이 없습니다.</div>';
+                return;
+            }
+            listEl.innerHTML = requests.map(req => {
+                const statusBadge = req.status === 'REQUESTED' ? '교환신청' : req.status === 'SHIPPING' ? '배송중' : '배송완료';
+                return `
+                    <div class="rounded-3xl border border-slate-100 p-4 bg-white text-xs">
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <div>
+                                <p class="font-bold text-slate-800">${req.title}</p>
+                                <p class="text-[11px] text-slate-500">코인 ${req.cost}개 | ${req.requestedOn || req.timestamp || '-'}</p>
+                            </div>
+                            <span class="text-[10px] ${req.status === 'DELIVERED' ? 'text-emerald-700 bg-emerald-100' : 'text-orange-700 bg-orange-100'} px-2 py-1 rounded-full">${statusBadge}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            ${req.status === 'REQUESTED' ? `<button onclick="cancelRewardRequest(${req.id})" class="bg-slate-100 hover:bg-rose-50 text-rose-600 font-bold px-3 py-2 rounded-2xl text-xs transition">취소</button>` : ''}
+                            ${req.status === 'SHIPPING' ? `<p class="text-[11px] text-slate-500">배송 중입니다. 부모님 확인 후 배송완료 됩니다.</p>` : ''}
+                            ${req.status === 'DELIVERED' ? `<p class="text-[11px] text-slate-500">배송완료: ${req.deliveredAt}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateDeliveredFilters(yearEl, monthEl) {
+            const now = new Date();
+            if (yearEl.options.length === 0) {
+                for (let y = now.getFullYear(); y >= now.getFullYear() - 2; y--) {
+                    const opt = document.createElement('option');
+                    opt.value = String(y);
+                    opt.text = `${y}년`;
+                    yearEl.appendChild(opt);
+                }
+            }
+            if (monthEl.options.length === 0) {
+                for (let m = 1; m <= 12; m++) {
+                    const opt = document.createElement('option');
+                    opt.value = String(m).padStart(2, '0');
+                    opt.text = `${m}월`;
+                    monthEl.appendChild(opt);
+                }
+            }
+            if (!yearEl.value) yearEl.value = String(now.getFullYear());
+            if (!monthEl.value) monthEl.value = String(now.getMonth() + 1).padStart(2, '0');
+        }
+
+        function animateCoinChange(isAdd, amount) {
+            const target = document.getElementById('global-star-count');
+            if (!target) return;
+            const rect = target.getBoundingClientRect();
+            const coin = document.createElement('span');
+            coin.className = 'flying-coin';
+            coin.style.left = `${rect.left + window.scrollX}px`;
+            coin.style.top = `${rect.top + window.scrollY}px`;
+            coin.style.setProperty('--mid-x', '0px');
+            coin.style.setProperty('--mid-y', '-80px');
+            coin.style.setProperty('--dest-x', '0px');
+            coin.style.setProperty('--dest-y', '-140px');
+            coin.innerText = `${isAdd ? '+' : '-'}${amount}🪙`;
+            document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 1100);
+        }
+
+        async function cancelRewardRequest(requestId) {
+            const targetChild = state.children[state.activeChildId];
+            const req = (targetChild.rewardRequests || []).find(r => String(r.id) === String(requestId));
+            if (!req) return;
+            showConfirm('교환 신청 취소', `신청한 상품을 취소하면 사용한 코인 ${req.cost}개가 복원됩니다. 계속하시겠습니까?`, async () => {
+                targetChild.stars += req.cost;
+                animateCoinChange(true, req.cost);
+                targetChild.rewardRequests = targetChild.rewardRequests.filter(r => String(r.id) !== String(requestId));
+                await saveStateToFirestore();
+                showToast('신청이 취소되었습니다. 코인이 복원되었습니다.');
+                syncDOM();
+            });
+        }
+
+        async function markRewardDelivered(childId, requestId) {
+            const targetChild = state.children[childId];
+            const req = targetChild.rewardRequests.find(r => String(r.id) === String(requestId));
+            if (!req) return;
+            const todayStr = new Date().toISOString().split('T')[0];
+            req.status = 'DELIVERED';
+            req.deliveredAt = todayStr;
+            if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
+            targetChild.approvalHistory.push({
+                id: req.id,
+                type: 'REWARD',
+                title: req.title,
+                cost: req.cost,
+                status: 'DELIVERED',
+                date: todayStr,
+                timestamp: new Date().toLocaleTimeString().substring(0, 5)
+            });
+            await saveStateToFirestore();
+            showToast('배송 완료로 상태가 변경되었습니다.');
+            syncDOM();
+        }
+
+        function renderChildPlanReport() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            const now = new Date();
+            const weekStart = getWeekStart(now);
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            const yearStart = new Date(now.getFullYear(), 0, 1);
+            const scheduleCounts = (periodStart) => {
+                const logs = (activeChild.studyLogs || []).filter(log => {
+                    const logDate = new Date(log.date);
+                    return logDate >= periodStart && logDate <= now;
+                });
+                const completed = logs.filter(l => l.completed).length;
+                const total = logs.length;
+                const coins = logs.reduce((sum, l) => sum + (l.completed ? (l.stars || 0) : 0), 0);
+                return { total, completed, coins, rate: total ? Math.round((completed / total) * 100) : 0 };
+            };
+            const weekData = scheduleCounts(weekStart);
+            const monthData = scheduleCounts(monthStart);
+            const yearData = scheduleCounts(yearStart);
+            
+            const setTxt = (id, text) => { const el = document.getElementById(id); if (el) el.innerText = text; };
+            setTxt('report-week-coins', `코인 ${weekData.coins}개`);
+            setTxt('report-week-tasks', `${weekData.total}건`);
+            setTxt('report-week-rate', `${weekData.rate}%`);
+            setTxt('report-month-coins', `코인 ${monthData.coins}개`);
+            setTxt('report-month-tasks', `${monthData.total}건`);
+            setTxt('report-month-rate', `${monthData.rate}%`);
+            setTxt('report-year-coins', `코인 ${yearData.coins}개`);
+            setTxt('report-year-tasks', `${yearData.total}건`);
+            setTxt('report-year-rate', `${yearData.rate}%`);
+        }
+
+        function getWeekStart(date) {
+            const result = new Date(date);
+            const day = result.getDay();
+            result.setDate(result.getDate() - day);
+            result.setHours(0, 0, 0, 0);
+            return result;
+        }
+
+        function renderChildAchievementStats() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            const now = new Date();
+            const weekStart = getWeekStart(now);
+            
+            // 이번주 획득 코인
+            const weekMissions = (activeChild.todayMissions || []).filter(m => {
+                const mDate = m.date ? new Date(m.date) : new Date();
+                return mDate >= weekStart && mDate <= now && m.completed;
+            });
+            const weeklyEarned = weekMissions.reduce((sum, m) => sum + (m.stars || 0), 0);
+            document.getElementById('stat-weekly-earned-coins').innerText = String(weeklyEarned);
+            
+            // 누적 획득 코인
+            const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.status !== 'CANCELLED' ? r.cost : 0), 0);
+            const totalEarnedCoins = activeChild.stars + totalUsedCoins;
+            document.getElementById('stat-total-earned-coins').innerText = String(totalEarnedCoins);
+            
+            // 사용 코인
+            document.getElementById('stat-used-coins').innerText = String(totalUsedCoins);
+            
+            // 잔여 코인
+            document.getElementById('stat-remaining-coins').innerText = String(activeChild.stars);
+        }
+
+        function renderChildAchievementCharts() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            renderCompletionChart(activeChild);
+            renderCoinChartByPeriod(activeChild);
+            renderSubjectChart(activeChild);
+        }
+
+        function renderCompletionChart(activeChild) {
+            const weekStart = getWeekStart(new Date());
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            
+            const weekMissions = (activeChild.todayMissions || []).filter(m => {
+                const mDate = m.date ? new Date(m.date) : new Date();
+                return mDate >= weekStart && mDate <= weekEnd;
+            });
+            
+            const completed = weekMissions.filter(m => m.completed).length;
+            const total = weekMissions.length;
+            
+            document.getElementById('stat-completion-ratio').innerText = String(completed);
+            document.getElementById('stat-completion-total').innerText = String(total);
+            
+            const completionCtx = document.getElementById('achievement-completion-chart');
+            if (!completionCtx) return;
+            
+            if (completionChartInstance) completionChartInstance.destroy();
+            completionChartInstance = new Chart(completionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['완료', '미완료'],
+                    datasets: [{
+                        data: [completed, Math.max(0, total - completed)],
+                        backgroundColor: ['#10b981', '#e5e7eb'],
+                        borderColor: ['#059669', '#d1d5db'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 11 }, padding: 10, usePointStyle: true }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setChildPeriodFilter(period) {
+            state.childPeriodFilter = period;
+            const modes = ['WEEK', 'MONTH', 'YEAR'];
+            modes.forEach(m => {
+                const btn = document.getElementById(`period-btn-${m.toLowerCase()}`);
+                if (btn) {
+                    btn.className = m === period
+                        ? 'py-2 px-2 rounded-2xl bg-orange-500 text-white font-bold transition'
+                        : 'py-2 px-2 rounded-2xl bg-slate-100 hover:bg-slate-200 font-bold transition';
+                }
+            });
+            renderCoinChartByPeriod(state.children[state.activeChildId]);
+        }
+
+        function renderCoinChartByPeriod(activeChild) {
+            if (!activeChild) return;
+            const now = new Date();
+            let startDate, labels = [];
+            
+            if (state.childPeriodFilter === 'WEEK') {
+                startDate = getWeekStart(now);
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(startDate);
+                    d.setDate(d.getDate() + i);
+                    labels.push(d.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }));
+                }
+            } else if (state.childPeriodFilter === 'MONTH') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                for (let i = 1; i <= daysInMonth; i++) {
+                    labels.push(`${i}일`);
+                }
+            } else {
+                startDate = new Date(now.getFullYear(), 0, 1);
+                const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+                labels = months;
+            }
+            
+            const coinData = labels.map((_, idx) => {
+                let checkDate;
+                if (state.childPeriodFilter === 'WEEK') {
+                    checkDate = new Date(startDate);
+                    checkDate.setDate(checkDate.getDate() + idx);
+                } else if (state.childPeriodFilter === 'MONTH') {
+                    checkDate = new Date(now.getFullYear(), now.getMonth(), idx + 1);
+                } else {
+                    checkDate = new Date(now.getFullYear(), idx, 1);
+                }
+                
+                const dateStr = checkDate.toISOString().split('T')[0];
+                const missions = (activeChild.todayMissions || []).filter(m => {
+                    const mDate = m.date ? new Date(m.date).toISOString().split('T')[0] : null;
+                    return (m.completed && mDate === dateStr);
+                });
+                return missions.reduce((sum, m) => sum + (m.stars || 0), 0);
+            });
+            
+            const coinCtx = document.getElementById('achievement-coin-chart');
+            if (!coinCtx) return;
+            
+            if (distChartInstance) distChartInstance.destroy();
+            distChartInstance = new Chart(coinCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '획득 코인',
+                        data: coinData,
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#d97706',
+                        borderRadius: 8,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                        x: { ticks: { maxRotation: 45, minRotation: 0, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function renderSubjectChart(activeChild) {
+            if (!activeChild) return;
+            
+            const subjectData = {};
+            (activeChild.todayMissions || []).forEach(m => {
+                if (!subjectData[m.subject]) {
+                    subjectData[m.subject] = { completed: 0, total: 0 };
+                }
+                subjectData[m.subject].total++;
+                if (m.completed) subjectData[m.subject].completed++;
+            });
+            
+            const subjects = Object.keys(subjectData);
+            const completedCounts = subjects.map(s => subjectData[s].completed);
+            const totalCounts = subjects.map(s => subjectData[s].total);
+            
+            const subjectCtx = document.getElementById('achievement-subject-chart');
+            if (!subjectCtx) return;
+            
+            if (subjectChartInstance) subjectChartInstance.destroy();
+            subjectChartInstance = new Chart(subjectCtx, {
+                type: 'bar',
+                data: {
+                    labels: subjects.length > 0 ? subjects : ['데이터 없음'],
+                    datasets: [
+                        {
+                            label: '완료',
+                            data: subjects.length > 0 ? completedCounts : [0],
+                            backgroundColor: '#10b981',
+                            borderColor: '#059669',
+                            borderRadius: 6,
+                            borderWidth: 1
+                        },
+                        {
+                            label: '미완료',
+                            data: subjects.length > 0 ? totalCounts.map((t, i) => t - completedCounts[i]) : [0],
+                            backgroundColor: '#e5e7eb',
+                            borderColor: '#d1d5db',
+                            borderRadius: 6,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'bottom' }
+                    },
+                    scales: {
+                        x: { stacked: true, beginAtZero: true },
+                        y: { stacked: true, ticks: { font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+
+
+        function getCurrentWeekRange() {
+            const now = new Date();
+            const start = getWeekStart(now);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            return { start, end };
+        }
+
+        function getScheduleStatusIcon(category) {
+            return getCategoryIcon(category);
+        }
+
+        function getCategoryIcon(category) {
+            switch (category) {
+                case '시험': return '📝';
+                case '숙제': return '📚';
+                case '준비물': return '🎒';
+                case '행사': return '🎡';
+                default: return '✨';
+            }
         }
 
         function setScheduleFilter(filterMode) {
@@ -2521,31 +3529,50 @@
             renderSchedulesList();
         }
 
-        async function addFutureSchedule(e) {
+        async function handleSaveSchedule(e) {
             e.preventDefault();
+            const mode = document.getElementById('form-sched-mode').value;
+            const schedId = document.getElementById('form-sched-id').value;
             const category = document.getElementById('form-sched-category').value;
             const content = document.getElementById('form-sched-content').value;
             const duedate = document.getElementById('form-sched-duedate').value;
             
             const targetChild = state.children[state.activeChildId];
-            const newSched = {
-                id: Date.now(),
-                category: category,
-                content: content,
-                duedate: duedate,
-                completed: false
-            };
+            if (!Array.isArray(targetChild.schedules)) {
+                targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
+            }
             
-            targetChild.schedules.push(newSched);
-            document.getElementById('form-sched-content').value = "";
-            showToast("새로운 일정이 등록되었습니다!");
+            if (mode === "ADD") {
+                const newSched = {
+                    id: Date.now(),
+                    category: category,
+                    content: content,
+                    duedate: duedate,
+                    completed: false
+                };
+                targetChild.schedules.push(newSched);
+                showToast("새로운 일정이 등록되었습니다!");
+            } else if (mode === "EDIT") {
+                const item = targetChild.schedules.find(s => String(s.id) === String(schedId));
+                if (item) {
+                    item.category = category;
+                    item.content = content;
+                    item.duedate = duedate;
+                    showToast("일정이 정상적으로 수정되었습니다!");
+                }
+            }
+            
             await saveStateToFirestore();
+            closeScheduleModal();
             syncDOM();
         }
 
         async function toggleScheduleComplete(schedId) {
             const targetChild = state.children[state.activeChildId];
-            const item = targetChild.schedules.find(s => s.id === schedId);
+            if (!Array.isArray(targetChild.schedules)) {
+                targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
+            }
+            const item = targetChild.schedules.find(s => String(s.id) === String(schedId));
             if(item) {
                 item.completed = !item.completed;
                 if(item.completed) {
@@ -2560,7 +3587,10 @@
         async function deleteSchedule(schedId) {
             showConfirm("일정 삭제", "이 일정을 목록에서 영구적으로 삭제하시겠습니까?", async () => {
                 const targetChild = state.children[state.activeChildId];
-                targetChild.schedules = targetChild.schedules.filter(s => s.id !== schedId);
+                if (!Array.isArray(targetChild.schedules)) {
+                    targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
+                }
+                targetChild.schedules = targetChild.schedules.filter(s => String(s.id) !== String(schedId));
                 showToast("일정이 성공적으로 삭제되었습니다.");
                 await saveStateToFirestore();
                 syncDOM();
@@ -2661,14 +3691,19 @@
             const completedM = activeChild.todayMissions ? activeChild.todayMissions.filter(m => m.completed).length : 0;
             const successPercent = totalM > 0 ? Math.round((completedM / totalM) * 100) : 0;
             
-            document.getElementById('today-completed-ratio').innerText = `${completedM}/${totalM}`;
-            document.getElementById('today-success-percent').innerText = `${successPercent}%`;
+            const ratioEl = document.getElementById('today-completed-ratio');
+            if (ratioEl) ratioEl.innerText = `${completedM}/${totalM}`;
+            const percentEl = document.getElementById('today-success-percent');
+            if (percentEl) percentEl.innerText = `${successPercent}%`;
             
+            updateChildHeaderDashboard(activeChild);
             renderChildDashboardStats();
+            switchChildTab(state.childActiveTab);
             renderSchedulesList();
             renderTodayMissionsList();
             renderStarRewardsStore();
             renderChildApprovalPanel();
+            renderScheduleCalendarModal();
             
             if(state.isParentMode) {
                 renderParentView();
@@ -2679,21 +3714,31 @@
         function syncTodayMissionsWithDefault(activeChild, currentDayName) {
             if (!activeChild.todayMissions) activeChild.todayMissions = [];
             
-            // 만약 오늘 날짜로 기록된 로그가 없는 첫 접속이라면 요일기본미션 긁어와서 밀어넣기
             const todayStr = new Date().toISOString().split('T')[0];
-            const hasMissionsLoadedToday = activeChild.todayMissions.some(m => {
-                const dateKey = m.id ? new Date(m.id).toISOString().split('T')[0] : '';
-                return dateKey === todayStr;
+            
+            // 1. 과거 날짜의 미션들을 자동으로 비워줍니다.
+            activeChild.todayMissions = activeChild.todayMissions.filter(m => {
+                const mDate = m.date || (m.id ? new Date(m.id).toISOString().split('T')[0] : '');
+                return mDate === todayStr;
             });
 
-            if (!hasMissionsLoadedToday) {
-                // 어제의 구식 미션 청소 및 오늘 기본 미션 맵핑
-                activeChild.todayMissions = [];
-                const defaults = activeChild.defaultMissions || [];
-                defaults.forEach(d => {
-                    if (d.day === currentDayName) {
+            // 2. 오늘 요일에 해당하는 학습 플랜(defaultMissions)을 오늘의 미션에 동기화
+            const defaults = activeChild.defaultMissions || [];
+            const currentDefaultIds = [];
+            
+            defaults.forEach(d => {
+                if (d.day === currentDayName) {
+                    currentDefaultIds.push(d.id);
+                    // 이미 동기화된 기본 미션인지 확인 (과거 하위호환을 위해 제목+범위도 체크)
+                    const alreadyExists = activeChild.todayMissions.some(m => 
+                        (m.defaultMissionId && m.defaultMissionId === d.id) || 
+                        (!m.isCustom && m.subject === d.subject && m.range === d.range)
+                    );
+                    
+                    if (!alreadyExists) {
                         activeChild.todayMissions.push({
                             id: Date.now() + Math.random(),
+                            defaultMissionId: d.id, // 동기화 식별용 키
                             subject: d.subject,
                             content: d.content || "",
                             range: d.range,
@@ -2701,11 +3746,22 @@
                             completed: false,
                             isCustom: false,
                             timeSpent: 0,
-                            actualRange: ""
+                            actualRange: "",
+                            date: todayStr
                         });
                     }
-                });
-            }
+                }
+            });
+
+            // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 오늘의 미션에서도 제외 (단, 이미 완료한 건 제외)
+            activeChild.todayMissions = activeChild.todayMissions.filter(m => {
+                if (!m.isCustom && m.defaultMissionId && !m.completed) {
+                    if (!currentDefaultIds.includes(m.defaultMissionId)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
         }
 
         function renderChildDashboardStats() {
@@ -2736,7 +3792,8 @@
             const listEl = document.getElementById('child-schedules-list');
             if (!listEl) return;
             
-            let filtered = activeChild.schedules || [];
+            const rawSchedules = activeChild.schedules || [];
+            let filtered = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
             if(state.scheduleFilter === 'UNCOMPLETED') filtered = filtered.filter(s => !s.completed);
             if(state.scheduleFilter === 'COMPLETED') filtered = filtered.filter(s => s.completed);
             
@@ -2756,6 +3813,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] font-bold text-slate-400"><i class="fa-regular fa-clock"></i> 기한: ${s.duedate}</span>
+                            <button onclick="editSchedule(${s.id})" class="text-slate-300 hover:text-indigo-500 transition"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteSchedule(${s.id})" class="text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -2775,8 +3833,19 @@
                 return;
             }
             
+            // 부모가 등록한 학습플랜을 상위로, 그 중에서도 미완료 건을 최상위로 정렬
+            const sortedMissions = [...missions].sort((a, b) => {
+                const getPriority = (m) => {
+                    let score = 0;
+                    if (!m.completed) score += 10; // 미완료 우선
+                    if (!m.isCustom) score += 5;   // 부모(기본) 플랜 우선
+                    return score;
+                };
+                return getPriority(b) - getPriority(a);
+            });
+
             let html = "";
-            missions.forEach(m => {
+            sortedMissions.forEach(m => {
                 const earnableStars = m.stars || 1;
                 let starStr = "🪙".repeat(earnableStars);
                 
@@ -2793,7 +3862,7 @@
                                     <div class="flex items-center gap-2">
                                         <h4 class="font-bold text-slate-800 text-sm">[${m.subject}]</h4>
                                         <span class="text-slate-400 line-through">목표: ${m.range}</span>
-                                        ${m.isCustom ? '<span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded font-black text-[9px]">모험도전</span>' : ''}
+                                        ${m.isCustom ? '<span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded font-black text-[9px]">자녀도전</span>' : ''}
                                     </div>
                                     <p class="text-[12px] text-slate-500 mt-1">학습 내용: ${m.content || '-'}</p>
                                     <p class="text-slate-600 font-medium mt-1">💡 결과: <b>${m.actualRange}</b> (${m.timeSpent}분 공부 완료)</p>
@@ -2814,7 +3883,7 @@
                     `;
                 } else {
                     html += `
-                        <div id="mission-card-${m.id}" class="p-4 bg-white border border-indigo-50 rounded-2xl space-y-3 text-xs shadow-sm relative">
+                        <div id="mission-card-${m.id}" class="${m.isCustom ? 'p-4 bg-emerald-50/40 border-2 border-emerald-400 shadow-md shadow-emerald-100/50 rounded-2xl space-y-3 text-xs relative' : 'p-4 bg-white border border-indigo-50 rounded-2xl space-y-3 text-xs shadow-sm relative'}">
                             ${m.isCustom ? `
                                 <button onclick="deleteChildCustomMission(${m.id})" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 transition">
                                     <i class="fa-solid fa-circle-xmark text-lg"></i>
@@ -2823,7 +3892,7 @@
 
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full ${m.isCustom ? 'bg-emerald-500' : 'bg-indigo-500'} animate-pulse"></span>
                                     <h4 class="font-bold text-slate-800 text-sm">
                                         [${m.subject}] 
                                         <span class="text-xs font-normal text-slate-500 ml-1">목표: ${m.range}</span>
@@ -2832,7 +3901,7 @@
                                     ${m.isCustom ? '<span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded font-black text-[9px]">자녀도전</span>' : ''}
                                 </div>
                                 
-                                <span class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-xl font-bold border border-amber-200 flex items-center gap-1 shrink-0">
+                                <span class="${m.isCustom ? 'bg-white text-amber-700 border-emerald-300' : 'bg-amber-50 text-amber-700 border-amber-200'} px-2.5 py-1 rounded-xl font-bold border flex items-center gap-1 shrink-0">
                                     <i class="fa-solid fa-coins text-amber-500 text-[10px]"></i> 코인 ${earnableStars}개 도전
                                 </span>
                             </div>
@@ -3511,8 +4580,9 @@
             
             activeConfirmCallback = onConfirm;
             document.getElementById('modal-confirm-btn').onclick = () => {
+                const callback = activeConfirmCallback;
                 closeCustomModal();
-                if (activeConfirmCallback) activeConfirmCallback();
+                if (callback) callback();
             };
             
             modal.classList.remove('pointer-events-none', 'opacity-0');
