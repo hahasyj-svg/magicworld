@@ -277,22 +277,22 @@
                                     <p class="text-sm text-orange-100 mt-1">자녀모드 학습 계획, 코인 상점, 성취도 조회를 탭으로 편리하게 이용해요.</p>
                                 </div>
                             </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full lg:w-auto">
-                            <button onclick="showTodayTasksDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
-                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">📝 오늘할일</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 w-full lg:w-auto">
+                            <button onclick="showTodayTasksDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-2 sm:p-3 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
+                                    <p class="text-[13px] sm:text-sm uppercase tracking-tight whitespace-nowrap text-slate-100 font-bold mb-1">📝 오늘의 할일</p>
                                     <p class="text-2xl font-black child-font text-white" id="child-header-today-tasks">0</p>
                                 </button>
-                            <button onclick="showTodayCompletedDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
-                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">✅ 오늘완료</p>
+                            <button onclick="showTodayCompletedDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-2 sm:p-3 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
+                                    <p class="text-[13px] sm:text-sm uppercase tracking-tight whitespace-nowrap text-slate-100 font-bold mb-1">✅ 오늘 완료한 일</p>
                                     <p class="text-2xl font-black child-font text-lime-200" id="child-header-today-completed">0</p>
                                 </button>
-                            <button onclick="showTodayCoinsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
-                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">🪙 오늘코인</p>
+                            <button onclick="showTodayCoinsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-2 sm:p-3 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
+                                    <p class="text-[13px] sm:text-sm uppercase tracking-tight whitespace-nowrap text-slate-100 font-bold mb-1">🪙 오늘 획득한 코인</p>
                                     <p class="text-2xl font-black child-font text-amber-200" id="child-header-today-coins">0</p>
                                 </button>
-                            <button onclick="showWeekExamsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
-                                    <p class="text-[11px] uppercase tracking-[0.18em] text-slate-100 font-bold mb-1">📚 이번주 시험 및 숙제</p>
-                                       <p class="text-2xl font-black child-font text-rose-200" id="child-header-week-exams">0</p>
+                            <button onclick="showWeekExamsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-2 sm:p-3 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
+                                    <p class="text-[13px] sm:text-sm uppercase tracking-tight whitespace-nowrap text-slate-100 font-bold mb-1">📚 이번주 시험/숙제</p>
+                                    <p class="text-2xl font-black child-font text-violet-200" id="child-header-week-exams">0</p>
                                 </button>
                             </div>
                         </div>
@@ -300,9 +300,9 @@
 
                     <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
                     <div class="grid grid-cols-3 gap-2 sm:gap-3 text-xs sm:text-sm font-bold text-slate-700">
-                        <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center">학습계획</button>
-                        <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center">코인상점</button>
-                        <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center">성취도</button>
+                        <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center gap-1 sm:gap-1.5">📝 학습계획</button>
+                        <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🎪 코인상점</button>
+                        <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🏆 성취도</button>
                         </div>
                     </div>
 
@@ -454,9 +454,9 @@
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
-                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-sky-500"></i> 내가 완료한 학습</h3>
+                                    <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-indigo-500"></i> 내가 완료한 학습</h3>
                                     <div class="flex gap-2 text-center text-xs text-slate-500">
-                                        <button onclick="setChartFilter('completion', 'WEEK')" id="filter-completion-week" class="py-1.5 px-3 rounded-xl bg-sky-500 text-white font-bold transition">이번주</button>
+                                        <button onclick="setChartFilter('completion', 'WEEK')" id="filter-completion-week" class="py-1.5 px-3 rounded-xl bg-indigo-500 text-white font-bold transition">이번주</button>
                                         <button onclick="setChartFilter('completion', 'MONTH')" id="filter-completion-month" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">이번달</button>
                                         <button onclick="setChartFilter('completion', 'YEAR')" id="filter-completion-year" class="py-1.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 hover:text-slate-800 font-bold transition">올해</button>
                                     </div>
@@ -468,9 +468,9 @@
                                     <div class="text-center">
                                         <p class="text-[11px] text-slate-400 mb-1">상세 내역을 보려면 숫자나 그래프를 클릭하세요.</p>
                                         <p class="text-2xl font-black text-slate-800">
-                                            <span id="stat-completion-ratio" class="cursor-pointer hover:text-sky-600 transition" onclick="showCompletionDetail('COMPLETED')">완료 0</span>
+                                            <span id="stat-completion-ratio" class="cursor-pointer hover:text-indigo-600 transition" onclick="showCompletionDetail('COMPLETED')">완료 0</span>
                                             <span class="text-slate-300 font-medium">/</span>
-                                            <span id="stat-completion-total" class="cursor-pointer hover:text-sky-600 transition" onclick="showCompletionDetail('ALL')">전체 0</span>
+                                            <span id="stat-completion-total" class="cursor-pointer hover:text-indigo-600 transition" onclick="showCompletionDetail('ALL')">전체 0</span>
                                         </p>
                                     </div>
                                 </div>
@@ -595,22 +595,22 @@
                         <!-- 대시보드 메인 레이아웃 -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="space-y-4">
-                                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-4">
+                                <div onclick="showCompletionDetail('COMPLETED')" class="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 cursor-pointer hover:bg-slate-100 transition">
                                     <span class="text-xs text-slate-400 font-bold uppercase block mb-1">총 누적 공부 시간</span>
                                     <h4 class="text-3xl font-black text-indigo-600 child-font" id="db-summary-time">0 <span class="text-sm font-bold text-slate-500">분</span></h4>
-                                    <p class="text-[10px] text-slate-400 mt-1">실제 입력한 공부 시간입니다.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">실제 입력한 공부 시간입니다. (클릭하여 상세 보기)</p>
                                 </div>
                                 
                                 <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-4">
                                     <span class="text-xs text-slate-400 font-bold uppercase block mb-1">미션 전체 수행 건수</span>
                                     <h4 class="text-3xl font-black text-slate-700 child-font" id="db-summary-missions">0 / 0 <span class="text-sm font-bold text-slate-500">건</span></h4>
-                                    <p class="text-[10px] text-slate-400 mt-1">조회 기간 내 진행 과제 중 완료를 제출한 수치입니다.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">완료/전체 숫자를 클릭하여 상세 리스트를 확인하세요.</p>
                                 </div>
 
-                                <div class="bg-slate-50 border border-slate-200/60 rounded-2xl p-4">
+                                <div onclick="showCompletionDetail('ALL')" class="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 cursor-pointer hover:bg-slate-100 transition">
                                     <span class="text-xs text-slate-400 font-bold uppercase block mb-1">평균 미션 달성율</span>
                                     <h4 class="text-3xl font-black text-emerald-600 child-font" id="db-summary-percent">0%</h4>
-                                    <p class="text-[10px] text-slate-400 mt-1">계획된 목표치 달성율입니다.</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">계획된 목표치 달성율입니다. (클릭하여 상세 보기)</p>
                                 </div>
                             </div>
 
@@ -3061,7 +3061,7 @@
             
             const periods = ['week', 'month', 'year'];
             let activeBgClass = 'bg-slate-500';
-            if (chartType === 'completion') activeBgClass = 'bg-sky-500';
+            if (chartType === 'completion') activeBgClass = 'bg-indigo-500';
             else if (chartType === 'subject') activeBgClass = 'bg-indigo-500';
             else if (chartType === 'coin') activeBgClass = 'bg-amber-500';
 
@@ -3084,6 +3084,25 @@
             }
         }
 
+        function getValidStudyLogs(activeChild) {
+            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
+            const uncompletedMissionIds = (activeChild.todayMissions || []).filter(m => !m.completed).map(m => String(m.id));
+            const rejectedHistory = (activeChild.approvalHistory || []).filter(h => h.type === 'MISSION' && h.status === 'REJECTED');
+            
+            let tempRejected = [...rejectedHistory];
+            let validLogs = [];
+            for (let log of (activeChild.studyLogs || [])) {
+                if (!log.completed) continue;
+                if (pendingIds.includes(String(log.missionId))) continue;
+                if (uncompletedMissionIds.includes(String(log.missionId))) continue;
+                
+                const rejectIdx = tempRejected.findIndex(r => r.date === log.date && r.subject === log.subject && (r.stars || 1) === (log.stars || 1));
+                if (rejectIdx >= 0) { tempRejected.splice(rejectIdx, 1); continue; }
+                validLogs.push(log);
+            }
+            return validLogs;
+        }
+
         // 상단 대시보드 팝업 함수들
         function showTodayTasksDetail() {
             const modal = document.getElementById('today-tasks-detail-modal');
@@ -3098,20 +3117,29 @@
             const todayStr = new Date().toISOString().split('T')[0];
             const todayMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
             
+            // 미완료된 미션을 상단으로 오도록 정렬
+            todayMissions.sort((a, b) => (a.completed === b.completed) ? 0 : a.completed ? 1 : -1);
+            
             const listEl = document.getElementById('today-tasks-detail-list');
             if (todayMissions.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">오늘 할일이 없습니다.</div>';
             } else {
                 listEl.innerHTML = todayMissions.map(m => `
-                    <div class="rounded-3xl border ${m.completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'} p-4 text-xs">
-                        <div class="flex items-start justify-between gap-2 mb-2">
-                            <div class="flex-1">
-                                <p class="font-bold text-slate-800">${m.subject}</p>
-                                <p class="text-slate-500 text-[11px] mt-1">${m.content} | 범위: ${m.range}</p>
+                    <div class="rounded-3xl border ${m.completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'} p-4 shadow-sm transition-all hover:scale-[1.02]">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-indigo-600">[${m.subject}]</span> ${m.content || '학습내용'} <span class="text-slate-400">/ ${m.range || ''}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 ${m.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full">${m.completed ? '✓ 완료' : '대기중'}</span>
                             </div>
-                            <span class="text-xs font-bold ${m.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2 py-1 rounded-full">${m.completed ? '✓ 완료' : '대기중'}</span>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-amber-50 border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm ${m.completed ? '' : 'animate-pulse'}">
+                                    <i class="fa-solid fa-coins text-amber-500 ${m.completed ? 'animate-bounce' : ''}"></i> 
+                                    코인 ${m.stars || 0}개 ${m.completed ? '획득! 🎉' : '도전!'}
+                                </span>
+                            </div>
                         </div>
-                        <p class="text-[11px] text-amber-600 font-bold">🪙 ${m.stars || 0}개</p>
                     </div>
                 `).join('');
             }
@@ -3142,15 +3170,21 @@
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">완료한 미션이 없습니다.</div>';
             } else {
                 listEl.innerHTML = completedMissions.map(m => `
-                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-xs">
-                        <div class="flex items-start justify-between gap-2 mb-2">
-                            <div class="flex-1">
-                                <p class="font-bold text-slate-800">${m.subject}</p>
-                                <p class="text-slate-500 text-[11px] mt-1">${m.content}</p>
+                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition-all hover:scale-[1.02]">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-emerald-600">[${m.subject}]</span> ${m.content || '학습내용'} <span class="text-slate-400">/ ${m.range || m.actualRange || ''}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">✓ 완료</span>
                             </div>
-                            <span class="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">✓ 완료</span>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-amber-50 border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                    코인 ${m.stars || 0}개 획득! 🎉
+                                </span>
+                            </div>
                         </div>
-                        <p class="text-[11px] text-amber-600 font-bold">🪙 ${m.stars || 0}개 획득</p>
                     </div>
                 `).join('');
             }
@@ -3177,17 +3211,30 @@
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">오늘 획득한 코인이 없습니다.</div>';
             } else {
                 listEl.innerHTML = `
-                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800 text-center mb-4">
+                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm sm:text-base font-black text-amber-800 text-center mb-4 shadow-sm">
                         💰 오늘 총 ${totalCoins}개 획득!
                     </div>
                     ${completedMissions.map(m => `
-                        <div class="rounded-3xl border border-slate-200 bg-white p-4 text-xs">
-                            <div class="flex items-start justify-between gap-2 mb-1">
-                                <p class="font-bold text-slate-800">${m.subject}: ${m.content}</p>
-                                <span class="text-sm font-bold text-amber-600">🪙 ${m.stars || 0}개</span>
+                        <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-start justify-between gap-3">
+                                    <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                        <span class="text-amber-600">[${m.subject}]</span> ${m.content || '학습내용'} <span class="text-slate-400">/ ${m.range || m.actualRange || ''}</span>
+                                    </h4>
+                                    <span class="text-xs font-bold shrink-0 text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full">✓ 완료</span>
+                                </div>
+                                <div class="flex justify-end">
+                                    <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                        <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                        코인 ${m.stars || 0}개 획득! 🎉
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     `).join('')}
+                    <div class="mt-2 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🌟 참 잘했어요! 오늘도 드림코인을 가득 모았네요! 🌟
+                    </div>
                 `;
             }
             
@@ -3224,17 +3271,29 @@
             if (weekExams.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 예정된 시험 및 숙제가 없습니다.</div>';
             } else {
-                listEl.innerHTML = weekExams.map(s => `
-                    <div class="rounded-3xl border border-rose-200 bg-rose-50 p-4 text-xs">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <div>
-                                <p class="font-bold text-slate-800">📝 ${s.content}</p>
-                                <p class="text-slate-500 text-[11px] mt-1">기한: ${s.duedate}</p>
+            listEl.innerHTML = `
+                ${weekExams.map(s => `
+                    <div class="rounded-3xl border ${s.completed ? 'border-emerald-200 bg-emerald-50' : 'border-violet-200 bg-violet-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="${s.completed ? 'text-emerald-600' : 'text-violet-600'}">[${s.category}]</span> ${s.content}
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 ${s.completed ? 'text-emerald-600 bg-emerald-100' : 'text-violet-600 bg-violet-100'} px-2.5 py-1 rounded-full">${s.completed ? '✓ 완료' : '예정'}</span>
                             </div>
-                            <span class="text-xs font-bold text-rose-600 bg-rose-100 px-2 py-1 rounded-full">${s.completed ? '✓ 완료' : '예정'}</span>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${s.completed ? 'text-emerald-600 bg-white border-emerald-200' : 'text-violet-600 bg-white border-violet-200'} border px-3 py-1.5 rounded-2xl shadow-sm ${s.completed ? '' : 'animate-pulse'}">
+                                    <i class="fa-regular fa-calendar-check ${s.completed ? 'text-emerald-500 animate-bounce' : 'text-violet-500'}"></i> 
+                                    기한: ${s.duedate}
+                                </span>
+                            </div>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                `).join('')}
+                <div class="mt-2 p-3 bg-violet-100 text-violet-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                    🔥 미리미리 준비하는 모습 참 잘했어요! 파이팅! 🔥
+                </div>
+            `;
             }
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3251,27 +3310,48 @@
             };
             const weekStartStr = toLocalIsoString(weekStart);
             
-            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
-            const logs = (activeChild.studyLogs || []).filter(log => {
-                return log.date >= weekStartStr && log.completed && !pendingIds.includes(String(log.missionId));
-            });
+            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr);
             
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
             
+            const logSum = logs.reduce((sum, m) => sum + (m.stars || 0), 0);
             const listEl = document.getElementById('weekly-coins-detail-list');
+            
+            let html = `
+                <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm sm:text-base font-black text-amber-800 text-center mb-4 shadow-sm">
+                    💰 이번주 총 ${logSum}개 획득!
+                </div>
+            `;
+            
             if (logs.length === 0) {
-                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 확정 획득한 코인이 없습니다.</div>';
+                html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 확정 획득한 코인이 없습니다.</div>';
             } else {
-                listEl.innerHTML = logs.map(m => `
-                    <div class="rounded-3xl border border-slate-200 bg-white p-4 text-xs flex justify-between items-center mb-2">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">${m.date}</span>
-                            <p class="font-bold text-slate-800">${m.subject}: ${m.content || '내용 없음'}</p>
+                html += logs.map(m => `
+                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-amber-600">[${m.subject}]</span> ${m.content || '학습내용'}
+                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${m.date}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full">✓ 완료</span>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                    코인 ${m.stars || 0}개 획득! 🎉
+                                </span>
+                            </div>
                         </div>
-                        <span class="text-sm font-bold text-amber-600">🪙 ${m.stars || 0}개</span>
                     </div>
                 `).join('');
+                html += `
+                    <div class="mt-2 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🌟 일주일 동안 열심히 모은 코인이에요! 멋져요! 🌟
+                    </div>
+                `;
             }
+            listEl.innerHTML = html;
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
@@ -3285,25 +3365,72 @@
             const activeChild = state.children[state.activeChildId];
             if (!modal || !activeChild) return;
             
-            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
-            const logs = (activeChild.studyLogs || []).filter(log => log.completed && !pendingIds.includes(String(log.missionId)));
+            const logs = getValidStudyLogs(activeChild);
             
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
             
+            const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const expectedTotal = activeChild.stars + totalUsedCoins;
+            const logSum = logs.reduce((sum, m) => sum + (m.stars || 0), 0);
+            
             const listEl = document.getElementById('total-coins-detail-list');
-            if (logs.length === 0) {
-                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">누적 확정 획득한 코인이 없습니다.</div>';
-            } else {
-                listEl.innerHTML = logs.map(m => `
-                    <div class="rounded-3xl border border-slate-200 bg-white p-4 text-xs flex justify-between items-center mb-2">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">${m.date}</span>
-                            <p class="font-bold text-slate-800">${m.subject}: ${m.content || '내용 없음'}</p>
+            
+            let html = `
+                <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-sm sm:text-base font-black text-emerald-800 text-center mb-4 shadow-sm">
+                    💎 총 누적 코인: ${expectedTotal}개
+                </div>
+            `;
+            
+            if (expectedTotal !== logSum) {
+                const diff = expectedTotal - logSum;
+                html += `
+                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-slate-500">[시스템 보정]</span> 과거 내역 동기화 보정 코인
+                                </h4>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-slate-600 bg-white border border-slate-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                    <i class="fa-solid fa-coins text-slate-400"></i> 
+                                    코인 ${diff > 0 ? '+' : ''}${diff}개
+                                </span>
+                            </div>
                         </div>
-                        <span class="text-sm font-bold text-amber-600">🪙 ${m.stars || 0}개</span>
+                    </div>
+                `;
+            }
+            
+            if (logs.length === 0 && expectedTotal === logSum) {
+                html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">누적 확정 획득한 코인이 없습니다.</div>';
+            } else {
+                html += logs.map(m => `
+                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-emerald-600">[${m.subject}]</span> ${m.content || '학습내용'}
+                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${m.date}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">✓ 완료</span>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-emerald-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                    코인 ${m.stars || 0}개 획득! 🎉
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 `).join('');
+                html += `
+                    <div class="mt-2 p-3 bg-emerald-100 text-emerald-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🏆 꾸준히 모아온 소중한 나의 드림 코인이에요! 정말 대단해요! 🏆
+                    </div>
+                `;
             }
+            listEl.innerHTML = html;
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
@@ -3331,18 +3458,31 @@
             if (usedItems.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">사용한 코인 내역이 없습니다.</div>';
             } else {
-                listEl.innerHTML = usedItems.map(item => `
-                    <div class="rounded-3xl border border-slate-200 bg-white p-4 text-xs flex justify-between items-center mb-2">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">${item.date}</span>
-                            <p class="font-bold text-slate-800">${item.title}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-sm font-bold text-rose-500">-🪙 ${item.cost}개</span>
-                            <p class="text-[10px] text-slate-500 mt-1">${item.status}</p>
+                let html = usedItems.map(item => `
+                    <div class="rounded-3xl border border-rose-200 bg-rose-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-rose-600">[포상]</span> ${item.title}
+                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${item.date}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 ${item.status === '배송완료' ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full">${item.status}</span>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-rose-600 bg-white border border-rose-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                    <i class="fa-solid fa-coins text-rose-500"></i> 
+                                    - ${item.cost}개 사용
+                                </span>
+                            </div>
                         </div>
                     </div>
                 `).join('');
+                html += `
+                    <div class="mt-2 p-3 bg-rose-100 text-rose-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🎁 모은 코인으로 원하는 걸 이루었어요! 🎁
+                    </div>
+                `;
+                listEl.innerHTML = html;
             }
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
@@ -3352,37 +3492,68 @@
             if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        function showCompletionDetail(mode = 'ALL') {
+        function showCompletionDetail(mode = 'ALL', subjectFilter = null) {
             const modal = document.getElementById('completion-detail-modal');
-            const activeChild = state.children[state.activeChildId];
-            if (!modal || !activeChild) return;
             
-            const filter = childChartFilters.completion || 'WEEK';
-            const now = new Date();
+            let activeChild;
             let startDate, endDate;
+            const now = new Date();
             
             const toLocalIsoString = (date) => {
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             };
             
-            if (filter === 'WEEK') {
-                startDate = toLocalIsoString(getWeekStart(now));
-                const end = new Date(getWeekStart(now));
-                end.setDate(end.getDate() + 6);
-                endDate = toLocalIsoString(end);
-            } else if (filter === 'MONTH') {
-                startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
-                const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                endDate = toLocalIsoString(end);
-            } else if (filter === 'YEAR') {
-                startDate = `${now.getFullYear()}-01-01`;
-                endDate = `${now.getFullYear()}-12-31`;
+            if (state.isParentMode) {
+                const childId = document.getElementById('db-filter-child').value;
+                activeChild = state.children[childId];
+                
+                const targetYear = document.getElementById('db-filter-year').value;
+                const targetMonth = document.getElementById('db-filter-month').value;
+                const targetWeek = document.getElementById('db-filter-week').value;
+
+                const year = parseInt(targetYear);
+                const month = parseInt(targetMonth) - 1;
+
+                if (targetWeek === 'ALL') {
+                    startDate = `${targetYear}-${targetMonth}-01`;
+                    const end = new Date(year, month + 1, 0);
+                    endDate = toLocalIsoString(end);
+                } else {
+                    const weekNum = parseInt(targetWeek.replace('W', ''));
+                    let startDay, endDay;
+                    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+
+                    if (weekNum === 1) { startDay = 1; endDay = 7; }
+                    else if (weekNum === 2) { startDay = 8; endDay = 14; }
+                    else if (weekNum === 3) { startDay = 15; endDay = 21; }
+                    else if (weekNum === 4) { startDay = 22; endDay = 28; }
+                    else { startDay = 29; endDay = lastDayOfMonth; }
+
+                    startDate = `${targetYear}-${targetMonth}-${String(startDay).padStart(2, '0')}`;
+                    endDate = `${targetYear}-${targetMonth}-${String(endDay > lastDayOfMonth ? lastDayOfMonth : endDay).padStart(2, '0')}`;
+                }
+            } else {
+                activeChild = state.children[state.activeChildId];
+                const filter = childChartFilters.completion || 'WEEK';
+                if (filter === 'WEEK') {
+                    startDate = toLocalIsoString(getWeekStart(now));
+                    const end = new Date(getWeekStart(now));
+                    end.setDate(end.getDate() + 6);
+                    endDate = toLocalIsoString(end);
+                } else if (filter === 'MONTH') {
+                    startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+                    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                    endDate = toLocalIsoString(end);
+                } else if (filter === 'YEAR') {
+                    startDate = `${now.getFullYear()}-01-01`;
+                    endDate = `${now.getFullYear()}-12-31`;
+                }
             }
 
+            if (!modal || !activeChild) return;
+
             let items = [];
-            const logs = (activeChild.studyLogs || []).filter(log => {
-                return log.date >= startDate && log.date <= endDate;
-            });
+            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= startDate && log.date <= endDate);
             items = logs.map(m => ({ date: m.date, subject: m.subject, content: m.content, completed: m.completed }));
             
             const todayStr = new Date().toISOString().split('T')[0];
@@ -3396,22 +3567,63 @@
             } else if (mode === 'INCOMPLETE') {
                 items = items.filter(item => !item.completed);
             }
+            
+            if (subjectFilter) {
+                items = items.filter(item => item.subject === subjectFilter);
+            }
 
             items.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            const titleEl = modal.querySelector('h3');
+            if (titleEl) {
+                let titleText = '📊 학습 전체 상세 내역';
+                if (subjectFilter) {
+                    titleText = `📊 [${subjectFilter}] 과목 상세 내역`;
+                } else if (mode === 'COMPLETED') {
+                    titleText = '📊 학습 완료 상세 내역';
+                } else if (mode === 'INCOMPLETE') {
+                    titleText = '📊 학습 미완료 상세 내역';
+                }
+                titleEl.innerText = titleText;
+            }
 
             const listEl = document.getElementById('completion-detail-list');
             if (items.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">해당 조건의 내역이 없습니다.</div>';
             } else {
-                listEl.innerHTML = items.map(item => `
-                    <div class="rounded-3xl border ${item.completed ? 'border-sky-200 bg-sky-50' : 'border-slate-200 bg-white'} p-4 text-xs flex justify-between items-center mb-2 shadow-sm">
-                        <div>
-                            <span class="text-[10px] text-slate-400 block">${item.date}</span>
-                            <p class="font-bold text-slate-800">${item.subject}: ${item.content || '내용 없음'}</p>
+                let html = items.map(item => `
+                    <div class="rounded-3xl border ${item.completed ? 'border-indigo-200 bg-indigo-50' : 'border-slate-200 bg-slate-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="${item.completed ? 'text-indigo-600' : 'text-slate-500'}">[${item.subject}]</span> ${item.content || '학습내용'}
+                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${item.date}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 ${item.completed ? 'text-indigo-600 bg-indigo-100' : 'text-slate-500 bg-slate-200'} px-2.5 py-1 rounded-full">${item.completed ? '✓ 완료' : '미완료'}</span>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${item.completed ? 'text-indigo-600 bg-white border-indigo-300' : 'text-slate-500 bg-white border-slate-300'} border px-3 py-1.5 rounded-2xl shadow-sm ${item.completed ? '' : 'animate-pulse'}">
+                                    <i class="fa-solid ${item.completed ? 'fa-check-circle text-indigo-500 animate-bounce' : 'fa-circle-xmark text-slate-400'}"></i> 
+                                    ${item.completed ? '학습 완료! 👏' : '아직 진행중!'}
+                                </span>
+                            </div>
                         </div>
-                        <span class="text-[11px] font-bold ${item.completed ? 'text-sky-600 bg-sky-100' : 'text-slate-500 bg-slate-100'} px-2 py-1 rounded-full">${item.completed ? '✓ 완료' : '미완료'}</span>
                     </div>
                 `).join('');
+                if (mode === 'COMPLETED' || mode === 'ALL') {
+                    html += `
+                        <div class="mt-2 p-3 bg-indigo-100 text-indigo-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                            📚 열심히 공부한 흔적이에요! 아주 훌륭해요! 📚
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="mt-2 p-3 bg-slate-100 text-slate-600 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                            🔥 조금만 더 힘내서 미완료 항목들을 없애볼까요? 🔥
+                        </div>
+                    `;
+                }
+                listEl.innerHTML = html;
             }
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
@@ -3473,8 +3685,8 @@
                 if (panel) panel.classList.toggle('hidden', id !== tabName);
                 if (button) {
                     button.className = id === tabName
-            ? 'py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center'
-            : 'py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center';
+            ? 'py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center gap-1 sm:gap-1.5 active:scale-95 transition'
+            : 'py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5 active:scale-95 transition';
                 }
             });
             const selectedTab = document.getElementById('child-header-selected-tab');
@@ -3707,16 +3919,25 @@
             itemsEl.innerHTML = monthSchedules
                 .sort((a, b) => (a.duedate || '').localeCompare(b.duedate || ''))
                 .map(item => `
-                    <div class="rounded-3xl border border-slate-100 bg-white p-4 text-xs">
-                        <div class="flex items-center justify-between gap-2 mb-2">
-                            <div class="flex items-center gap-2 font-bold text-slate-800">${getCategoryIcon(item.category)} ${item.category}</div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[11px] text-slate-500">${item.duedate}</span>
-                                <button onclick="editSchedule(${item.id})" class="text-slate-400 hover:text-indigo-600 transition text-sm"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="deleteSchedule(${item.id})" class="text-slate-400 hover:text-rose-600 transition text-sm"><i class="fa-solid fa-trash"></i></button>
+                    <div class="rounded-3xl border ${item.completed ? 'border-emerald-200 bg-emerald-50' : 'border-orange-200 bg-orange-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="${item.completed ? 'text-emerald-600' : 'text-orange-600'}">[${item.category}]</span> ${item.content}
+                                </h4>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button onclick="editSchedule(${item.id})" class="text-slate-400 hover:text-indigo-600 transition text-sm"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteSchedule(${item.id})" class="text-slate-400 hover:text-rose-600 transition text-sm"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="flex justify-end items-center gap-2">
+                                <span class="text-xs font-bold ${item.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full mr-auto">${item.completed ? '✓ 완료' : '예정'}</span>
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${item.completed ? 'text-emerald-600 bg-white border-emerald-300' : 'text-orange-600 bg-white border-orange-300'} border px-3 py-1.5 rounded-2xl shadow-sm ${item.completed ? '' : 'animate-pulse'}">
+                                    <i class="fa-regular fa-calendar-check ${item.completed ? 'text-emerald-500 animate-bounce' : 'text-orange-500'}"></i> 
+                                    기한: ${item.duedate}
+                                </span>
                             </div>
                         </div>
-                        <p class="text-slate-500">${item.content}</p>
                     </div>
                 `).join('');
         }
@@ -3877,20 +4098,11 @@
             const yearStartStr = toLocalIsoString(yearStart);
             const nowStr = toLocalIsoString(now);
             
-            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
-            
             const scheduleCounts = (periodStartStr) => {
-                const logs = (activeChild.studyLogs || []).filter(log => {
-                    return log.date >= periodStartStr && log.date <= nowStr;
-                });
+                const logs = getValidStudyLogs(activeChild).filter(log => log.date >= periodStartStr && log.date <= nowStr);
                 const completed = logs.filter(l => l.completed).length;
                 const total = logs.length;
-                const coins = logs.reduce((sum, l) => {
-                    if (l.completed && !pendingIds.includes(String(l.missionId))) {
-                        return sum + (l.stars || 0);
-                    }
-                    return sum;
-                }, 0);
+                const coins = logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 return { total, completed, coins, rate: total ? Math.round((completed / total) * 100) : 0 };
             };
             const weekData = scheduleCounts(weekStartStr);
@@ -3929,10 +4141,7 @@
             };
             const weekStartStr = toLocalIsoString(weekStart);
             
-            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
-            const weeklyLogs = (activeChild.studyLogs || []).filter(log => {
-                return log.date >= weekStartStr && log.completed && !pendingIds.includes(String(log.missionId));
-            });
+            const weeklyLogs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr);
             const weeklyEarned = weeklyLogs.reduce((sum, log) => sum + (log.stars || 0), 0);
             document.getElementById('stat-weekly-earned-coins').innerText = String(weeklyEarned);
             
@@ -3943,10 +4152,6 @@
             
             // 누적 획득 코인
             document.getElementById('stat-total-earned-coins').innerText = String(activeChild.stars + totalUsedCoins);
-            // 누적 획득 코인 (실제 완료된 studyLogs 총합과 동일하게 맞춤)
-            const totalLogs = (activeChild.studyLogs || []).filter(log => log.completed && !pendingIds.includes(String(log.missionId)));
-            const totalEarned = totalLogs.reduce((sum, log) => sum + (log.stars || 0), 0);
-            document.getElementById('stat-total-earned-coins').innerText = String(totalEarned);
 
             // 잔여 코인
             document.getElementById('stat-remaining-coins').innerText = String(activeChild.stars);
@@ -4023,9 +4228,7 @@
             let completed = 0;
             let total = 0;
 
-            const logs = (activeChild.studyLogs || []).filter(log => {
-                return log.date >= startDate && log.date <= endDate;
-            });
+            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= startDate && log.date <= endDate);
             const todayStr = new Date().toISOString().split('T')[0];
             const includesToday = todayStr >= startDate && todayStr <= endDate;
             
@@ -4050,8 +4253,8 @@
                     labels: ['완료', '미완료'],
                     datasets: [{
                         data: [completed, Math.max(0, total - completed)],
-                        backgroundColor: ['#0ea5e9', '#e0f2fe'],
-                        borderColor: ['#0284c7', '#bae6fd'],
+                        backgroundColor: ['#818cf8', '#e0e7ff'],
+                        borderColor: ['#6366f1', '#c7d2fe'],
                         borderWidth: 2
                     }]
                 },
@@ -4108,23 +4311,21 @@
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             };
             
-            const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
-
             const coinData = labels.map((_, idx) => {
                 if (filter === 'WEEK') {
                     const checkDate = new Date(startDate);
                     checkDate.setDate(checkDate.getDate() + idx);
                     const dateStr = toLocalIsoString(checkDate);
-                    const logs = (activeChild.studyLogs || []).filter(l => l.completed && l.date === dateStr && !pendingIds.includes(String(l.missionId)));
+                    const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 } else if (filter === 'MONTH') {
                     const checkDate = new Date(now.getFullYear(), now.getMonth(), idx + 1);
                     const dateStr = toLocalIsoString(checkDate);
-                    const logs = (activeChild.studyLogs || []).filter(l => l.completed && l.date === dateStr && !pendingIds.includes(String(l.missionId)));
+                    const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 } else {
                     const monthPrefix = `${now.getFullYear()}-${String(idx + 1).padStart(2, '0')}`;
-                    const logs = (activeChild.studyLogs || []).filter(l => l.completed && l.date && l.date.startsWith(monthPrefix) && !pendingIds.includes(String(l.missionId)));
+                    const logs = getValidStudyLogs(activeChild).filter(l => l.date && l.date.startsWith(monthPrefix));
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 }
             });
@@ -4143,7 +4344,8 @@
                         backgroundColor: '#f59e0b',
                         borderColor: '#d97706',
                         borderRadius: 8,
-                        borderWidth: 1
+                        borderWidth: 1,
+                        maxBarThickness: 24
                     }]
                 },
                 options: {
@@ -4198,7 +4400,7 @@
             
             const subjectData = {};
             
-            const logs = (activeChild.studyLogs || []).filter(log => log.date >= startDate && log.date <= endDate);
+            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= startDate && log.date <= endDate);
             logs.forEach(log => {
                 if (!subjectData[log.subject]) subjectData[log.subject] = { completed: 0, total: 0 };
                 subjectData[log.subject].total++;
@@ -4230,10 +4432,11 @@
                         {
                             label: '완료',
                             data: subjects.length > 0 ? completedCounts : [0],
-                            backgroundColor: '#0ea5e9',
-                            borderColor: '#0284c7',
+                            backgroundColor: '#818cf8',
+                            borderColor: '#6366f1',
                             borderRadius: 6,
                             borderWidth: 1,
+                            maxBarThickness: 24,
                             datalabels: {
                                 color: '#ffffff'
                             }
@@ -4241,10 +4444,11 @@
                         {
                             label: '미완료',
                             data: subjects.length > 0 ? totalCounts.map((t, i) => t - completedCounts[i]) : [0],
-                            backgroundColor: '#e0f2fe',
-                            borderColor: '#bae6fd',
+                            backgroundColor: '#e0e7ff',
+                            borderColor: '#c7d2fe',
                             borderRadius: 6,
                             borderWidth: 1,
+                            maxBarThickness: 24,
                             datalabels: {
                                 color: '#1e293b'
                             }
@@ -4252,8 +4456,15 @@
                     ]
                 },
                 options: {
-                onClick: () => {
-                    showCompletionDetail('ALL');
+                onClick: (e, elements) => {
+                    if (elements.length > 0) {
+                        const datasetIndex = elements[0].datasetIndex;
+                        const dataIndex = elements[0].index;
+                        const subject = subjectChartInstance.data.labels[dataIndex];
+                        showCompletionDetail(datasetIndex === 0 ? 'COMPLETED' : 'INCOMPLETE', subject);
+                    } else {
+                        showCompletionDetail('ALL');
+                    }
                 },
                     indexAxis: 'y',
                     responsive: true,
@@ -5230,7 +5441,7 @@
             const child = state.children[childId];
             if (!child) return;
 
-            const logs = child.studyLogs || [];
+            const logs = getValidStudyLogs(child);
 
             const filteredLogs = logs.filter(log => {
                 const [year, month, dateStr] = log.date.split('-');
@@ -5279,18 +5490,9 @@
                     dTotal = tMissions.length;
                     dCompleted = tMissions.filter(m => m.completed).length;
                 } else {
-                    const dateObj = new Date(dateStr);
-                    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-                    const dayName = weekdays[dateObj.getDay()];
-                    
-                    const defaultCount = (child.defaultMissions || []).filter(m => m.day === dayName).length;
-                    const reqCount = (child.missionRequests || []).filter(r => {
-                        try { return new Date(Number(r.missionId)).toISOString().split('T')[0] === dateStr; } catch(e) { return false; }
-                    }).length;
-                    const histCount = (child.approvalHistory || []).filter(h => h.type === 'MISSION' && h.date === dateStr).length;
-                    
-                    dTotal = defaultCount + reqCount + histCount;
-                    dCompleted = (child.studyLogs || []).filter(l => l.date === dateStr && l.completed).length;
+                    const dLogs = getValidStudyLogs(child).filter(l => l.date === dateStr);
+                    dTotal = dLogs.length;
+                    dCompleted = dLogs.filter(l => l.completed !== false).length;
                 }
                 
                 periodTotal += dTotal;
@@ -5302,9 +5504,9 @@
 
             document.getElementById('db-summary-time').innerHTML = `${totalTime} <span class="text-sm font-bold text-slate-500">분</span>`;
             document.getElementById('db-summary-missions').innerHTML = `
-                <span>완료 ${periodCompleted}</span>
+                <span class="cursor-pointer hover:text-indigo-600 transition" onclick="showCompletionDetail('COMPLETED')">완료 ${periodCompleted}</span>
                 <span class="text-slate-300 text-xl sm:text-2xl font-light px-2">/</span>
-                <span>전체 ${periodTotal}</span>
+                <span class="cursor-pointer hover:text-indigo-600 transition" onclick="showCompletionDetail('ALL')">전체 ${periodTotal}</span>
             `;
             document.getElementById('db-summary-percent').innerText = `${successRatio}%`;
 
@@ -5386,6 +5588,13 @@
                     }]
                 },
                 options: {
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const dataIndex = elements[0].index;
+                            const subject = distChartInstance.data.labels[dataIndex];
+                            showCompletionDetail('ALL', subject);
+                        }
+                    },
                     cutout: '70%',
                     responsive: true,
                     maintainAspectRatio: false,
@@ -5493,7 +5702,7 @@
             const endRange = new Date(targetSundayDate);
             endRange.setDate(startRange.getDate() + 6);
 
-            const weeklyLogs = (child.studyLogs || []).filter(log => {
+            const weeklyLogs = getValidStudyLogs(child).filter(log => {
                 const logDate = new Date(log.date);
                 return logDate >= startRange && logDate <= endRange;
             });
@@ -5671,6 +5880,18 @@
             
             domEventsInitialized = true;
         }
+
+        // ==================== 실시간 전역 에러 모니터링 모듈 ====================
+        window.addEventListener('error', function(event) {
+            console.error("Global Error Caught:", event.error);
+            showToast(`[시스템 오류] ${event.message}`, "error");
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error("Unhandled Promise Rejection:", event.reason);
+            const reasonMsg = event.reason && event.reason.message ? event.reason.message : event.reason;
+            showToast(`[통신/비동기 오류] ${reasonMsg}`, "error");
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             initDOMEvents();
