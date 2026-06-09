@@ -468,9 +468,9 @@
                                     <div class="text-center">
                                         <p class="text-[11px] text-slate-400 mb-1">상세 내역을 보려면 숫자나 그래프를 클릭하세요.</p>
                                         <p class="text-2xl font-black text-slate-800">
-                                            <span id="stat-completion-ratio" class="cursor-pointer hover:text-sky-600 transition" onclick="showCompletionDetail('COMPLETED')">0</span>
+                                            <span id="stat-completion-ratio" class="cursor-pointer hover:text-sky-600 transition" onclick="showCompletionDetail('COMPLETED')">완료 0</span>
                                             <span class="text-slate-300 font-medium">/</span>
-                                            <span id="stat-completion-total" class="cursor-pointer hover:text-sky-600 transition" onclick="showCompletionDetail('ALL')">0</span>
+                                            <span id="stat-completion-total" class="cursor-pointer hover:text-sky-600 transition" onclick="showCompletionDetail('ALL')">전체 0</span>
                                         </p>
                                     </div>
                                 </div>
@@ -4037,8 +4037,8 @@
                 total += tMissions.length;
             }
             
-            document.getElementById('stat-completion-ratio').innerText = String(completed);
-            document.getElementById('stat-completion-total').innerText = String(total);
+            document.getElementById('stat-completion-ratio').innerText = `완료 ${completed}`;
+            document.getElementById('stat-completion-total').innerText = `전체 ${total}`;
             
             const completionCtx = document.getElementById('achievement-completion-chart');
             if (!completionCtx) return;
