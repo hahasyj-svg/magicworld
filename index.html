@@ -201,7 +201,7 @@
                                 <i class="fa-solid fa-house-chimney-user"></i> family
                             </span>
                         </h1>
-                        <p class="text-xs text-slate-500 font-medium">실시간 동기화로 부모님과 함께 가꾸는 즐거운 모험 놀이터 🎡</p>
+                        <p class="text-xs text-slate-500 font-medium">계획한대로 실행하고 보상받는 나만의 플래너 🎡</p>
                     </div>
                 </div>
 
@@ -330,12 +330,16 @@
                             </div>
                             <div class="space-y-4">
                                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                    <div class="flex items-center justify-between gap-3 mb-4">
-                                        <div>
-                                            <h3 class="font-bold text-lg text-slate-800">🎯 오늘의 체크리스트</h3>
-                                            <p class="text-xs text-slate-400">오늘 완료해야 할 목표를 확인하고 드림코인을 모아요.</p>
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                                        <div class="flex items-center gap-2">
+                                            <button onclick="changeChecklistDate(-1)" class="w-8 h-8 bg-slate-50 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:text-emerald-500 hover:bg-emerald-50 transition flex items-center justify-center shrink-0"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                            <div class="text-center sm:text-left">
+                                                <h3 class="font-bold text-lg text-slate-800 cursor-pointer hover:text-emerald-600 transition" onclick="resetChecklistDate()" id="checklist-title">🎯 오늘의 체크리스트</h3>
+                                                <p class="text-xs text-slate-400" id="checklist-subtitle">오늘 완료해야 할 목표를 확인하고 드림코인을 모아요.</p>
+                                            </div>
+                                            <button onclick="changeChecklistDate(1)" class="w-8 h-8 bg-slate-50 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:text-emerald-500 hover:bg-emerald-50 transition flex items-center justify-center shrink-0"><i class="fa-solid fa-chevron-right text-xs"></i></button>
                                         </div>
-                                        <button onclick="toggleChildCustomForm()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2">
+                                        <button onclick="toggleChildCustomForm()" id="checklist-add-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition flex items-center gap-2 shrink-0">
                                             <i class="fa-solid fa-circle-plus"></i> 직접 추가
                                         </button>
                                     </div>
@@ -681,7 +685,7 @@
 
                             <!-- 승인 요청 리스트 영역 -->
                             <div class="mb-6 flex-grow">
-                                <h4 class="text-xs font-black text-slate-700 mb-2 flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> 실시간 승인 요청 및 배송 대기 리스트</h4>
+                                <h4 class="text-xs font-black text-slate-700 mb-2 flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> 실시간 코인교환 요청 리스트</h4>
                                 <div id="parent-reward-requests-list" class="space-y-3 max-h-[160px] overflow-y-auto pr-1"></div>
                             </div>
 
@@ -718,7 +722,7 @@
 
                             <!-- 승인 요청 리스트 영역 -->
                             <div class="mb-6 flex-grow">
-                                <h4 class="text-xs font-black text-slate-700 mb-2 flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-emerald-500"></i> 실시간 도전 완료 확인 및 드림코인 지급 리스트</h4>
+                                <h4 class="text-xs font-black text-slate-700 mb-2 flex items-center gap-1"><i class="fa-solid fa-circle-exclamation text-emerald-500"></i> 실시간 자녀도전 결재 리스트</h4>
                                 <div id="parent-custom-mission-requests" class="space-y-3 max-h-[160px] overflow-y-auto pr-1"></div>
                             </div>
 
@@ -952,46 +956,113 @@
 
     <!-- ==================== 전역 상세 정보 팝업 모달 ==================== -->
     <div id="schedule-calendar-modal" onclick="if(event.target === this) closeScheduleModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[210] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-3xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[90vh] overflow-y-auto" id="schedule-calendar-box">
+        <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-5xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[95vh] overflow-y-auto" id="schedule-calendar-box">
             <button onclick="closeScheduleModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-4">
                 <div>
-                    <h3 class="text-lg sm:text-xl font-black text-slate-800">중요 일정 및 숙제 알림판</h3>
-                    <p class="text-xs text-slate-500 mt-1">등록된 일정은 달력의 해당 날짜에 아이콘과 텍스트로 표시됩니다.</p>
+                    <h3 class="text-lg sm:text-xl font-black text-slate-800">📅 중요 일정 및 숙제 알림판</h3>
+                    <p class="text-xs text-slate-500 mt-1">입력, 달력, 일정 목록을 한눈에 관리하세요.</p>
                 </div>
             </div>
-            <form onsubmit="handleSaveSchedule(event)" class="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-4 text-xs">
-                <input type="hidden" id="form-sched-mode" value="ADD">
-                <input type="hidden" id="form-sched-id" value="">
-                <div>
-                    <label class="block text-slate-500 font-bold mb-1">카테고리</label>
-                    <select id="form-sched-category" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
-                        <option value="시험">📝 시험</option>
-                        <option value="숙제">📚 숙제</option>
-                        <option value="준비물">🎨 준비물</option>
-                        <option value="행사">🎡 행사</option>
-                    </select>
-                </div>
-                <div class="lg:col-span-2">
-                    <label class="block text-slate-500 font-bold mb-1">메모 내용</label>
-                    <input type="text" id="form-sched-content" placeholder="예: 내일 발표 준비, 영어 숙제" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-slate-500 font-bold mb-1">기한</label>
-                    <input type="date" id="form-sched-duedate" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus:outline-none">
-                </div>
-                <div class="col-span-full lg:col-auto flex gap-2">
-                    <button type="submit" id="schedule-submit-btn" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl px-4 py-3 text-sm shadow-sm transition">등록</button>
-                    <button type="button" onclick="closeScheduleModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl px-4 py-3 text-sm shadow-sm transition">취소</button>
-                </div>
-            </form>
-            <div class="flex items-center justify-between bg-slate-50 p-1.5 sm:p-2 rounded-2xl mb-4 border border-slate-100 mt-4">
-                <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left text-xs sm:text-base"></i></button>
-                <h4 class="font-black text-slate-800 text-base sm:text-lg" id="modal-calendar-title"></h4>
-                <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-base"></i></button>
+
+            <!-- 1. 일정 입력 영역 -->
+            <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl mb-4 sm:mb-6 shadow-sm">
+                <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-indigo-500"></i> 일정 입력</h4>
+                <form onsubmit="handleSaveSchedule(event)" class="grid grid-cols-1 lg:grid-cols-4 gap-3 text-xs">
+                    <input type="hidden" id="form-sched-mode" value="ADD">
+                    <input type="hidden" id="form-sched-id" value="">
+                    
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">카테고리</label>
+                        <select id="form-sched-category" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold text-slate-700">
+                            <option value="시험">📝 시험</option>
+                            <option value="숙제">📚 숙제</option>
+                            <option value="준비물">🎨 준비물</option>
+                            <option value="행사">🎡 행사</option>
+                        </select>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-slate-500 font-bold mb-1">메모 내용</label>
+                        <input type="text" id="form-sched-content" placeholder="예: 내일 발표 준비, 영어 숙제" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 font-bold mb-1">기한 (시작 날짜)</label>
+                        <input type="date" id="form-sched-duedate" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold text-indigo-600">
+                    </div>
+
+                    <!-- 반복 설정 토글 버튼 -->
+                    <div class="col-span-full" id="repeat-toggle-wrapper">
+                        <button type="button" id="repeat-toggle-btn" onclick="toggleRepeatOptions()" class="text-xs font-bold text-slate-500 hover:text-indigo-600 transition flex items-center gap-1.5 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                            <i id="repeat-toggle-icon" class="fa-solid fa-chevron-down"></i> <span id="repeat-toggle-text">상세 반복 설정 열기</span>
+                        </button>
+                    </div>
+
+                    <!-- 반복 설정 아코디언 영역 -->
+                    <div id="repeat-options-container" class="col-span-full bg-white p-4 rounded-xl border border-slate-200 hidden gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 shadow-inner">
+                        <div class="col-span-1 lg:col-span-2 flex gap-3">
+                            <div class="flex-1">
+                                <label class="block text-slate-500 font-bold mb-1">반복 유형</label>
+                                <select id="form-sched-repeat" onchange="handleRepeatTypeChange()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold text-slate-700">
+                                    <option value="NONE">반복 없음</option>
+                                    <option value="DAILY">매일</option>
+                                    <option value="WEEKLY">매주</option>
+                                    <option value="MONTHLY">매월</option>
+                                </select>
+                            </div>
+                            <div id="repeat-end-date-wrapper" class="flex-1 hidden">
+                                <label class="block text-slate-500 font-bold mb-1">반복 종료일</label>
+                                <input type="date" id="form-sched-repeat-end-date" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold text-indigo-600">
+                            </div>
+                        </div>
+                        <div id="repeat-weekly-options" class="col-span-full lg:col-span-2 hidden">
+                            <label class="block text-slate-500 font-bold mb-2">반복 요일 선택</label>
+                            <div class="flex gap-2 flex-wrap text-[11px]">
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="0" class="text-indigo-500 focus:ring-indigo-400"> 일</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="1" class="text-indigo-500 focus:ring-indigo-400"> 월</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="2" class="text-indigo-500 focus:ring-indigo-400"> 화</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="3" class="text-indigo-500 focus:ring-indigo-400"> 수</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="4" class="text-indigo-500 focus:ring-indigo-400"> 목</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="5" class="text-indigo-500 focus:ring-indigo-400"> 금</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="6" class="text-indigo-500 focus:ring-indigo-400"> 토</label>
+                            </div>
+                        </div>
+                        <div id="repeat-monthly-options" class="col-span-full lg:col-span-2 hidden">
+                            <label class="block text-slate-500 font-bold mb-2">매월 반복 기준</label>
+                            <div class="flex gap-4 items-center">
+                                <label class="flex items-center gap-1.5 cursor-pointer font-bold text-slate-600"><input type="radio" name="repeat-monthly-type" value="DATE" checked class="w-3.5 h-3.5 text-indigo-600 focus:ring-indigo-400"> 매월 같은 날짜</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer font-bold text-slate-600"><input type="radio" name="repeat-monthly-type" value="NTH_DAY" class="w-3.5 h-3.5 text-indigo-600 focus:ring-indigo-400"> N번째 같은 요일</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-full flex gap-2 justify-end mt-2">
+                        <button type="button" onclick="resetScheduleForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold rounded-xl px-5 py-2.5 text-xs shadow-sm transition">초기화</button>
+                        <button type="submit" id="schedule-submit-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl px-6 py-2.5 text-xs shadow-sm transition">일정 등록</button>
+                    </div>
+                </form>
             </div>
-            <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-2 text-[11px]"></div>
-            <div id="schedule-calendar-items" class="mt-4 space-y-3"></div>
+            
+            <!-- 2. 달력 및 목록 2분할 영역 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+                
+                <!-- 좌측 달력 -->
+                <div class="lg:col-span-7 bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i></button>
+                        <h4 class="font-black text-slate-800 text-base sm:text-lg" id="modal-calendar-title"></h4>
+                        <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i></button>
+                    </div>
+                    <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-1 sm:gap-2 text-[11px]"></div>
+                </div>
+
+                <!-- 우측 목록 -->
+                <div class="lg:col-span-5 bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col h-[400px] lg:h-auto min-h-[400px]">
+                    <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2 shrink-0"><i class="fa-solid fa-list-ul text-orange-500"></i> 해당 월 일정 목록</h4>
+                    <div id="schedule-calendar-items" class="space-y-3 overflow-y-auto pr-2 flex-grow scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent pb-2">
+                        <!-- 동적 렌더링 -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1113,7 +1184,7 @@
     </div>
     
     <!-- ==================== 버그 및 충돌 방지 커스텀 다이얼로그 모달 모듈 ==================== -->
-    <div id="custom-modal" onclick="if(event.target === this) closeCustomModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[200] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+    <div id="custom-modal" onclick="if(event.target === this) closeCustomModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[290] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="custom-modal-box">
             <h3 class="text-lg font-black text-slate-800 mb-2" id="custom-modal-title">알림</h3>
             <p class="text-xs text-slate-500 mb-6 leading-relaxed" id="custom-modal-message">내용</p>
@@ -1240,8 +1311,12 @@
         window.editSchedule = editSchedule;
         window.toggleScheduleComplete = toggleScheduleComplete;
         window.deleteSchedule = deleteSchedule;
+        window.showChoiceModal = showChoiceModal;
         window.submitMissionProgress = submitMissionProgress;
         window.cancelMissionProgress = cancelMissionProgress; // 신규: 완료 미션 취소 기능
+        window.changeChecklistDate = changeChecklistDate;
+        window.resetChecklistDate = resetChecklistDate;
+        window.renderChildStoreStatusList = renderChildStoreStatusList;
         window.setTargetReward = setTargetReward; // 신규: 목표 포상 설정
         window.purchaseReward = purchaseReward;
         window.cancelRewardRequest = cancelRewardRequest;
@@ -1255,10 +1330,9 @@
         window.openScheduleModal = openScheduleModal;
         window.closeScheduleModal = closeScheduleModal;
         window.setScheduleFormDate = setScheduleFormDate;
+        window.resetScheduleForm = resetScheduleForm;
         window.changeCalendarMonth = changeCalendarMonth;
         window.setChildStoreStatusFilter = setChildStoreStatusFilter;
-        window.cancelRewardRequest = cancelRewardRequest;
-        window.markRewardDelivered = markRewardDelivered;
         window.showTodayTasksDetail = showTodayTasksDetail;
         window.closeTodayTasksDetail = closeTodayTasksDetail;
         window.showTodayCompletedDetail = showTodayCompletedDetail;
@@ -1277,12 +1351,13 @@
         window.closeCompletionDetail = closeCompletionDetail;
         window.renderChildAchievementCharts = renderChildAchievementCharts;
         window.setChartFilter = setChartFilter;
+        window.toggleRepeatOptions = toggleRepeatOptions;
+        window.handleRepeatTypeChange = handleRepeatTypeChange;
         
         window.openSubjectManageModal = openSubjectManageModal;
         window.closeSubjectManageModal = closeSubjectManageModal;
         window.addSubject = addSubject;
         window.deleteSubject = deleteSubject;
-        window.deleteSchedule = deleteSchedule;
         window.toggleChildCustomForm = toggleChildCustomForm;
         window.handleChildCreateMission = handleChildCreateMission;
         window.deleteChildCustomMission = deleteChildCustomMission;
@@ -1334,7 +1409,9 @@
         let subjectChartInstance = null;
         let coinChartInstance = null;
 
-        Chart.register(ChartDataLabels);
+        if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+            Chart.register(ChartDataLabels);
+        }
 
         // 임시 사진 데이터 보관함
         let currentPhotoBase64 = "";
@@ -1371,11 +1448,20 @@
             });
         }
 
-        // 로컬 가상 클라우드 데이터베이션(오프라인 모드 세션)
-        let localDB = JSON.parse(localStorage.getItem('magic_land_local_db')) || {};
+        // 로컬 가상 클라우드 데이터베이스 (오프라인 모드 세션) - JSON 파싱 방어
+        let localDB = {};
+        try {
+            const rawDB = localStorage.getItem('magic_land_local_db');
+            if (rawDB) {
+                localDB = JSON.parse(rawDB);
+            }
+        } catch (e) {
+            console.warn("로컬 DB 파싱 오류. 빈 객체로 초기화합니다.");
+        }
 
         let currentCalYear = new Date().getFullYear();
         let currentCalMonth = new Date().getMonth();
+        let currentChecklistDate = new Date();
 
         // 🟢 Firebase 연동 시작
         async function runFirebaseSetup() {
@@ -1417,14 +1503,16 @@
             const savedSession = sessionStorage.getItem('magic_logged_in_user');
             if (savedSession) {
                 loggedInUser = JSON.parse(savedSession);
-                await loadUserData();
-                showMainApp();
-                await loadUserData(true);
-                const childList = getSortedChildren();
-                if (childList.length > 0 && !state.isParentMode) {
-                    openChildSelectionModal();
+                await loadUserData(true); // 데이터 동기화 단일화
+                if (loggedInUser.role === 'admin') {
+                    await showMainApp();
                 } else {
-                    showMainApp();
+                    const childList = getSortedChildren();
+                    if (childList.length > 0 && !state.isParentMode) {
+                        openChildSelectionModal();
+                    } else {
+                        await showMainApp();
+                    }
                 }
             }
         }
@@ -1451,14 +1539,8 @@
             // 온라인 파이어베이스 저장 (Strict Path 준수: /artifacts/{appId}/public/data/users/{username})
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
             try {
-                // 유저 메타데이터 및 플래너 상태 일괄 보관
-                const currentDoc = await getDoc(docRef);
-                const meta = currentDoc.exists() ? currentDoc.data() : {};
-                
-                await setDoc(docRef, {
-                    ...meta,
-                    state: state
-                });
+                // 유저 메타데이터 보존을 위해 merge 옵션 사용 (getDoc 호출 제거로 Race Condition 원천 차단)
+                await setDoc(docRef, { state: state }, { merge: true });
             } catch (error) {
                 console.error("클라우드 데이터 저장 실패:", error);
                 showToast("데이터를 동기화하는 중 실패했습니다.", "error");
@@ -1651,7 +1733,15 @@
                 }
             } catch (err) {
                 console.error(err);
-                showToast("중복 확인 도중 오류가 발생했습니다.", "error");
+                if (localDB[id]) {
+                    resultText.innerText = "[오프라인] 이미 사용 중인 패밀리 ID입니다.";
+                    resultText.className = "text-[10px] mt-1 font-medium text-rose-500";
+                    isUsernameChecked = false;
+                } else {
+                    resultText.innerText = "[오프라인] 사용 가능한 안전한 ID입니다!";
+                    resultText.className = "text-[10px] mt-1 font-medium text-emerald-600";
+                    isUsernameChecked = true;
+                }
             }
         }
 
@@ -1700,7 +1790,17 @@
                 toggleAuthForm('LOGIN');
             } catch (err) {
                 console.error(err);
-                showToast("가입 데이터 전송 중 오류 발생", "error");
+                localDB[id] = {
+                    id: id,
+                    password: pw,
+                    recoveryQuestion: question,
+                    recoveryAnswer: answer,
+                    registerDate: today,
+                    state: null
+                };
+                localStorage.setItem('magic_land_local_db', JSON.stringify(localDB));
+                showToast("네트워크 연결이 불안정하여 로컬 계정으로 회원 등록을 완료했습니다.");
+                toggleAuthForm('LOGIN');
             }
         }
 
@@ -1753,8 +1853,15 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    showToast("네트워크 인증 실패", "error");
-                    return;
+                    const target = localDB[id];
+                    if (target && target.password === pw) {
+                        authSuccess = true;
+                        isOfflineMode = true;
+                        showToast(`[오프라인 모드] 패밀리 게이트가 활성화되었습니다.`);
+                    } else {
+                        showToast("네트워크 인증에 실패했으며, 로컬 정보와도 일치하지 않습니다.", "error");
+                        return;
+                    }
                 }
             }
 
@@ -1916,15 +2023,6 @@
                 adminTab.classList.add('hidden');
                 adminTab.classList.remove('flex');
                 
-                const preservedChildId = state.activeChildId;
-                await loadUserData();
-                if (!state || Object.keys(state.children || {}).length === 0) {
-                    await loadUserData();
-                }
-                
-                if (preservedChildId && state && state.children && state.children[preservedChildId]) {
-                    state.activeChildId = preservedChildId;
-                }
                 syncDOM();
             }
         }
@@ -2377,8 +2475,8 @@
                             <td class="p-2.5 font-bold text-slate-700">${r.title}</td>
                             <td class="p-2.5 font-black text-amber-600">⭐ ${r.cost} 코인</td>
                             <td class="p-2.5 text-center space-x-2">
-                                <button onclick="editRewardStoreItem(${r.id})" class="text-indigo-600 hover:underline"><i class="fa-solid fa-pencil"></i> 수정</button>
-                                <button onclick="deleteRewardStoreItem(${r.id})" class="text-rose-500 hover:underline"><i class="fa-solid fa-trash-can"></i> 삭제</button>
+                                <button onclick="editRewardStoreItem('${r.id}')" class="text-indigo-600 hover:underline"><i class="fa-solid fa-pencil"></i> 수정</button>
+                                <button onclick="deleteRewardStoreItem('${r.id}')" class="text-rose-500 hover:underline"><i class="fa-solid fa-trash-can"></i> 삭제</button>
                             </td>
                         </tr>
                     `;
@@ -2550,12 +2648,6 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            if (file.size > 250 * 1024) {
-                showAlert("업로드 실패", "원활한 실시간 클라우드 동기화를 위해 사진은 250KB 이하의 소형 이미지만 업로드할 수 있습니다.");
-                e.target.value = "";
-                return;
-            }
-
             const reader = new FileReader();
             reader.onload = function(evt) {
                 currentPhotoBase64 = evt.target.result;
@@ -2672,15 +2764,17 @@
                         star.remove();
                         if (i === 5) {
                             destEl.classList.add('scale-110', 'bg-amber-100');
-                            confetti({
-                                particleCount: 30,
-                                spread: 45,
-                                origin: {
-                                    x: destX / window.innerWidth,
-                                    y: destY / window.innerHeight
-                                },
-                                colors: ['#f59e0b', '#fbbf24', '#fef08a']
-                            });
+                            if (typeof confetti === 'function') {
+                                confetti({
+                                    particleCount: 30,
+                                    spread: 45,
+                                    origin: {
+                                        x: destX / window.innerWidth,
+                                        y: destY / window.innerHeight
+                                    },
+                                    colors: ['#f59e0b', '#fbbf24', '#fef08a']
+                                });
+                            }
                             setTimeout(() => destEl.classList.remove('scale-110', 'bg-amber-100'), 300);
                         }
                     }, 1100);
@@ -2705,6 +2799,11 @@
             if (!subject || !content || !range) return;
 
             const targetChild = state.children[state.activeChildId];
+            const targetY = currentChecklistDate.getFullYear();
+            const targetM = String(currentChecklistDate.getMonth() + 1).padStart(2, '0');
+            const targetD = String(currentChecklistDate.getDate()).padStart(2, '0');
+            const targetDateStr = `${targetY}-${targetM}-${targetD}`;
+
             const newMission = {
                 id: Date.now(),
                 subject: subject,
@@ -2716,7 +2815,7 @@
                 isApproved: false,
                 timeSpent: 0,
                 actualRange: "",
-                date: new Date().toISOString().split('T')[0]
+                date: targetDateStr
             };
 
             if (!targetChild.todayMissions) targetChild.todayMissions = [];
@@ -2756,7 +2855,7 @@
             }
             
             const targetChild = state.children[state.activeChildId];
-            const mission = targetChild.todayMissions.find(m => m.id === missionId);
+            const mission = targetChild.todayMissions.find(m => String(m.id) === String(missionId));
             if(mission) {
                 mission.completed = true;
                 mission.timeSpent = mins;
@@ -2822,10 +2921,11 @@
 
                 // Study Log 제거
                 const todayStr = new Date().toISOString().split('T')[0];
+                const targetDateStr = mission.date || todayStr;
                 if (targetChild.studyLogs) {
                     targetChild.studyLogs = targetChild.studyLogs.filter(log => {
                         if (log.missionId) return String(log.missionId) !== String(missionId);
-                        return !(log.date === todayStr && log.subject === mission.subject);
+                        return !(log.date === targetDateStr && log.subject === mission.subject);
                     });
                 }
 
@@ -2859,21 +2959,43 @@
             else if (iconClass === "fa-gift") emoji = "🎁";
             else if (iconClass === "fa-pizza-slice") emoji = "🍕";
 
-            for (let i = 0; i < 20; i++) {
+            // 화려한 폭죽(Confetti) 효과 추가
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                const particleCount = 50 * (timeLeft / duration);
+                if (typeof confetti === 'function') {
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }
+            }, 250);
+
+            // 기존 이모지 효과를 더 길고 풍성하게 수정 (20개 -> 40개, 크기 다양화)
+            for (let i = 0; i < 40; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
-                    el.className = 'fixed z-[9999] pointer-events-none text-4xl';
+                    el.className = 'fixed z-[9999] pointer-events-none text-5xl';
                     el.innerText = emoji;
-                    el.style.left = `${10 + Math.random() * 80}vw`;
+                    el.style.left = `${5 + Math.random() * 90}vw`;
                     el.style.top = `100vh`;
-                    el.style.transition = `all ${1.5 + Math.random()}s cubic-bezier(0.25, 1, 0.5, 1)`;
+                    el.style.transition = `all ${2 + Math.random() * 1.5}s cubic-bezier(0.25, 1, 0.5, 1)`;
                     document.body.appendChild(el);
                     requestAnimationFrame(() => {
-                        el.style.transform = `translateY(-120vh) rotate(${(Math.random() - 0.5) * 360}deg)`;
+                        el.style.transform = `translateY(-120vh) rotate(${(Math.random() - 0.5) * 720}deg) scale(${0.5 + Math.random()})`;
                         el.style.opacity = '0';
                     });
-                    setTimeout(() => el.remove(), 3000);
-                }, i * 80);
+                    setTimeout(() => el.remove(), 4000);
+                }, i * 60);
             }
         }
 
@@ -2948,10 +3070,6 @@
             showConfirm("쿠폰 교환 반려", `이 요청을 거절하고 차감된 드림 코인 ${req.cost}개를 자녀에게 돌려주시겠습니까?`, async () => {
                 targetChild.stars += req.cost;
 
-                if (targetChild.studyLogs) {
-                    targetChild.studyLogs = targetChild.studyLogs.filter(log => String(log.missionId) !== String(req.missionId));
-                }
-
                 const todayStr = new Date().toISOString().split('T')[0];
                 if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
                 targetChild.approvalHistory.push({
@@ -3018,6 +3136,10 @@
                     mission.completed = false;
                     mission.timeSpent = 0;
                     mission.actualRange = "";
+                }
+
+                if (targetChild.studyLogs) {
+                    targetChild.studyLogs = targetChild.studyLogs.filter(log => String(log.missionId) !== String(req.missionId));
                 }
 
                 const todayStr = new Date().toISOString().split('T')[0];
@@ -3214,6 +3336,9 @@
                     <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm sm:text-base font-black text-amber-800 text-center mb-4 shadow-sm">
                         💰 오늘 총 ${totalCoins}개 획득!
                     </div>
+                    <div class="mb-4 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🌟 참 잘했어요! 오늘도 드림코인을 가득 모았네요! 🌟
+                    </div>
                     ${completedMissions.map(m => `
                         <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
                             <div class="flex flex-col gap-3">
@@ -3232,9 +3357,6 @@
                             </div>
                         </div>
                     `).join('')}
-                    <div class="mt-2 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                        🌟 참 잘했어요! 오늘도 드림코인을 가득 모았네요! 🌟
-                    </div>
                 `;
             }
             
@@ -3268,31 +3390,57 @@
                 return schedDate >= weekStart && schedDate <= weekEnd && (s.category === '시험' || s.category === '숙제');
             });
             
+            const todayStr = new Date().toISOString().split('T')[0];
+
             if (weekExams.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 예정된 시험 및 숙제가 없습니다.</div>';
             } else {
             listEl.innerHTML = `
-                ${weekExams.map(s => `
-                    <div class="rounded-3xl border ${s.completed ? 'border-emerald-200 bg-emerald-50' : 'border-violet-200 bg-violet-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                <div class="mb-4 p-3 bg-violet-100 text-violet-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                    🔥 미리미리 준비하는 모습 참 잘했어요! 파이팅! 🔥
+                </div>
+                ${weekExams.map(s => {
+                    const [sY, sM, sD] = s.duedate.split('-');
+                    const dObj = new Date(sY, sM - 1, sD);
+                    const dWeek = ['일', '월', '화', '수', '목', '금', '토'][dObj.getDay()];
+                    const formattedDueDate = `${s.duedate} ${dWeek}요일`;
+                    const isPast = !s.completed && s.duedate < todayStr;
+                    const isCompletedOrPast = s.completed || isPast;
+
+                    let bgClass = s.completed ? 'border-emerald-200 bg-emerald-50' : 'border-violet-200 bg-violet-50';
+                    let textClass = s.completed ? 'text-emerald-600' : 'text-violet-600';
+                    let badgeClass = s.completed ? 'text-emerald-600 bg-emerald-100' : 'text-violet-600 bg-violet-100';
+                    let dateBadgeClass = s.completed ? 'text-emerald-600 bg-white border-emerald-200' : 'text-violet-600 bg-white border-violet-200';
+                    let iconClass = s.completed ? 'text-emerald-500 animate-bounce' : 'text-violet-500';
+                    let statusText = s.completed ? '✓ 완료' : '예정';
+
+                    if (isPast) {
+                        bgClass = 'border-slate-200 bg-slate-50';
+                        textClass = 'text-slate-500';
+                        badgeClass = 'text-slate-500 bg-slate-200';
+                        dateBadgeClass = 'text-slate-500 bg-white border-slate-300';
+                        iconClass = 'text-slate-400';
+                        statusText = '✓ 완료';
+                    }
+
+                    return `
+                    <div class="rounded-3xl border ${bgClass} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="${s.completed ? 'text-emerald-600' : 'text-violet-600'}">[${s.category}]</span> ${s.content}
+                                    <span class="${textClass}">[${s.category}]</span> ${s.content}
                                 </h4>
-                                <span class="text-xs font-bold shrink-0 ${s.completed ? 'text-emerald-600 bg-emerald-100' : 'text-violet-600 bg-violet-100'} px-2.5 py-1 rounded-full">${s.completed ? '✓ 완료' : '예정'}</span>
+                                <span class="text-xs font-bold shrink-0 ${badgeClass} px-2.5 py-1 rounded-full">${statusText}</span>
                             </div>
                             <div class="flex justify-end">
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${s.completed ? 'text-emerald-600 bg-white border-emerald-200' : 'text-violet-600 bg-white border-violet-200'} border px-3 py-1.5 rounded-2xl shadow-sm ${s.completed ? '' : 'animate-pulse'}">
-                                    <i class="fa-regular fa-calendar-check ${s.completed ? 'text-emerald-500 animate-bounce' : 'text-violet-500'}"></i> 
-                                    기한: ${s.duedate}
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${dateBadgeClass} border px-3 py-1.5 rounded-2xl shadow-sm ${isCompletedOrPast ? '' : 'animate-pulse'}">
+                                    <i class="fa-regular fa-calendar-check ${iconClass}"></i> 
+                                    기한: ${formattedDueDate}
                                 </span>
                             </div>
                             </div>
                         </div>
-                `).join('')}
-                <div class="mt-2 p-3 bg-violet-100 text-violet-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                    🔥 미리미리 준비하는 모습 참 잘했어요! 파이팅! 🔥
-                </div>
+                `}).join('')}
             `;
             }
             
@@ -3326,6 +3474,11 @@
             if (logs.length === 0) {
                 html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 확정 획득한 코인이 없습니다.</div>';
             } else {
+                html += `
+                    <div class="mb-4 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🌟 일주일 동안 열심히 모은 코인이에요! 멋져요! 🌟
+                    </div>
+                `;
                 html += logs.map(m => `
                     <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
                         <div class="flex flex-col gap-3">
@@ -3345,11 +3498,6 @@
                         </div>
                     </div>
                 `).join('');
-                html += `
-                    <div class="mt-2 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                        🌟 일주일 동안 열심히 모은 코인이에요! 멋져요! 🌟
-                    </div>
-                `;
             }
             listEl.innerHTML = html;
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3381,6 +3529,35 @@
                 </div>
             `;
             
+            if (logs.length === 0 && expectedTotal === logSum) {
+                html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">누적 확정 획득한 코인이 없습니다.</div>';
+            } else {
+                html += `
+                    <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🏆 꾸준히 모아온 소중한 나의 드림 코인이에요! 정말 대단해요! 🏆
+                    </div>
+                `;
+                html += logs.map(m => `
+                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                    <span class="text-emerald-600">[${m.subject}]</span> ${m.content || '학습내용'}
+                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${m.date}</span>
+                                </h4>
+                                <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">✓ 완료</span>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-emerald-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                    코인 ${m.stars || 0}개 획득! 🎉
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
             if (expectedTotal !== logSum) {
                 const diff = expectedTotal - logSum;
                 html += `
@@ -3401,35 +3578,7 @@
                     </div>
                 `;
             }
-            
-            if (logs.length === 0 && expectedTotal === logSum) {
-                html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">누적 확정 획득한 코인이 없습니다.</div>';
-            } else {
-                html += logs.map(m => `
-                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
-                        <div class="flex flex-col gap-3">
-                            <div class="flex items-start justify-between gap-3">
-                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="text-emerald-600">[${m.subject}]</span> ${m.content || '학습내용'}
-                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${m.date}</span>
-                                </h4>
-                                <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">✓ 완료</span>
-                            </div>
-                            <div class="flex justify-end">
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-emerald-300 px-3 py-1.5 rounded-2xl shadow-sm">
-                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
-                                    코인 ${m.stars || 0}개 획득! 🎉
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-                html += `
-                    <div class="mt-2 p-3 bg-emerald-100 text-emerald-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                        🏆 꾸준히 모아온 소중한 나의 드림 코인이에요! 정말 대단해요! 🏆
-                    </div>
-                `;
-            }
+
             listEl.innerHTML = html;
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
@@ -3458,7 +3607,12 @@
             if (usedItems.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">사용한 코인 내역이 없습니다.</div>';
             } else {
-                let html = usedItems.map(item => `
+                let html = `
+                    <div class="mb-4 p-3 bg-rose-100 text-rose-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🎁 모은 코인으로 원하는 걸 이루었어요! 🎁
+                    </div>
+                `;
+                html += usedItems.map(item => `
                     <div class="rounded-3xl border border-rose-200 bg-rose-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
@@ -3477,11 +3631,6 @@
                         </div>
                     </div>
                 `).join('');
-                html += `
-                    <div class="mt-2 p-3 bg-rose-100 text-rose-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                        🎁 모은 코인으로 원하는 걸 이루었어요! 🎁
-                    </div>
-                `;
                 listEl.innerHTML = html;
             }
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3591,7 +3740,21 @@
             if (items.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">해당 조건의 내역이 없습니다.</div>';
             } else {
-                let html = items.map(item => `
+                let html = '';
+                if (mode === 'COMPLETED' || mode === 'ALL') {
+                    html += `
+                        <div class="mb-4 p-3 bg-indigo-100 text-indigo-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                            📚 열심히 공부한 흔적이에요! 아주 훌륭해요! 📚
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="mb-4 p-3 bg-slate-100 text-slate-600 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                            🔥 조금만 더 힘내서 미완료 항목들을 없애볼까요? 🔥
+                        </div>
+                    `;
+                }
+                html += items.map(item => `
                     <div class="rounded-3xl border ${item.completed ? 'border-indigo-200 bg-indigo-50' : 'border-slate-200 bg-slate-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
@@ -3610,19 +3773,6 @@
                         </div>
                     </div>
                 `).join('');
-                if (mode === 'COMPLETED' || mode === 'ALL') {
-                    html += `
-                        <div class="mt-2 p-3 bg-indigo-100 text-indigo-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                            📚 열심히 공부한 흔적이에요! 아주 훌륭해요! 📚
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="mt-2 p-3 bg-slate-100 text-slate-600 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                            🔥 조금만 더 힘내서 미완료 항목들을 없애볼까요? 🔥
-                        </div>
-                    `;
-                }
                 listEl.innerHTML = html;
             }
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3699,7 +3849,7 @@
                 renderTodayMissionsList();
             } else if (tabName === 'STORE') {
                 renderStarRewardsStore();
-                renderChildStoreStatusList();
+                setChildStoreStatusFilter(state.childStoreStatusFilter || 'REQUESTED');
             } else if (tabName === 'ACHIEVEMENT') {
                 renderChildAchievementStats();
                 renderChildAchievementCharts();
@@ -3710,17 +3860,63 @@
             const modal = document.getElementById('schedule-calendar-modal');
             const box = document.getElementById('schedule-calendar-box');
             if (!modal || !box) return;
+            const dateInput = document.getElementById('form-sched-duedate');
+            if (dateInput) {
+                if (typeof dateStr === 'string' && dateStr) {
+                    dateInput.value = dateStr;
+                    dateInput.focus();
+                } else {
+                const modeInput = document.getElementById('form-sched-mode');
+                if (!modeInput || modeInput.value !== "EDIT") {
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    dateInput.value = todayStr;
+                }
+                }
+            }
+            
             renderScheduleCalendarModal();
             modal.classList.remove('pointer-events-none', 'opacity-0');
             box.classList.remove('scale-95');
-            
-            if (typeof dateStr === 'string' && dateStr) {
-                const dateInput = document.getElementById('form-sched-duedate');
-                if (dateInput) {
-                    dateInput.value = dateStr;
-                    dateInput.focus();
-                }
+        }
+
+        function toggleRepeatOptions() {
+            const container = document.getElementById('repeat-options-container');
+            const icon = document.getElementById('repeat-toggle-icon');
+            const text = document.getElementById('repeat-toggle-text');
+            if (container && container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                container.classList.add('grid');
+                if (icon) icon.className = "fa-solid fa-chevron-up";
+                if (text) text.innerText = "상세 반복 설정 닫기";
+            } else if (container) {
+                container.classList.add('hidden');
+                container.classList.remove('grid');
+                if (icon) icon.className = "fa-solid fa-chevron-down";
+                if (text) text.innerText = "상세 반복 설정 열기";
             }
+        }
+
+        function handleRepeatTypeChange() {
+            const type = document.getElementById('form-sched-repeat').value;
+            const endDateWrapper = document.getElementById('repeat-end-date-wrapper');
+            const weeklyOptions = document.getElementById('repeat-weekly-options');
+            const monthlyOptions = document.getElementById('repeat-monthly-options');
+
+            if (endDateWrapper) endDateWrapper.classList.add('hidden');
+            if (weeklyOptions) weeklyOptions.classList.add('hidden');
+            if (monthlyOptions) monthlyOptions.classList.add('hidden');
+
+            if (type !== 'NONE') {
+                if (endDateWrapper) endDateWrapper.classList.remove('hidden');
+            }
+            if (type === 'WEEKLY') {
+                if (weeklyOptions) weeklyOptions.classList.remove('hidden');
+            } else if (type === 'MONTHLY') {
+                if (monthlyOptions) monthlyOptions.classList.remove('hidden');
+            }
+            
+            const endDateInput = document.getElementById('form-sched-repeat-end-date');
+            if (endDateInput) endDateInput.disabled = (type === 'NONE');
         }
 
         function setScheduleFormDate(dateStr) {
@@ -3746,14 +3942,40 @@
             const categoryInput = document.getElementById('form-sched-category');
             const contentInput = document.getElementById('form-sched-content');
             const duedateInput = document.getElementById('form-sched-duedate');
+            const repeatInput = document.getElementById('form-sched-repeat');
+            const repeatEndDateInput = document.getElementById('form-sched-repeat-end-date');
             const btn = document.getElementById('schedule-submit-btn');
             
             if(modeInput) modeInput.value = "ADD";
             if(idInput) idInput.value = "";
             if(categoryInput) categoryInput.value = "시험";
             if(contentInput) contentInput.value = "";
-            if(duedateInput) duedateInput.value = "";
-            if(btn) btn.innerText = "등록";
+            if(duedateInput) duedateInput.value = new Date().toISOString().split('T')[0];
+            if(repeatInput) { repeatInput.value = "NONE"; repeatInput.disabled = false; }
+            if(repeatEndDateInput) { repeatEndDateInput.value = ""; repeatEndDateInput.disabled = true; }
+            if(btn) btn.innerText = "일정 등록";
+
+            const repeatContainer = document.getElementById('repeat-options-container');
+            const toggleIcon = document.getElementById('repeat-toggle-icon');
+            const toggleText = document.getElementById('repeat-toggle-text');
+            if (repeatContainer) {
+                repeatContainer.classList.add('hidden');
+                repeatContainer.classList.remove('grid');
+            }
+            if (toggleIcon) toggleIcon.className = "fa-solid fa-chevron-down";
+            if (toggleText) toggleText.innerText = "상세 반복 설정 열기";
+            
+            handleRepeatTypeChange();
+            document.querySelectorAll('input[name="repeat-day"]').forEach(cb => cb.checked = false);
+            const radioDate = document.querySelector('input[name="repeat-monthly-type"][value="DATE"]');
+            if (radioDate) radioDate.checked = true;
+            
+            const repeatToggleBtn = document.getElementById('repeat-toggle-btn');
+            if (repeatToggleBtn) {
+                repeatToggleBtn.classList.remove('hidden');
+                repeatToggleBtn.disabled = false;
+                repeatToggleBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
         }
 
         function editSchedule(schedId) {
@@ -3770,9 +3992,39 @@
             document.getElementById('form-sched-category').value = item.category || "시험";
             document.getElementById('form-sched-content').value = item.content || "";
             document.getElementById('form-sched-duedate').value = item.duedate || "";
-            document.getElementById('schedule-submit-btn').innerText = "수정";
+            document.getElementById('schedule-submit-btn').innerText = "일정 수정";
+
+            const repeatToggleBtn = document.getElementById('repeat-toggle-btn');
+            if (repeatToggleBtn) {
+                repeatToggleBtn.classList.remove('hidden');
+                repeatToggleBtn.disabled = true;
+                repeatToggleBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+            const repeatContainer = document.getElementById('repeat-options-container');
+            if (repeatContainer) {
+                repeatContainer.classList.add('hidden');
+                repeatContainer.classList.remove('grid');
+            }
+
+            const repeatInput = document.getElementById('form-sched-repeat');
+            const repeatEndDateInput = document.getElementById('form-sched-repeat-end-date');
+            if(repeatInput) repeatInput.disabled = true;
+            if(repeatEndDateInput) repeatEndDateInput.disabled = true;
+            
+            const toggleIcon = document.getElementById('repeat-toggle-icon');
+            const toggleText = document.getElementById('repeat-toggle-text');
+            if (toggleIcon) toggleIcon.className = "fa-solid fa-chevron-down";
+            if (toggleText) toggleText.innerText = "반복 설정은 신규 등록 시에만 가능합니다";
 
             openScheduleModal();
+            
+            // 스크롤이 아래에 있을 때 클릭해도 폼이 로드되었음을 인지할 수 있도록 내용 입력창으로 포커스
+            setTimeout(() => {
+                const contentInput = document.getElementById('form-sched-content');
+                if (contentInput) {
+                    contentInput.focus();
+                }
+            }, 50);
         }
 
         function changeCalendarMonth(offset) {
@@ -3852,7 +4104,11 @@
                             <span class="${dayTextClass}">${day}</span>
                             ${items.length ? `<span class="text-[10px] ${dateStr === todayStr || (dateStr >= weekStartStr && dateStr <= weekEndStr) ? 'text-indigo-700 bg-indigo-200' : 'text-orange-700 bg-orange-100'} px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
                         </div>
-                        ${items.slice(0, 2).map(item => `<div class="flex items-center gap-1.5 text-[10px] text-slate-600 mb-1 bg-white/60 px-1.5 py-0.5 rounded font-medium"><span>${getCategoryIcon(item.category)}</span><span class="truncate">${item.content}</span></div>`).join('')}
+                        ${items.slice(0, 2).map(item => {
+                            const isPast = !item.completed && item.duedate < todayStr;
+                            const itemBg = getCategoryStyleClass(item.category, item.completed, isPast);
+                            return `<div onclick="editSchedule('${item.id}'); event.stopPropagation();" class="flex items-center gap-1.5 text-[10px] mb-1 px-1.5 py-0.5 rounded font-medium cursor-pointer transition ${itemBg}"><span>${getCategoryIcon(item.category)}</span><span class="truncate ${item.completed ? 'line-through' : ''}">${item.content}</span></div>`;
+                        }).join('')}
                     </div>
                 `;
             }
@@ -3885,6 +4141,8 @@
             const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
             let html = weekdays.map(day => `<div class="text-center text-[10px] sm:text-[11px] font-bold text-slate-400 mb-1 sm:mb-2">${day}</div>`).join('');
 
+            const todayStr = new Date().toISOString().split('T')[0];
+
             for (let i = 0; i < firstDay; i++) {
             html += '<div class="min-h-[60px] sm:min-h-[80px] rounded-2xl sm:rounded-3xl border border-slate-100 bg-slate-50"></div>';
             }
@@ -3897,7 +4155,11 @@
                             <span class="font-bold text-slate-700">${day}</span>
                             ${items.length ? `<span class="text-[10px] text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
                         </div>
-                        ${items.slice(0, 2).map(item => `<div class="flex items-center gap-2 text-[10px] text-slate-600 mb-1"><span>${getCategoryIcon(item.category)}</span><span class="truncate">${item.content}</span></div>`).join('')}
+                        ${items.slice(0, 2).map(item => {
+                            const isPast = !item.completed && item.duedate < todayStr;
+                            const itemBg = getCategoryStyleClass(item.category, item.completed, isPast);
+                            return `<div onclick="editSchedule('${item.id}'); event.stopPropagation();" class="flex items-center gap-1.5 text-[10px] mb-1 px-1.5 py-0.5 rounded font-medium cursor-pointer transition ${itemBg}"><span>${getCategoryIcon(item.category)}</span><span class="truncate ${item.completed ? 'line-through' : ''}">${item.content}</span></div>`;
+                        }).join('')}
                     </div>
                 `;
             }
@@ -3916,30 +4178,80 @@
                 itemsEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">해당 월에 등록된 일정이 없습니다.</div>';
                 return;
             }
+
             itemsEl.innerHTML = monthSchedules
                 .sort((a, b) => (a.duedate || '').localeCompare(b.duedate || ''))
-                .map(item => `
-                    <div class="rounded-3xl border ${item.completed ? 'border-emerald-200 bg-emerald-50' : 'border-orange-200 bg-orange-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                .map(item => {
+                    const isPast = !item.completed && item.duedate < todayStr;
+                    const isCompletedOrPast = item.completed || isPast;
+
+                    let bgClass = '';
+                    let textClass = '';
+                    let badgeClass = '';
+                    let dateBadgeClass = '';
+                    let iconClass = '';
+                    let statusText = item.completed ? '✓ 완료' : '예정';
+
+                    if (item.completed) {
+                        bgClass = 'border-emerald-200 bg-emerald-50';
+                        textClass = 'text-emerald-600';
+                        badgeClass = 'text-emerald-600 bg-emerald-100';
+                        dateBadgeClass = 'text-emerald-600 bg-white border-emerald-300';
+                        iconClass = 'text-emerald-500 animate-bounce';
+                    } else if (isPast) {
+                        bgClass = 'border-slate-200 bg-slate-50';
+                        textClass = 'text-slate-500';
+                        badgeClass = 'text-slate-500 bg-slate-200';
+                        dateBadgeClass = 'text-slate-500 bg-white border-slate-300';
+                        iconClass = 'text-slate-400';
+                        statusText = '✓ 완료';
+                    } else {
+                        switch (item.category) {
+                            case '시험':
+                                bgClass = 'border-rose-200 bg-rose-50'; textClass = 'text-rose-600'; badgeClass = 'text-rose-600 bg-rose-100'; dateBadgeClass = 'text-rose-600 bg-white border-rose-300'; iconClass = 'text-rose-500';
+                                break;
+                            case '숙제':
+                                bgClass = 'border-violet-200 bg-violet-50'; textClass = 'text-violet-600'; badgeClass = 'text-violet-600 bg-violet-100'; dateBadgeClass = 'text-violet-600 bg-white border-violet-300'; iconClass = 'text-violet-500';
+                                break;
+                            case '준비물':
+                                bgClass = 'border-emerald-200 bg-emerald-50'; textClass = 'text-emerald-600'; badgeClass = 'text-emerald-600 bg-emerald-100'; dateBadgeClass = 'text-emerald-600 bg-white border-emerald-300'; iconClass = 'text-emerald-500';
+                                break;
+                            case '행사':
+                                bgClass = 'border-amber-200 bg-amber-50'; textClass = 'text-amber-600'; badgeClass = 'text-amber-600 bg-amber-100'; dateBadgeClass = 'text-amber-600 bg-white border-amber-300'; iconClass = 'text-amber-500';
+                                break;
+                            default:
+                                bgClass = 'border-blue-200 bg-blue-50'; textClass = 'text-blue-600'; badgeClass = 'text-blue-600 bg-blue-100'; dateBadgeClass = 'text-blue-600 bg-white border-blue-300'; iconClass = 'text-blue-500';
+                                break;
+                        }
+                    }
+
+                    const [sY, sM, sD] = item.duedate.split('-');
+                    const dObj = new Date(sY, sM - 1, sD);
+                    const dWeek = ['일', '월', '화', '수', '목', '금', '토'][dObj.getDay()];
+                    const formattedDueDate = `${item.duedate} ${dWeek}요일`;
+
+                    return `
+                    <div onclick="editSchedule('${item.id}')" class="rounded-3xl border ${bgClass} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 cursor-pointer">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="${item.completed ? 'text-emerald-600' : 'text-orange-600'}">[${item.category}]</span> ${item.content}
+                                    <span class="${textClass}">[${item.category}]</span> ${item.content}
                                 </h4>
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <button onclick="editSchedule(${item.id})" class="text-slate-400 hover:text-indigo-600 transition text-sm"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteSchedule(${item.id})" class="text-slate-400 hover:text-rose-600 transition text-sm"><i class="fa-solid fa-trash"></i></button>
+                                    <button onclick="editSchedule('${item.id}'); event.stopPropagation();" class="text-slate-400 hover:text-indigo-600 transition text-sm"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteSchedule('${item.id}', event)" class="text-slate-400 hover:text-rose-600 transition text-sm"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
                             <div class="flex justify-end items-center gap-2">
-                                <span class="text-xs font-bold ${item.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full mr-auto">${item.completed ? '✓ 완료' : '예정'}</span>
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${item.completed ? 'text-emerald-600 bg-white border-emerald-300' : 'text-orange-600 bg-white border-orange-300'} border px-3 py-1.5 rounded-2xl shadow-sm ${item.completed ? '' : 'animate-pulse'}">
-                                    <i class="fa-regular fa-calendar-check ${item.completed ? 'text-emerald-500 animate-bounce' : 'text-orange-500'}"></i> 
-                                    기한: ${item.duedate}
+                                <span class="text-xs font-bold ${badgeClass} px-2.5 py-1 rounded-full mr-auto">${statusText}</span>
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${dateBadgeClass} border px-3 py-1.5 rounded-2xl shadow-sm ${isCompletedOrPast ? '' : 'animate-pulse'}">
+                                    <i class="fa-regular fa-calendar-check ${iconClass}"></i> 
+                                    기한: ${formattedDueDate}
                                 </span>
                             </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
         }
 
         function setChildStoreStatusFilter(status) {
@@ -4000,7 +4312,7 @@
                             <span class="text-[10px] ${req.status === 'DELIVERED' ? 'text-emerald-700 bg-emerald-100' : 'text-orange-700 bg-orange-100'} px-2 py-1 rounded-full">${statusBadge}</span>
                         </div>
                         <div class="flex items-center justify-between gap-2">
-                            ${!req.status || req.status === 'REQUESTED' ? `<button onclick="cancelRewardRequest(${req.id})" class="bg-slate-100 hover:bg-rose-50 text-rose-600 font-bold px-3 py-2 rounded-2xl text-xs transition">취소</button>` : ''}
+                ${!req.status || req.status === 'REQUESTED' ? `<button onclick="cancelRewardRequest('${req.id}')" class="bg-slate-100 hover:bg-rose-50 text-rose-600 font-bold px-3 py-2 rounded-2xl text-xs transition">취소</button>` : ''}
                             ${req.status === 'SHIPPING' ? `<p class="text-[11px] text-slate-500">배송 중입니다. 부모님 확인 후 배송완료 됩니다.</p>` : ''}
                             ${req.status === 'DELIVERED' ? `<p class="text-[11px] text-slate-500">배송완료: ${req.deliveredAt}</p>` : ''}
                         </div>
@@ -4244,7 +4556,7 @@
             document.getElementById('stat-completion-total').innerText = `전체 ${total}`;
             
             const completionCtx = document.getElementById('achievement-completion-chart');
-            if (!completionCtx) return;
+            if (!completionCtx || typeof Chart === 'undefined') return;
             
             if (completionChartInstance) completionChartInstance.destroy();
             completionChartInstance = new Chart(completionCtx, {
@@ -4331,7 +4643,7 @@
             });
             
             const coinCtx = document.getElementById('achievement-coin-chart');
-            if (!coinCtx) return;
+            if (!coinCtx || typeof Chart === 'undefined') return;
             
             if (coinChartInstance) coinChartInstance.destroy();
             coinChartInstance = new Chart(coinCtx, {
@@ -4421,7 +4733,7 @@
             const totalCounts = subjects.map(s => subjectData[s].total);
             
             const subjectCtx = document.getElementById('achievement-subject-chart');
-            if (!subjectCtx) return;
+            if (!subjectCtx || typeof Chart === 'undefined') return;
             
             if (subjectChartInstance) subjectChartInstance.destroy();
             subjectChartInstance = new Chart(subjectCtx, {
@@ -4504,6 +4816,18 @@
             }
         }
 
+        function getCategoryStyleClass(category, completed, isPast) {
+            if (completed) return 'bg-slate-200 text-slate-400';
+            if (isPast) return 'bg-slate-100 text-rose-500';
+            switch (category) {
+                case '시험': return 'bg-rose-100 text-rose-700 hover:bg-rose-200';
+                case '숙제': return 'bg-violet-100 text-violet-700 hover:bg-violet-200';
+                case '준비물': return 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200';
+                case '행사': return 'bg-amber-100 text-amber-700 hover:bg-amber-200';
+                default: return 'bg-blue-100 text-blue-700 hover:bg-blue-200';
+            }
+        }
+
         function setScheduleFilter(filterMode) {
             state.scheduleFilter = filterMode;
             const modes = ['UNCOMPLETED', 'COMPLETED', 'ALL'];
@@ -4520,7 +4844,7 @@
             renderSchedulesList();
         }
 
-        async function handleSaveSchedule(e) {
+        async function handleSaveSchedule(e) { // 'async' 추가
             e.preventDefault();
             const mode = document.getElementById('form-sched-mode').value;
             const schedId = document.getElementById('form-sched-id').value;
@@ -4528,37 +4852,224 @@
             const content = document.getElementById('form-sched-content').value;
             const duedate = document.getElementById('form-sched-duedate').value;
             
+            const repeat = document.getElementById('form-sched-repeat') ? document.getElementById('form-sched-repeat').value : 'NONE';
+            let repeatEndDateStr = document.getElementById('form-sched-repeat-end-date') ? document.getElementById('form-sched-repeat-end-date').value : '';
+            
+            if (repeat !== 'NONE' && !repeatEndDateStr) {
+                showAlert("입력 확인", "반복 종료일을 선택해주세요.");
+                return;
+            }
+            if (repeat !== 'NONE' && repeatEndDateStr < duedate) {
+                showAlert("입력 확인", "반복 종료일은 시작일보다 이후여야 합니다.");
+                return;
+            }
+
             const targetChild = state.children[state.activeChildId];
             if (!Array.isArray(targetChild.schedules)) {
                 targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
             }
             
             if (mode === "ADD") {
-                const newSched = {
-                    id: Date.now(),
-                    category: category,
-                    content: content,
-                    duedate: duedate,
-                    completed: false
-                };
-                targetChild.schedules.push(newSched);
-                showToast("새로운 일정이 등록되었습니다!");
+                const [y, m, d] = duedate.split('-');
+                let baseDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+                let endDate = repeatEndDateStr ? new Date(repeatEndDateStr) : new Date(baseDate);
+                endDate.setHours(23, 59, 59, 999);
+                
+                let addedCount = 0;
+                const repeatGroupId = repeat !== 'NONE' ? `repeat-${Date.now()}` : null;
+                
+                if (repeat === 'WEEKLY') {
+                    const checkedDays = Array.from(document.querySelectorAll('input[name="repeat-day"]:checked')).map(cb => parseInt(cb.value));
+                    if (checkedDays.length === 0) {
+                        checkedDays.push(baseDate.getDay());
+                    }
+                    
+                    let currentDate = new Date(baseDate);
+                    while (currentDate <= endDate) {
+                        if (checkedDays.includes(currentDate.getDay())) {
+                            const newDuedate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                            targetChild.schedules.push({
+                                id: Date.now() + addedCount + Math.random(),
+                                category: category,
+                                content: content,
+                                duedate: newDuedate,
+                                        completed: false,
+                                        repeatGroupId: repeatGroupId
+                            });
+                            addedCount++;
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                } else if (repeat === 'MONTHLY') {
+                    const monthlyTypeRadios = document.querySelector('input[name="repeat-monthly-type"]:checked');
+                    const monthlyType = monthlyTypeRadios ? monthlyTypeRadios.value : 'DATE';
+                    const baseDay = baseDate.getDay();
+                    const nthWeek = Math.ceil(baseDate.getDate() / 7);
+                    
+                    let i = 0;
+                    while (true) {
+                        let targetDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
+                        const expectedMonth = targetDate.getMonth();
+                        
+                        if (monthlyType === 'DATE') {
+                            const lastDayOfMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0).getDate();
+                            const targetDay = Math.min(baseDate.getDate(), lastDayOfMonth);
+                            targetDate.setDate(targetDay);
+                        } else {
+                            targetDate.setDate(1);
+                            const firstDay = targetDate.getDay();
+                            let dateOffset = baseDay - firstDay;
+                            if (dateOffset < 0) dateOffset += 7;
+                            targetDate.setDate(1 + dateOffset + (nthWeek - 1) * 7);
+                            
+                            if (targetDate.getMonth() !== expectedMonth) {
+                                targetDate.setDate(targetDate.getDate() - 7);
+                            }
+                        }
+                        
+                        if (targetDate > endDate) break;
+
+                        if (targetDate >= baseDate) {
+                            const newDuedate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+                            targetChild.schedules.push({
+                                id: Date.now() + addedCount + Math.random(),
+                                category: category,
+                                content: content,
+                                duedate: newDuedate,
+                                completed: false,
+                                repeatGroupId: repeatGroupId
+                            });
+                            addedCount++;
+                        }
+                        i++;
+                    }
+                } else if (repeat === 'DAILY') {
+                    let targetDate = new Date(baseDate);
+                    while (targetDate <= endDate) {
+                        const newDuedate = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+                        targetChild.schedules.push({
+                            id: Date.now() + addedCount + Math.random(),
+                            category: category,
+                            content: content,
+                            duedate: newDuedate,
+                            completed: false,
+                            repeatGroupId: repeatGroupId
+                        });
+                        addedCount++;
+                        targetDate.setDate(targetDate.getDate() + 1);
+                    }
+                } else {
+                    const newDuedate = `${baseDate.getFullYear()}-${String(baseDate.getMonth() + 1).padStart(2, '0')}-${String(baseDate.getDate()).padStart(2, '0')}`;
+                    targetChild.schedules.push({
+                        id: Date.now() + Math.random(),
+                        category: category,
+                        content: content,
+                        duedate: newDuedate,
+                        completed: false
+                    });
+                    addedCount++;
+                }
+
+                showToast(addedCount > 1 ? `총 ${addedCount}개의 일정이 등록되었습니다!` : "새로운 일정이 등록되었습니다!");
+                await saveStateToFirestore();
+                resetScheduleForm();
+                syncDOM();
             } else if (mode === "EDIT") {
                 const item = targetChild.schedules.find(s => String(s.id) === String(schedId));
                 if (item) {
-                    item.category = category;
-                    item.content = content;
-                    item.duedate = duedate;
-                    showToast("일정이 정상적으로 수정되었습니다!");
+                    const diffTime = new Date(duedate) - new Date(item.duedate);
+                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (item.repeatGroupId) {
+                        showChoiceModal(
+                            "✏️ 반복 일정 일괄 수정",
+                            "이 일정은 반복 설정된 일정입니다. 수정 범위를 선택해 주세요.\n(💡안내: 날짜를 변경하셨을 경우, 선택한 범위의 일정들이 동일한 간격으로 모두 함께 이동합니다.)",
+                            [
+                                {
+                                    text: "이 일정만 수정",
+                                    class: "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-md",
+                                    callback: async () => {
+                                        item.category = category;
+                                        item.content = content;
+                                        item.duedate = duedate;
+                                        delete item.repeatGroupId; // Detach from series
+                                        showToast("선택한 일정만 개별적으로 수정되었습니다.");
+                                        await saveStateToFirestore();
+                                        resetScheduleForm();
+                                        syncDOM();
+                                    }
+                                },
+                                {
+                                    text: "이후 모든 일정 일괄수정",
+                                    class: "px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white font-bold text-xs rounded-xl transition shadow-md",
+                                    callback: async () => {
+                                        const repeatGroupId = item.repeatGroupId;
+                                        const itemDate = item.duedate; // 원본 날짜 기준
+                                        let updatedCount = 0;
+                                        targetChild.schedules.forEach(s => {
+                                            if (s.repeatGroupId === repeatGroupId && s.duedate >= itemDate) {
+                                                s.category = category;
+                                                s.content = content;
+                                                if (diffDays !== 0) {
+                                                    const sDate = new Date(s.duedate);
+                                                    sDate.setDate(sDate.getDate() + diffDays);
+                                                    s.duedate = `${sDate.getFullYear()}-${String(sDate.getMonth() + 1).padStart(2, '0')}-${String(sDate.getDate()).padStart(2, '0')}`;
+                                                }
+                                                updatedCount++;
+                                            }
+                                        });
+                                        showToast(`선택한 날짜 포함 이후 반복 일정 ${updatedCount}개가 일괄 수정되었습니다.`);
+                                        await saveStateToFirestore();
+                                        resetScheduleForm();
+                                        syncDOM();
+                                    }
+                                },
+                                {
+                                    text: "전체 반복 일정 일괄수정",
+                                    class: "px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs rounded-xl transition shadow-md",
+                                    callback: async () => {
+                                        const repeatGroupId = item.repeatGroupId;
+                                        let updatedCount = 0;
+                                        targetChild.schedules.forEach(s => {
+                                            if (s.repeatGroupId === repeatGroupId) {
+                                                s.category = category;
+                                                s.content = content;
+                                                if (diffDays !== 0) {
+                                                    const sDate = new Date(s.duedate);
+                                                    sDate.setDate(sDate.getDate() + diffDays);
+                                                    s.duedate = `${sDate.getFullYear()}-${String(sDate.getMonth() + 1).padStart(2, '0')}-${String(sDate.getDate()).padStart(2, '0')}`;
+                                                }
+                                                updatedCount++;
+                                            }
+                                        });
+                                        showToast(`연관된 전체 반복 일정 ${updatedCount}개가 일괄 수정되었습니다.`);
+                                        await saveStateToFirestore();
+                                        resetScheduleForm();
+                                        syncDOM();
+                                    }
+                                },
+                                {
+                                    text: "취소",
+                                    class: "px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition",
+                                    callback: () => {}
+                                }
+                            ]
+                        );
+                    } else {
+                        item.category = category;
+                        item.content = content;
+                        item.duedate = duedate;
+                        showToast("일정이 정상적으로 수정되었습니다!");
+                        await saveStateToFirestore();
+                        resetScheduleForm();
+                        syncDOM();
+                    }
                 }
             }
-            
-            await saveStateToFirestore();
-            closeScheduleModal();
-            syncDOM();
         }
 
-        async function toggleScheduleComplete(schedId) {
+        async function toggleScheduleComplete(schedId, event) {
+            if (event) event.stopPropagation();
             const targetChild = state.children[state.activeChildId];
             if (!Array.isArray(targetChild.schedules)) {
                 targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
@@ -4567,7 +5078,9 @@
             if(item) {
                 item.completed = !item.completed;
                 if(item.completed) {
-                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+                    if (typeof confetti === 'function') {
+                        confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+                    }
                     showToast("목표 일정을 달성했습니다! 👏");
                 }
                 await saveStateToFirestore();
@@ -4575,17 +5088,75 @@
             }
         }
 
-        async function deleteSchedule(schedId) {
-            showConfirm("일정 삭제", "이 일정을 목록에서 영구적으로 삭제하시겠습니까?", async () => {
-                const targetChild = state.children[state.activeChildId];
-                if (!Array.isArray(targetChild.schedules)) {
-                    targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
-                }
-                targetChild.schedules = targetChild.schedules.filter(s => String(s.id) !== String(schedId));
-                showToast("일정이 성공적으로 삭제되었습니다.");
-                await saveStateToFirestore();
-                syncDOM();
-            });
+        async function deleteSchedule(schedId, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+
+            const targetChild = state.children[state.activeChildId];
+            if (!targetChild) return;
+
+            if (!Array.isArray(targetChild.schedules)) {
+                targetChild.schedules = targetChild.schedules ? Object.values(targetChild.schedules) : [];
+            }
+            const item = targetChild.schedules.find(s => String(s.id) === String(schedId));
+            if (!item) return;
+
+            if (item.repeatGroupId) {
+                showChoiceModal(
+                    "반복 일정 삭제",
+                    "이 일정은 반복 설정된 일정입니다.\n삭제 유형을 선택해 주세요.",
+                    [
+                        {
+                            text: "이 일정만 삭제",
+                            class: "px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-md",
+                            callback: async () => {
+                                targetChild.schedules = targetChild.schedules.filter(s => String(s.id) !== String(schedId));
+                                showToast("선택한 일정이 삭제되었습니다.");
+                                await saveStateToFirestore();
+                                syncDOM();
+                            }
+                        },
+                        {
+                            text: "이후 모든 일정 삭제",
+                            class: "px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl transition shadow-md",
+                            callback: async () => {
+                                const repeatGroupId = item.repeatGroupId;
+                                const itemDate = item.duedate;
+                                const initialCount = targetChild.schedules.length;
+                                targetChild.schedules = targetChild.schedules.filter(s => {
+                                    return !(s.repeatGroupId === repeatGroupId && s.duedate >= itemDate);
+                                });
+                                const deletedCount = initialCount - targetChild.schedules.length;
+                                showToast(`선택한 날짜를 포함한 이후의 반복 일정 ${deletedCount}개가 삭제되었습니다.`);
+                                await saveStateToFirestore();
+                                syncDOM();
+                            }
+                        },
+                        {
+                            text: "전체 반복 일정 삭제",
+                            class: "px-3 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded-xl transition shadow-md",
+                            callback: async () => {
+                                const repeatGroupId = item.repeatGroupId;
+                                const initialCount = targetChild.schedules.length;
+                                targetChild.schedules = targetChild.schedules.filter(s => s.repeatGroupId !== repeatGroupId);
+                                const deletedCount = initialCount - targetChild.schedules.length;
+                                showToast(`연관된 전체 반복 일정 ${deletedCount}개가 삭제되었습니다.`);
+                                await saveStateToFirestore();
+                                syncDOM();
+                            }
+                        },
+                        { text: "취소", class: "px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition", callback: () => {} }
+                    ]
+                );
+            } else {
+                showConfirm("일정 삭제", "이 일정을 목록에서 영구적으로 삭제하시겠습니까?", async () => {
+                    targetChild.schedules = targetChild.schedules.filter(s => String(s.id) !== String(schedId));
+                    showToast("일정이 성공적으로 삭제되었습니다.");
+                    await saveStateToFirestore();
+                    syncDOM();
+                });
+            }
         }
 
         function renderSubjectOptions() {
@@ -4733,7 +5304,7 @@
             const dropdownSelectedAvatar = document.getElementById('dropdown-selected-avatar');
             const dropdownSelectedName = document.getElementById('dropdown-selected-name');
             if (dropdownSelectedAvatar && dropdownSelectedName) {
-                dropdownSelectedName.innerText = `입장패스: ${activeChild.name}`;
+                dropdownSelectedName.innerText = activeChild.name;
                 if (activeChild.photo) {
                     dropdownSelectedAvatar.innerHTML = `<img src="${activeChild.photo}" class="w-full h-full object-cover rounded-full">`;
                 } else {
@@ -4776,28 +5347,34 @@
         }
 
         // 매일 아침 접속 시 요일 반복 미션 로딩 알고리즘
-        function syncTodayMissionsWithDefault(activeChild, currentDayName) {
+        function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj = new Date()) {
             if (!activeChild.todayMissions) activeChild.todayMissions = [];
             
+            const targetY = targetDateObj.getFullYear();
+            const targetM = String(targetDateObj.getMonth() + 1).padStart(2, '0');
+            const targetD = String(targetDateObj.getDate()).padStart(2, '0');
+            const targetDateStr = `${targetY}-${targetM}-${targetD}`;
             const todayStr = new Date().toISOString().split('T')[0];
             
-            // 1. 과거 날짜의 미션들을 자동으로 비워줍니다.
+            // 1. 오래된(어제 이전) '미완료' 미션만 정리하여 메모리 및 데이터 최적화
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                 const mDate = m.date || (m.id ? new Date(m.id).toISOString().split('T')[0] : '');
-                return mDate === todayStr;
+                if (!m.completed && mDate < todayStr) return false;
+                return true;
             });
 
-            // 2. 오늘 요일에 해당하는 학습 플랜(defaultMissions)을 오늘의 미션에 동기화
+            // 2. 타겟 요일에 해당하는 학습 플랜(defaultMissions)을 미션에 동기화
             const defaults = activeChild.defaultMissions || [];
             const currentDefaultIds = [];
             
             defaults.forEach(d => {
                 if (d.day === currentDayName) {
                     currentDefaultIds.push(d.id);
-                    // 이미 동기화된 기본 미션인지 확인 (과거 하위호환을 위해 제목+범위도 체크)
+                    // 이미 동기화된 기본 미션인지 확인
                     const alreadyExists = activeChild.todayMissions.some(m => 
-                        (m.defaultMissionId && m.defaultMissionId === d.id) || 
-                        (!m.isCustom && m.subject === d.subject && m.range === d.range)
+                        m.date === targetDateStr &&
+                        ((m.defaultMissionId && String(m.defaultMissionId) === String(d.id)) || 
+                        (!m.isCustom && m.subject === d.subject && m.range === d.range))
                     );
                     
                     if (!alreadyExists) {
@@ -4812,16 +5389,16 @@
                             isCustom: false,
                             timeSpent: 0,
                             actualRange: "",
-                            date: todayStr
+                            date: targetDateStr
                         });
                     }
                 }
             });
 
-            // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 오늘의 미션에서도 제외 (단, 이미 완료한 건 제외)
+            // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 해당 일자의 미션에서도 제외 (단, 이미 완료한 건 제외)
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
-                if (!m.isCustom && m.defaultMissionId && !m.completed) {
-                    if (!currentDefaultIds.includes(m.defaultMissionId)) {
+                if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
+                    if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
                         return false;
                     }
                 }
@@ -4867,19 +5444,21 @@
                 return;
             }
             
+            const todayStr = new Date().toISOString().split('T')[0];
             let html = "";
             filtered.forEach(s => {
+                const isPast = !s.completed && s.duedate < todayStr;
                 html += `
-                    <div class="flex items-center justify-between p-3 rounded-xl border ${s.completed ? 'bg-slate-50 border-slate-200' : 'bg-white border-pink-100'} text-xs">
+                    <div onclick="editSchedule('${s.id}')" class="flex items-center justify-between p-3 rounded-xl border ${s.completed ? 'bg-slate-50 border-slate-200' : (isPast ? 'bg-slate-50 border-rose-200' : 'bg-white border-pink-100')} text-xs cursor-pointer hover:bg-slate-50 transition">
                         <div class="flex items-center gap-3">
-                            <input type="checkbox" ${s.completed ? 'checked' : ''} onclick="toggleScheduleComplete(${s.id})" class="w-4 h-4 text-pink-600 rounded focus:ring-pink-500 cursor-pointer">
+                            <input type="checkbox" ${s.completed ? 'checked' : ''} onclick="toggleScheduleComplete('${s.id}', event)" class="w-4 h-4 text-pink-600 rounded focus:ring-pink-500 cursor-pointer">
                             <span class="px-2 py-0.5 rounded-md font-bold ${s.completed ? 'bg-slate-200 text-slate-500' : 'bg-pink-100 text-pink-700'}">${s.category || '기타'}</span>
                             <span class="${s.completed ? 'line-through text-slate-400' : 'font-medium text-slate-700'}">${s.content}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] font-bold text-slate-400"><i class="fa-regular fa-clock"></i> 기한: ${s.duedate}</span>
-                            <button onclick="editSchedule(${s.id})" class="text-slate-300 hover:text-indigo-500 transition"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteSchedule(${s.id})" class="text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="editSchedule('${s.id}'); event.stopPropagation();" class="text-slate-300 hover:text-indigo-500 transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteSchedule('${s.id}', event)" class="text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
@@ -4887,16 +5466,67 @@
             listEl.innerHTML = html;
         }
 
+        function changeChecklistDate(offset) {
+            currentChecklistDate.setDate(currentChecklistDate.getDate() + offset);
+            const activeChild = state.children[state.activeChildId];
+            if (activeChild) {
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const targetDayName = dayNames[currentChecklistDate.getDay()];
+                syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+            }
+            renderTodayMissionsList();
+        }
+
+        function resetChecklistDate() {
+            currentChecklistDate = new Date();
+            const activeChild = state.children[state.activeChildId];
+            if (activeChild) {
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const targetDayName = dayNames[currentChecklistDate.getDay()];
+                syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+            }
+            renderTodayMissionsList();
+        }
+
         function renderTodayMissionsList() {
             const activeChild = state.children[state.activeChildId];
             const listEl = document.getElementById('today-missions-list');
             if (!listEl) return;
             
+            const targetY = currentChecklistDate.getFullYear();
+            const targetM = String(currentChecklistDate.getMonth() + 1).padStart(2, '0');
+            const targetD = String(currentChecklistDate.getDate()).padStart(2, '0');
+            const targetDateStr = `${targetY}-${targetM}-${targetD}`;
+            
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+            const targetDayName = dayNames[currentChecklistDate.getDay()];
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            const titleEl = document.getElementById('checklist-title');
+            const subtitleEl = document.getElementById('checklist-subtitle');
+            const addBtn = document.getElementById('checklist-add-btn');
+            const isPastDate = targetDateStr < todayStr;
+            const isFutureDate = targetDateStr > todayStr;
+            
+            if (titleEl && subtitleEl) {
+                if (targetDateStr === todayStr) {
+                    titleEl.innerHTML = `🎯 오늘의 체크리스트`;
+                    subtitleEl.innerHTML = `오늘 완료해야 할 목표를 확인하고 드림코인을 모아요.`;
+                } else {
+                    titleEl.innerHTML = `📅 ${targetM}월 ${targetD}일 (${targetDayName}) 체크리스트`;
+                    subtitleEl.innerHTML = `해당 일자의 목표와 완료 내역을 확인합니다.`;
+                }
+            }
+            if (addBtn) {
+                addBtn.style.display = isPastDate ? 'none' : 'flex';
+            }
+
             renderAiCheerMessage(activeChild);
-            const missions = activeChild.todayMissions || [];
+            const allMissions = activeChild.todayMissions || [];
+            const missions = allMissions.filter(m => m.date === targetDateStr);
             
             if(missions.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs">오늘 설정된 기본 드림 미션이 없습니다. 우측 상단의 직접 만들기 버튼으로 오늘 학습을 설계해 보세요!</div>`;
+                listEl.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs">설정된 기본 드림 미션이 없습니다. 우측 상단의 직접 만들기 버튼으로 학습을 설계해 보세요!</div>`;
                 return;
             }
             
@@ -4937,18 +5567,20 @@
                                 <i class="fa-solid fa-coins text-amber-500"></i> ${earnableStars}개 ${isAwaiting ? '대기' : '지급'}
                             </span>
                             
-                            <div class="flex justify-end pt-3 border-t ${isAwaiting ? 'border-amber-200' : 'border-emerald-200'} mt-1">
-                                <button onclick="cancelMissionProgress(${m.id})" class="px-4 py-2 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl font-bold transition flex items-center gap-1.5 border border-slate-200 hover:border-rose-200 shadow-sm text-xs">
-                                    <i class="fa-solid fa-rotate-left"></i> 완료 취소
-                                </button>
-                            </div>
+                            ${isPastDate ? '' : `
+                        <div class="flex justify-end pt-3 border-t ${isAwaiting ? 'border-amber-200' : 'border-emerald-200'} mt-1">
+                            <button onclick="cancelMissionProgress('${m.id}')" class="px-4 py-2 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl font-bold transition flex items-center gap-1.5 border border-slate-200 hover:border-rose-200 shadow-sm text-xs">
+                                        <i class="fa-solid fa-rotate-left"></i> 완료 취소
+                                    </button>
+                                </div>
+                            `}
                         </div>
                     `;
                 } else {
                     html += `
                         <div id="mission-card-${m.id}" class="${m.isCustom ? 'p-4 bg-emerald-50/40 border-2 border-emerald-400 shadow-md shadow-emerald-100/50 rounded-2xl text-xs relative' : 'p-4 bg-blue-50/40 border-2 border-blue-400 shadow-md shadow-blue-100/50 rounded-2xl text-xs relative'}">
-                            ${m.isCustom ? `
-                                <button onclick="deleteChildCustomMission(${m.id})" class="absolute -top-2 -right-2 bg-white rounded-full text-slate-400 hover:text-rose-500 transition shadow-sm border border-slate-200 w-7 h-7 flex items-center justify-center z-10">
+                            ${(m.isCustom && !isPastDate) ? `
+                        <button onclick="deleteChildCustomMission('${m.id}')" class="absolute -top-2 -right-2 bg-white rounded-full text-slate-400 hover:text-rose-500 transition shadow-sm border border-slate-200 w-7 h-7 flex items-center justify-center z-10">
                                     <i class="fa-solid fa-xmark text-sm"></i>
                                 </button>
                             ` : ''}
@@ -4971,7 +5603,7 @@
                                 <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
                                     <div class="w-full sm:w-32 shrink-0">
                                         <label class="block text-[11px] text-slate-500 font-bold mb-1">공부 시간 선택</label>
-                                        <select id="time-${m.id}" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-sm text-slate-700">
+                                        <select id="time-${m.id}" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-sm text-slate-700" ${isPastDate || isFutureDate ? 'disabled' : ''}>
                                             <option value="10">10분</option>
                                             <option value="20">20분</option>
                                             <option value="30" selected>30분</option>
@@ -4989,8 +5621,8 @@
                                     <div class="flex-1 w-full">
                                         <label class="block text-[11px] text-slate-500 font-bold mb-1">오늘 한 일 내용</label>
                                         <div class="flex flex-col sm:flex-row gap-2">
-                                            <input type="text" id="range-${m.id}" placeholder="예: 3장 다 풀고 오답정리 완료" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
-                                            <button onclick="submitMissionProgress(${m.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl transition shrink-0 shadow-md text-sm whitespace-nowrap">
+                                            <input type="text" id="range-${m.id}" placeholder="예: 3장 다 풀고 오답정리 완료" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" ${isPastDate || isFutureDate ? 'disabled' : ''}>
+                                <button onclick="submitMissionProgress('${m.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl transition shrink-0 shadow-md text-sm whitespace-nowrap ${isPastDate || isFutureDate ? 'opacity-50 cursor-not-allowed' : ''}" ${isPastDate || isFutureDate ? 'disabled' : ''}>
                                                 ${m.isCustom ? '부모님께 확인 요청' : '오늘의 할일 끝냈어요.'}
                                             </button>
                                         </div>
@@ -5213,7 +5845,7 @@
                                 <td class="p-2.5 text-slate-500">${m.range}</td>
                                 <td class="p-2.5 font-bold text-amber-600">⭐ 코인 ${m.stars || 1}개</td>
                                 <td class="p-2.5 text-center">
-                                    <button onclick="deleteDefaultMission('${c.id}', ${m.id})" class="text-xs text-rose-500 hover:underline font-semibold"><i class="fa-solid fa-circle-minus"></i> 삭제</button>
+                        <button onclick="deleteDefaultMission('${c.id}', '${m.id}')" class="text-xs text-rose-500 hover:underline font-semibold"><i class="fa-solid fa-circle-minus"></i> 삭제</button>
                                 </td>
                             </tr>
                         `;
@@ -5244,12 +5876,12 @@
                         let buttonsHtml = '';
                         if (!r.status || r.status === 'REQUESTED') {
                             buttonsHtml = `
-                                <button onclick="approveRewardRequest('${c.id}', ${r.id})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded-xl transition shadow-sm text-[11px]">승인</button>
-                                <button onclick="rejectRewardRequest('${c.id}', ${r.id})" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition text-[11px]">반려</button>
+                                <button onclick="approveRewardRequest('${c.id}', '${r.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-3 rounded-xl transition shadow-sm text-[11px]">승인</button>
+                                <button onclick="rejectRewardRequest('${c.id}', '${r.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition text-[11px]">반려</button>
                             `;
                         } else if (r.status === 'SHIPPING') {
                             buttonsHtml = `
-                                <button onclick="markRewardDelivered('${c.id}', ${r.id})" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-1.5 px-3 rounded-xl transition shadow-sm text-[11px]">배송완료 처리</button>
+                                <button onclick="markRewardDelivered('${c.id}', '${r.id}')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-1.5 px-3 rounded-xl transition shadow-sm text-[11px]">배송완료 처리</button>
                             `;
                         }
 
@@ -5270,7 +5902,7 @@
                     });
                 });
 
-                parentRewardReqEl.innerHTML = hasRewardReq ? rewardHtml : `<div class="text-center py-8 text-slate-400 text-[11px]">드림 코인 보상 교환 신청 및 배송 대기 내역이 비어 있습니다.</div>`;
+                parentRewardReqEl.innerHTML = hasRewardReq ? rewardHtml : `<div class="text-center py-8 text-slate-400 text-[11px]">요청 내역이 없습니다.</div>`;
             }
 
             const parentMissionReqEl = document.getElementById('parent-custom-mission-requests');
@@ -5294,15 +5926,15 @@
                                     </div>
                                 </div>
                                 <div class="flex gap-1 shrink-0">
-                                    <button onclick="approveCustomMissionRequest('${c.id}', ${r.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition shadow-sm text-[11px]">승인</button>
-                                    <button onclick="rejectCustomMissionRequest('${c.id}', ${r.id})" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition text-[11px]">반려</button>
+                                    <button onclick="approveCustomMissionRequest('${c.id}', '${r.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition shadow-sm text-[11px]">승인</button>
+                                    <button onclick="rejectCustomMissionRequest('${c.id}', '${r.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition text-[11px]">반려</button>
                                 </div>
                             </div>
                         `;
                     });
                 });
 
-                parentMissionReqEl.innerHTML = hasMissionReq ? missionHtml : `<div class="text-center py-8 text-slate-400 text-[11px]">자녀의 보너스 미션 완료 결재 건이 없습니다.</div>`;
+                parentMissionReqEl.innerHTML = hasMissionReq ? missionHtml : `<div class="text-center py-8 text-slate-400 text-[11px]">결재 내역이 없습니다.</div>`;
             }
         }
 
@@ -5518,7 +6150,7 @@
 
         function renderDistributionChart(logs) {
             const ctx = document.getElementById('chart-subject-distribution');
-            if (!ctx) return;
+            if (!ctx || typeof Chart === 'undefined') return;
 
             const subjectMap = {};
             logs.forEach(log => {
@@ -5616,7 +6248,7 @@
 
         function renderAchievementChart(dateMap) {
             const ctx = document.getElementById('chart-achievement-rate');
-            if (!ctx) return;
+            if (!ctx || typeof Chart === 'undefined') return;
 
             const sortedDates = Object.keys(dateMap).sort();
             const completionRates = sortedDates.map(d => {
@@ -5832,6 +6464,29 @@
             modal.classList.add('pointer-events-none', 'opacity-0');
             box.classList.add('scale-95');
             activeConfirmCallback = null;
+        }
+
+        function showChoiceModal(title, message, choices) {
+            const modal = document.getElementById('custom-modal');
+            const box = document.getElementById('custom-modal-box');
+            
+            document.getElementById('custom-modal-title').innerText = title;
+            document.getElementById('custom-modal-message').innerHTML = message.replace(/\n/g, '<br>');
+            
+            const btnContainer = document.getElementById('custom-modal-buttons');
+            btnContainer.innerHTML = choices.map((choice, index) => 
+                `<button id="choice-btn-${index}" class="${choice.class || 'px-4 py-2 bg-slate-600 text-white font-bold text-xs rounded-xl'}">${choice.text}</button>`
+            ).join(' ');
+
+            choices.forEach((choice, index) => {
+                document.getElementById(`choice-btn-${index}`).onclick = () => {
+                    closeCustomModal();
+                    if (choice.callback) choice.callback();
+                };
+            });
+            
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            box.classList.remove('scale-95');
         }
 
         // ==================== 이벤트 리스너 통합 설정 바인딩 ====================
