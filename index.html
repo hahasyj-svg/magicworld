@@ -1401,6 +1401,7 @@
         let user = null;
         let isOfflineMode = false;
         let unsubSnapshot = null;
+        let lastSavedStateStr = "";
 
         // 차트 인스턴스 전역 보관함
         let distChartInstance = null;
@@ -1539,8 +1540,11 @@
             // 온라인 파이어베이스 저장 (Strict Path 준수: /artifacts/{appId}/public/data/users/{username})
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
             try {
+                const stateToSave = JSON.parse(JSON.stringify(state));
+                lastSavedStateStr = JSON.stringify(stateToSave);
                 // 유저 메타데이터 보존을 위해 merge 옵션 사용 (getDoc 호출 제거로 Race Condition 원천 차단)
                 await setDoc(docRef, { state: state }, { merge: true });
+                await setDoc(docRef, { state: stateToSave }, { merge: true });
             } catch (error) {
                 console.error("클라우드 데이터 저장 실패:", error);
                 showToast("데이터를 동기화하는 중 실패했습니다.", "error");
@@ -1565,6 +1569,17 @@
                     remoteState.childStatFilter = state.childStatFilter;
                     remoteState.scheduleFilter = state.scheduleFilter;
                     
+                    const remoteStateStr = JSON.stringify(remoteState);
+                    
+                    // 내 기기에서 저장한 상태에 대한 서버 응답인 경우 불필요한 UI 리렌더링(깜빡임) 방지
+                    if (lastSavedStateStr && remoteStateStr === lastSavedStateStr) {
+                        return;
+                    }
+                    // 로컬 상태와 원격 상태가 실질적으로 같은 경우에도 무시
+                    if (JSON.stringify(state) === remoteStateStr) {
+                        return;
+                    }
+
                     state = remoteState;
                     normalizeState(state);
                     syncDOM();
@@ -1890,6 +1905,8 @@
                         state.childActiveTab = "PLAN"; // 첫 번째 자녀의 학습계획 화면을 기본으로 설정
                     }
                     syncDOM(); // 설정된 자녀 모드 및 탭 화면 갱신
+
+                    await showMainApp();
                 
                     requestParentMode(); // 부모 인증 비밀번호 입력창 띄우기
                 }
@@ -2862,10 +2879,11 @@
                 mission.actualRange = txt;
                 
                 const todayStr = new Date().toISOString().split('T')[0];
+                const targetDateStr = mission.date || todayStr;
                 if (!targetChild.studyLogs) targetChild.studyLogs = [];
                 targetChild.studyLogs.push({
                     missionId: mission.id,
-                    date: todayStr,
+                    date: targetDateStr,
                     subject: mission.subject,
                     content: mission.content || "",
                     timeSpent: mins,
@@ -3214,7 +3232,6 @@
             let tempRejected = [...rejectedHistory];
             let validLogs = [];
             for (let log of (activeChild.studyLogs || [])) {
-                if (!log.completed) continue;
                 if (pendingIds.includes(String(log.missionId))) continue;
                 if (uncompletedMissionIds.includes(String(log.missionId))) continue;
                 
@@ -3458,7 +3475,7 @@
             };
             const weekStartStr = toLocalIsoString(weekStart);
             
-            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr);
+            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr && log.completed);
             
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
             
@@ -3513,7 +3530,7 @@
             const activeChild = state.children[state.activeChildId];
             if (!modal || !activeChild) return;
             
-            const logs = getValidStudyLogs(activeChild);
+            const logs = getValidStudyLogs(activeChild).filter(l => l.completed);
             
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
             
@@ -4413,8 +4430,14 @@
             const scheduleCounts = (periodStartStr) => {
                 const logs = getValidStudyLogs(activeChild).filter(log => log.date >= periodStartStr && log.date <= nowStr);
                 const completed = logs.filter(l => l.completed).length;
-                const total = logs.length;
-                const coins = logs.reduce((sum, l) => sum + (l.stars || 0), 0);
+                let total = logs.length;
+                
+                if (nowStr >= periodStartStr) {
+                    const todayUncompleted = (activeChild.todayMissions || []).filter(m => (m.date === nowStr || !m.date) && !m.completed).length;
+                    total += todayUncompleted;
+                }
+                
+                const coins = logs.filter(l => l.completed).reduce((sum, l) => sum + (l.stars || 0), 0);
                 return { total, completed, coins, rate: total ? Math.round((completed / total) * 100) : 0 };
             };
             const weekData = scheduleCounts(weekStartStr);
@@ -4453,7 +4476,7 @@
             };
             const weekStartStr = toLocalIsoString(weekStart);
             
-            const weeklyLogs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr);
+            const weeklyLogs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr && log.completed);
             const weeklyEarned = weeklyLogs.reduce((sum, log) => sum + (log.stars || 0), 0);
             document.getElementById('stat-weekly-earned-coins').innerText = String(weeklyEarned);
             
@@ -4628,16 +4651,16 @@
                     const checkDate = new Date(startDate);
                     checkDate.setDate(checkDate.getDate() + idx);
                     const dateStr = toLocalIsoString(checkDate);
-                    const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr);
+                    const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr && l.completed);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 } else if (filter === 'MONTH') {
                     const checkDate = new Date(now.getFullYear(), now.getMonth(), idx + 1);
                     const dateStr = toLocalIsoString(checkDate);
-                    const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr);
+                    const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr && l.completed);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 } else {
                     const monthPrefix = `${now.getFullYear()}-${String(idx + 1).padStart(2, '0')}`;
-                    const logs = getValidStudyLogs(activeChild).filter(l => l.date && l.date.startsWith(monthPrefix));
+                    const logs = getValidStudyLogs(activeChild).filter(l => l.date && l.date.startsWith(monthPrefix) && l.completed);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 }
             });
@@ -5322,6 +5345,10 @@
 
             // 오늘 아침 요일 기본 미션 동기화 배치 수립
             syncTodayMissionsWithDefault(activeChild, dayName);
+            const isModified = syncTodayMissionsWithDefault(activeChild, dayName);
+            if (isModified) {
+                saveStateToFirestore();
+            }
 
             const totalM = activeChild.todayMissions ? activeChild.todayMissions.length : 0;
             const completedM = activeChild.todayMissions ? activeChild.todayMissions.filter(m => m.completed).length : 0;
@@ -5349,6 +5376,7 @@
         // 매일 아침 접속 시 요일 반복 미션 로딩 알고리즘
         function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj = new Date()) {
             if (!activeChild.todayMissions) activeChild.todayMissions = [];
+            let isModified = false;
             
             const targetY = targetDateObj.getFullYear();
             const targetM = String(targetDateObj.getMonth() + 1).padStart(2, '0');
@@ -5357,9 +5385,24 @@
             const todayStr = new Date().toISOString().split('T')[0];
             
             // 1. 오래된(어제 이전) '미완료' 미션만 정리하여 메모리 및 데이터 최적화
+            const origLength = activeChild.todayMissions.length;
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                 const mDate = m.date || (m.id ? new Date(m.id).toISOString().split('T')[0] : '');
-                if (!m.completed && mDate < todayStr) return false;
+                if (!m.completed && mDate < todayStr) {
+                    // 미완료된 미션을 studyLogs에 병합 기록하여 전체 통계의 분모(total) 손실을 방지합니다.
+                    if (!activeChild.studyLogs) activeChild.studyLogs = [];
+                    activeChild.studyLogs.push({
+                        missionId: m.id,
+                        date: mDate,
+                        subject: m.subject,
+                        content: m.content || "",
+                        timeSpent: 0,
+                        completed: false,
+                        stars: m.stars || 0
+                    });
+                    isModified = true;
+                    return false;
+                }
                 return true;
             });
 
@@ -5391,11 +5434,13 @@
                             actualRange: "",
                             date: targetDateStr
                         });
+                        isModified = true;
                     }
                 }
             });
 
             // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 해당 일자의 미션에서도 제외 (단, 이미 완료한 건 제외)
+            const beforeFilterLen = activeChild.todayMissions.length;
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                 if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
                     if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
@@ -5404,6 +5449,11 @@
                 }
                 return true;
             });
+            if (activeChild.todayMissions.length !== beforeFilterLen) {
+                isModified = true;
+            }
+            
+            return isModified;
         }
 
         function renderChildDashboardStats() {
@@ -5473,6 +5523,10 @@
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const targetDayName = dayNames[currentChecklistDate.getDay()];
                 syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+                const isModified = syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+                if (isModified) {
+                    saveStateToFirestore();
+                }
             }
             renderTodayMissionsList();
         }
@@ -5484,6 +5538,10 @@
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const targetDayName = dayNames[currentChecklistDate.getDay()];
                 syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+                const isModified = syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+                if (isModified) {
+                    saveStateToFirestore();
+                }
             }
             renderTodayMissionsList();
         }
@@ -6369,7 +6427,23 @@
             });
 
             const biasRatio = totalTime > 0 ? (highestTime / totalTime) : 0;
-            const completedRatio = weeklyLogs.filter(l => l.completed).length / weeklyLogs.length;
+            
+            const startRangeStr = `${sYear}-${sMonth}-${sDate}`;
+            const eYear = endRange.getFullYear();
+            const eMonth = String(endRange.getMonth() + 1).padStart(2, '0');
+            const eDate = String(endRange.getDate()).padStart(2, '0');
+            const endRangeStr = `${eYear}-${eMonth}-${eDate}`;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            let totalMissionsCount = weeklyLogs.length;
+            let completedMissionsCount = weeklyLogs.filter(l => l.completed).length;
+
+            if (todayStr >= startRangeStr && todayStr <= endRangeStr) {
+                const tMissions = (child.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
+                totalMissionsCount += tMissions.length;
+            }
+
+            const completedRatio = totalMissionsCount > 0 ? (completedMissionsCount / totalMissionsCount) : 0;
 
             if (biasRatio > 0.6) {
                 gradeEl.innerText = "편중 주의";
