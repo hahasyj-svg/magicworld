@@ -1489,6 +1489,23 @@
         let currentCoinDetailLimit = 10;
         let currentCoinDetailMode = 'WEEKLY';
 
+        // 객체 키 순서에 의존하지 않는 안정적인 JSON 문자열화 함수 (무한 깜빡임 방지용)
+        function stringifyStable(obj) {
+            if (obj === undefined) return undefined;
+            if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+            if (Array.isArray(obj)) {
+                const arr = obj.map(item => stringifyStable(item));
+                return '[' + arr.map(a => a === undefined ? 'null' : a).join(',') + ']';
+            }
+            const keys = Object.keys(obj).sort();
+            let res = [];
+            for (let key of keys) {
+                const val = stringifyStable(obj[key]);
+                if (val !== undefined) res.push(JSON.stringify(key) + ':' + val);
+            }
+            return '{' + res.join(',') + '}';
+        }
+
         function getLocalIsoString(dateObj = new Date()) {
             return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
         }
@@ -1539,6 +1556,9 @@
                 } else {
                     const childList = getSortedChildren();
                     if (childList.length > 0 && !state.isParentMode) {
+                            document.documentElement.classList.add('is-logged-in');
+                            document.getElementById('auth-gateway').classList.add('hidden');
+                            document.getElementById('planner-main-app').classList.remove('hidden');
                         openChildSelectionModal();
                     } else {
                         await showMainApp();
@@ -1570,7 +1590,7 @@
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
             try {
                 const stateToSave = JSON.parse(JSON.stringify(state));
-                lastSavedStateStr = JSON.stringify(stateToSave);
+                lastSavedStateStr = stringifyStable(stateToSave);
                 // 유저 메타데이터 보존을 위해 merge 옵션 사용 (getDoc 호출 제거로 Race Condition 원천 차단)
                 await setDoc(docRef, { state: stateToSave }, { merge: true });
             } catch (error) {
@@ -1597,14 +1617,14 @@
                     remoteState.childStatFilter = state.childStatFilter;
                     remoteState.scheduleFilter = state.scheduleFilter;
                     
-                    const remoteStateStr = JSON.stringify(remoteState);
+                    const remoteStateStr = stringifyStable(remoteState);
                     
                     // 내 기기에서 저장한 상태에 대한 서버 응답인 경우 불필요한 UI 리렌더링(깜빡임) 방지
                     if (lastSavedStateStr && remoteStateStr === lastSavedStateStr) {
                         return;
                     }
                     // 로컬 상태와 원격 상태가 실질적으로 같은 경우에도 무시
-                    if (JSON.stringify(state) === remoteStateStr) {
+                    if (stringifyStable(state) === remoteStateStr) {
                         return;
                     }
 
@@ -1850,6 +1870,14 @@
         // 로그인 실행
         async function handleUserLogin(e) {
             e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> 입장하는 중...';
+            }
+
             const id = document.getElementById('login-id').value.trim().toLowerCase();
             const pw = document.getElementById('login-pw').value.trim();
 
@@ -1858,6 +1886,7 @@
                 loggedInUser = { id: 'yoonadmin', role: 'admin' };
                 sessionStorage.setItem('magic_logged_in_user', JSON.stringify(loggedInUser));
                 showToast("매직 총괄 관리자님 환영합니다! 시스템 통제실 진입.");
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                 await showMainApp();
                 return;
             }
@@ -1873,6 +1902,7 @@
                     authSuccess = true;
                     showToast("게이트 입장 성공! 즐거운 모험되세요.");
                 } else {
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                     showAlert("로그인 실패", "패밀리 ID 또는 비밀번호가 다릅니다.");
                     return;
                 }
@@ -1887,10 +1917,12 @@
                             authSuccess = true;
                             showToast(`[${id}] 패밀리 게이트가 활성화되었습니다.`);
                         } else {
+                            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                             showAlert("비밀번호 불일치", "입력하신 암호가 다릅니다.");
                             return;
                         }
                     } else {
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                         showAlert("존재하지 않는 ID", "등록되지 않은 패밀리 ID입니다.");
                         return;
                     }
@@ -1902,6 +1934,7 @@
                         isOfflineMode = true;
                         showToast(`[오프라인 모드] 패밀리 게이트가 활성화되었습니다.`);
                     } else {
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                         showToast("네트워크 인증에 실패했으며, 로컬 정보와도 일치하지 않습니다.", "error");
                         return;
                     }
@@ -1913,10 +1946,14 @@
                 sessionStorage.setItem('magic_logged_in_user', JSON.stringify(loggedInUser));
                 
                 await loadUserData(true);
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                 
                 if (loginType === 'CHILD') {
                     const childList = getSortedChildren();
                     if (childList.length > 0) {
+                        document.documentElement.classList.add('is-logged-in');
+                        document.getElementById('auth-gateway').classList.add('hidden');
+                        document.getElementById('planner-main-app').classList.remove('hidden');
                         openChildSelectionModal();
                     } else {
                         await showMainApp();
