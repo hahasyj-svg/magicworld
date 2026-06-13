@@ -205,7 +205,7 @@
                         <i class="fa-solid fa-face-smile" id="header-default-avatar"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                        <h1 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2 cursor-pointer hover:opacity-80 transition" onclick="goToChildMode()">
                             <span class="text-orange-600"><i class="fa-solid fa-wand-magic-sparkles"></i> My Special Magic Planner</span>
                             <span id="current-family-badge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 flex items-center gap-1">
                                 <i class="fa-solid fa-house-chimney-user"></i> family
@@ -334,7 +334,7 @@
                                     <h4 class="font-black text-slate-800 text-base sm:text-lg" id="monthly-calendar-title"></h4>
                                     <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-base"></i></button>
                                     </div>
-                                    <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-2 text-[11px]"></div>
+                                    <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 text-[10px] sm:text-[11px]"></div>
                                     <div id="calendar-event-preview" class="mt-4 grid gap-3"></div>
                                 </div>
                             </div>
@@ -408,13 +408,13 @@
                     <div id="child-tab-store" class="space-y-6 hidden">
                         <div class="grid grid-cols-1 xl:grid-cols-[1.4fr_0.85fr] gap-6">
                             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                                <div class="flex items-center justify-between gap-3 mb-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                                     <div>
                                         <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><span class="animate-bounce inline-block text-xl">🎪</span> 드림코인 상점 <span class="animate-pulse text-amber-400 text-xl">✨</span></h3>
                                         <p class="text-xs text-slate-400">코인을 사용하여 바로 교환 신청할 수 있어요.</p>
                                     </div>
-                                    <div class="text-right text-xs text-slate-500">
-                                        <p>내 드림 코인</p>
+                                    <div class="flex items-center justify-between sm:block text-right text-xs text-slate-500 bg-amber-50/50 sm:bg-transparent p-3 sm:p-0 rounded-2xl sm:rounded-none border border-amber-100 sm:border-none">
+                                        <p class="font-bold sm:font-normal text-slate-600 sm:text-slate-500">내 드림 코인</p>
                                         <p class="text-2xl font-black text-amber-500 child-font" id="child-store-star-count">0</p>
                                     </div>
                                 </div>
@@ -1064,11 +1064,11 @@
                         <h4 class="font-black text-slate-800 text-base sm:text-lg" id="modal-calendar-title"></h4>
                         <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i></button>
                     </div>
-                    <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-1 sm:gap-2 text-[11px]"></div>
+                    <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-1 sm:gap-2 text-[10px] sm:text-[11px]"></div>
                 </div>
 
                 <!-- 우측 목록 -->
-                <div class="lg:col-span-5 bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col h-[400px] lg:h-auto min-h-[400px]">
+                <div class="lg:col-span-5 bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col h-[280px] sm:h-[350px] lg:h-auto lg:min-h-[400px]">
                     <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2 shrink-0"><i class="fa-solid fa-list-ul text-orange-500"></i> 해당 월 일정 목록</h4>
                     <div id="schedule-calendar-items" class="space-y-3 overflow-y-auto pr-2 flex-grow scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent pb-2">
                         <!-- 동적 렌더링 -->
@@ -1317,6 +1317,7 @@
         window.submitParentPassword = submitParentPassword;
         window.closeParentAuthModal = closeParentAuthModal;
         window.exitParentMode = exitParentMode;
+        window.goToChildMode = goToChildMode;
         window.setChildStatFilter = setChildStatFilter;
         window.setScheduleFilter = setScheduleFilter;
         window.handleSaveSchedule = handleSaveSchedule;
@@ -1345,6 +1346,7 @@
         window.setScheduleFormDate = setScheduleFormDate;
         window.resetScheduleForm = resetScheduleForm;
         window.changeCalendarMonth = changeCalendarMonth;
+        window.loadMoreSchedules = loadMoreSchedules;
         window.setChildStoreStatusFilter = setChildStoreStatusFilter;
         window.showTodayTasksDetail = showTodayTasksDetail;
         window.closeTodayTasksDetail = closeTodayTasksDetail;
@@ -1362,6 +1364,8 @@
         window.closeUsedCoinsDetail = closeUsedCoinsDetail;
         window.showCompletionDetail = showCompletionDetail;
         window.closeCompletionDetail = closeCompletionDetail;
+        window.loadMoreCompletionItems = loadMoreCompletionItems;
+        window.loadMoreCoinDetailItems = loadMoreCoinDetailItems;
         window.renderChildAchievementCharts = renderChildAchievementCharts;
         window.setChartFilter = setChartFilter;
         window.toggleRepeatOptions = toggleRepeatOptions;
@@ -1477,6 +1481,17 @@
         let currentCalYear = new Date().getFullYear();
         let currentCalMonth = new Date().getMonth();
         let currentChecklistDate = new Date();
+        let currentScheduleLimit = 10;
+        let currentCompletionItems = [];
+        let currentCompletionLimit = 10;
+        let currentCompletionMode = 'ALL';
+        let currentCoinDetailItems = [];
+        let currentCoinDetailLimit = 10;
+        let currentCoinDetailMode = 'WEEKLY';
+
+        function getLocalIsoString(dateObj = new Date()) {
+            return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+        }
 
         // 🟢 Firebase 연동 시작
         async function runFirebaseSetup() {
@@ -1557,7 +1572,6 @@
                 const stateToSave = JSON.parse(JSON.stringify(state));
                 lastSavedStateStr = JSON.stringify(stateToSave);
                 // 유저 메타데이터 보존을 위해 merge 옵션 사용 (getDoc 호출 제거로 Race Condition 원천 차단)
-                await setDoc(docRef, { state: state }, { merge: true });
                 await setDoc(docRef, { state: stateToSave }, { merge: true });
             } catch (error) {
                 console.error("클라우드 데이터 저장 실패:", error);
@@ -1787,7 +1801,7 @@
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalIsoString();
 
             if (isOfflineMode) {
                 localDB[id] = {
@@ -1920,8 +1934,6 @@
                     }
                     syncDOM(); // 설정된 자녀 모드 및 탭 화면 갱신
 
-                    await showMainApp();
-                
                     requestParentMode(); // 부모 인증 비밀번호 입력창 띄우기
                 }
             }
@@ -2328,6 +2340,14 @@
                 showAlert("인증 실패", "비밀번호가 일치하지 않습니다. 다시 시도해 주세요.");
             }
         }
+
+    function goToChildMode() {
+        if (state.isParentMode) {
+            exitParentMode();
+        } else {
+            switchChildTab('PLAN');
+        }
+    }
 
         function exitParentMode() {
             state.isParentMode = false;
@@ -3010,6 +3030,11 @@
             toggleChildCustomForm();
 
             showToast("특별 보너스 미션 등록이 완료되었습니다. 👍");
+            
+            // 네트워크 지연 전 즉각적인 UI 반영 (Optimistic UI Update)
+            renderTodayMissionsList();
+            updateChildHeaderDashboard(targetChild);
+            
             await saveStateToFirestore();
             syncDOM();
         }
@@ -3019,6 +3044,11 @@
                 const targetChild = state.children[state.activeChildId];
                 targetChild.todayMissions = targetChild.todayMissions.filter(m => String(m.id) !== String(missionId));
                 showToast("오늘 도전 미션이 성공적으로 삭제되었습니다.");
+                
+                // 네트워크 지연 전 즉각적인 UI 반영
+                renderTodayMissionsList();
+                updateChildHeaderDashboard(targetChild);
+                
                 await saveStateToFirestore();
                 syncDOM();
             });
@@ -3043,7 +3073,7 @@
                 mission.timeSpent = mins;
                 mission.actualRange = txt;
                 
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getLocalIsoString();
                 const targetDateStr = mission.date || todayStr;
                 if (!targetChild.studyLogs) targetChild.studyLogs = [];
                 targetChild.studyLogs.push({
@@ -3051,9 +3081,12 @@
                     date: targetDateStr,
                     subject: mission.subject,
                     content: mission.content || "",
+                    range: mission.range || "",
                     timeSpent: mins,
                     completed: true,
-                    stars: mission.stars
+                    stars: mission.stars,
+                    defaultMissionId: mission.defaultMissionId,
+                    isCustom: mission.isCustom
                 });
                 
                 if (mission.isCustom) {
@@ -3103,12 +3136,23 @@
                 mission.isApproved = false;
 
                 // Study Log 제거
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getLocalIsoString();
                 const targetDateStr = mission.date || todayStr;
                 if (targetChild.studyLogs) {
                     targetChild.studyLogs = targetChild.studyLogs.filter(log => {
                         if (log.missionId) return String(log.missionId) !== String(missionId);
                         return !(log.date === targetDateStr && log.subject === mission.subject);
+                    });
+                }
+
+                // 부모 결재 내역(approvalHistory) 연동 삭제 추가
+                if (targetChild.approvalHistory) {
+                    targetChild.approvalHistory = targetChild.approvalHistory.filter(h => {
+                        if (h.type === 'MISSION') {
+                            if (h.missionId && String(h.missionId) === String(missionId)) return false;
+                            if (!h.missionId && h.subject === mission.subject && h.range === mission.range) return false;
+                        }
+                        return true;
                     });
                 }
 
@@ -3206,7 +3250,7 @@
                         title: item.title,
                         cost: item.cost,
                         status: 'REQUESTED',
-                        requestedOn: new Date().toISOString().split('T')[0],
+                        requestedOn: getLocalIsoString(),
                         timestamp: new Date().toLocaleTimeString()
                     });
                     
@@ -3226,7 +3270,7 @@
             if (!req) return;
 
             showConfirm("쿠폰 교환 승인", `[${targetChild.name}]님의 [${req.title}] 쿠폰 수령을 공식 수락합니까?`, async () => {
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getLocalIsoString();
                 req.status = 'SHIPPING';
                 if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
                 targetChild.approvalHistory.push({
@@ -3253,7 +3297,7 @@
             showConfirm("쿠폰 교환 반려", `이 요청을 거절하고 차감된 드림 코인 ${req.cost}개를 자녀에게 돌려주시겠습니까?`, async () => {
                 targetChild.stars += req.cost;
 
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getLocalIsoString();
                 if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
                 targetChild.approvalHistory.push({
                     id: req.id,
@@ -3284,10 +3328,11 @@
 
             targetChild.stars += req.stars;
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
             targetChild.approvalHistory.push({
                 id: req.id,
+                missionId: req.missionId,
                 type: "MISSION",
                 subject: req.subject,
                 range: req.range,
@@ -3298,7 +3343,7 @@
             });
 
             targetChild.missionRequests = targetChild.missionRequests.filter(r => String(r.id) !== String(requestId));
-            showToast(`[${targetChild.name}]님의 수율 도전 과제가 승인되어 코인 ${req.stars}개가 적립되었습니다!`);
+            showToast(`[${targetChild.name}]님의 자율 도전 과제가 승인되어 코인 ${req.stars}개가 적립되었습니다!`);
             
             setTimeout(() => {
                 animateFlyingStars(`parent-mission-req-${requestId}`);
@@ -3325,10 +3370,11 @@
                     targetChild.studyLogs = targetChild.studyLogs.filter(log => String(log.missionId) !== String(req.missionId));
                 }
 
-                const todayStr = new Date().toISOString().split('T')[0];
+                const todayStr = getLocalIsoString();
                 if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
                 targetChild.approvalHistory.push({
                     id: req.id,
+                    missionId: req.missionId,
                     type: "MISSION",
                     subject: req.subject,
                     range: req.range,
@@ -3395,16 +3441,29 @@
             const rejectedHistory = (activeChild.approvalHistory || []).filter(h => h.type === 'MISSION' && h.status === 'REJECTED');
             
             let tempRejected = [...rejectedHistory];
-            let validLogs = [];
+            const logMap = new Map();
+            
             for (let log of (activeChild.studyLogs || [])) {
-                if (pendingIds.includes(String(log.missionId))) continue;
-                if (uncompletedMissionIds.includes(String(log.missionId))) continue;
+                if (log.missionId && pendingIds.includes(String(log.missionId))) continue;
+                if (log.missionId && uncompletedMissionIds.includes(String(log.missionId))) continue;
                 
                 const rejectIdx = tempRejected.findIndex(r => r.date === log.date && r.subject === log.subject && (r.stars || 1) === (log.stars || 1));
                 if (rejectIdx >= 0) { tempRejected.splice(rejectIdx, 1); continue; }
-                validLogs.push(log);
+                
+                // 완벽한 중복 제거를 위해 missionId 대신 내용 기반 고유키 사용 (오염된 DB의 가짜 ID 증식 방어)
+                let uniqueKey = `${log.date}_${log.subject}_${log.content || ''}_${log.range || ''}`;
+                
+                if (logMap.has(uniqueKey)) {
+                    const existingLog = logMap.get(uniqueKey);
+                    // 동일한 내용의 미션이라면 '완료'된 데이터를 우선적으로 남김
+                    if (!existingLog.completed && log.completed) {
+                        logMap.set(uniqueKey, log);
+                    }
+                } else {
+                    logMap.set(uniqueKey, log);
+                }
             }
-            return validLogs;
+            return Array.from(logMap.values());
         }
 
         // 상단 대시보드 팝업 함수들
@@ -3418,7 +3477,7 @@
             const activeChild = state.children[childId];
             if (!modal || !activeChild) return;
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             const todayMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
             
             // 미완료된 미션을 상단으로 오도록 정렬
@@ -3428,14 +3487,36 @@
             if (todayMissions.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">오늘 할일이 없습니다.</div>';
             } else {
-                listEl.innerHTML = todayMissions.map(m => `
-                    <div class="rounded-3xl border ${m.completed ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-white'} p-4 shadow-sm transition-all hover:scale-[1.02]">
+                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                todayMissions.forEach(item => {
+                    const dStr = item.date || todayStr;
+                    const [y, m, d] = dStr.split('-');
+                    const dObj = new Date(y, m - 1, d);
+                    item.dateStr = `${dStr} (${weekdays[dObj.getDay()]}요일)`;
+                });
+                
+                let html = '';
+                let currentDateStr = "";
+
+                todayMissions.forEach(m => {
+                    if (currentDateStr !== m.dateStr) {
+                        currentDateStr = m.dateStr;
+                        html += `
+                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                                <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
+                                    <i class="fa-regular fa-calendar-check text-indigo-500"></i> ${m.dateStr}
+                                </h4>
+                            </div>
+                        `;
+                    }
+                    html += `
+                        <div class="rounded-3xl border ${m.completed ? 'border-emerald-200 bg-emerald-50 border-l-4 border-l-emerald-500' : 'border-slate-200 bg-white border-l-4 border-l-slate-400'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
                                     <span class="text-indigo-600">[${m.subject}]</span> ${m.content || '학습내용'} <span class="text-slate-400">/ ${m.range || ''}</span>
                                 </h4>
-                                <span class="text-xs font-bold shrink-0 ${m.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full">${m.completed ? '✓ 완료' : '대기중'}</span>
+                                    <span class="text-xs font-bold shrink-0 ${m.completed ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full whitespace-nowrap">${m.completed ? '✓ 완료' : '대기중'}</span>
                             </div>
                             <div class="flex justify-end">
                                 <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-amber-50 border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm ${m.completed ? '' : 'animate-pulse'}">
@@ -3445,7 +3526,9 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                });
+                listEl.innerHTML = html;
             }
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3466,21 +3549,43 @@
             const activeChild = state.children[childId];
             if (!modal || !activeChild) return;
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             const completedMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && m.completed);
             
             const listEl = document.getElementById('today-completed-detail-list');
             if (completedMissions.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">완료한 미션이 없습니다.</div>';
             } else {
-                listEl.innerHTML = completedMissions.map(m => `
-                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition-all hover:scale-[1.02]">
+                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                completedMissions.forEach(item => {
+                    const dStr = item.date || todayStr;
+                    const [y, m, d] = dStr.split('-');
+                    const dObj = new Date(y, m - 1, d);
+                    item.dateStr = `${dStr} (${weekdays[dObj.getDay()]}요일)`;
+                });
+                
+                let html = '';
+                let currentDateStr = "";
+
+                completedMissions.forEach(m => {
+                    if (currentDateStr !== m.dateStr) {
+                        currentDateStr = m.dateStr;
+                        html += `
+                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                                <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
+                                    <i class="fa-regular fa-calendar-check text-emerald-500"></i> ${m.dateStr}
+                                </h4>
+                            </div>
+                        `;
+                    }
+                    html += `
+                        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 border-l-4 border-l-emerald-500 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
                                     <span class="text-emerald-600">[${m.subject}]</span> ${m.content || '학습내용'} <span class="text-slate-400">/ ${m.range || m.actualRange || ''}</span>
                                 </h4>
-                                <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">✓ 완료</span>
+                                    <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full whitespace-nowrap">✓ 완료</span>
                             </div>
                             <div class="flex justify-end">
                                 <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-amber-50 border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
@@ -3490,7 +3595,9 @@
                             </div>
                         </div>
                     </div>
-                `).join('');
+                    `;
+                });
+                listEl.innerHTML = html;
             }
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3506,7 +3613,7 @@
             const activeChild = state.children[state.activeChildId];
             if (!modal || !activeChild) return;
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             const completedMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && m.completed);
             const totalCoins = completedMissions.reduce((sum, m) => sum + (m.stars || 0), 0);
             
@@ -3514,6 +3621,14 @@
             if (completedMissions.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">오늘 획득한 코인이 없습니다.</div>';
             } else {
+                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                completedMissions.forEach(item => {
+                    const dStr = item.date || todayStr;
+                    const [y, m, d] = dStr.split('-');
+                    const dObj = new Date(y, m - 1, d);
+                    item.dateStr = `${dStr} (${weekdays[dObj.getDay()]}요일)`;
+                });
+                
                 listEl.innerHTML = `
                     <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm sm:text-base font-black text-amber-800 text-center mb-4 shadow-sm">
                         💰 오늘 총 ${totalCoins}개 획득!
@@ -3521,14 +3636,29 @@
                     <div class="mb-4 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
                         🌟 참 잘했어요! 오늘도 드림코인을 가득 모았네요! 🌟
                     </div>
-                    ${completedMissions.map(m => `
-                        <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                `;
+                
+                let currentDateStr = "";
+
+                completedMissions.forEach(m => {
+                    if (currentDateStr !== m.dateStr) {
+                        currentDateStr = m.dateStr;
+                        listEl.innerHTML += `
+                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                                <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
+                                    <i class="fa-regular fa-calendar-check text-amber-500"></i> ${m.dateStr}
+                                </h4>
+                            </div>
+                        `;
+                    }
+                    listEl.innerHTML += `
+                        <div class="rounded-3xl border border-amber-200 bg-amber-50 border-l-4 border-l-amber-500 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
                             <div class="flex flex-col gap-3">
                                 <div class="flex items-start justify-between gap-3">
                                     <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
                                         <span class="text-amber-600">[${m.subject}]</span> ${m.content || '학습내용'} <span class="text-slate-400">/ ${m.range || m.actualRange || ''}</span>
                                     </h4>
-                                    <span class="text-xs font-bold shrink-0 text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full">✓ 완료</span>
+                                    <span class="text-xs font-bold shrink-0 text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">✓ 완료</span>
                                 </div>
                                 <div class="flex justify-end">
                                     <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
@@ -3538,8 +3668,8 @@
                                 </div>
                             </div>
                         </div>
-                    `).join('')}
-                `;
+                    `;
+                });
             }
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3572,24 +3702,44 @@
                 return schedDate >= weekStart && schedDate <= weekEnd && (s.category === '시험' || s.category === '숙제');
             });
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
 
             if (weekExams.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 예정된 시험 및 숙제가 없습니다.</div>';
             } else {
-            listEl.innerHTML = `
-                <div class="mb-4 p-3 bg-violet-100 text-violet-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                    🔥 미리미리 준비하는 모습 참 잘했어요! 파이팅! 🔥
-                </div>
-                ${weekExams.map(s => {
+                const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                weekExams.forEach(s => {
                     const [sY, sM, sD] = s.duedate.split('-');
                     const dObj = new Date(sY, sM - 1, sD);
-                    const dWeek = ['일', '월', '화', '수', '목', '금', '토'][dObj.getDay()];
-                    const formattedDueDate = `${s.duedate} ${dWeek}요일`;
+                    s.dateStr = `${s.duedate} (${weekdays[dObj.getDay()]}요일)`;
+                });
+
+                weekExams.sort((a, b) => a.duedate.localeCompare(b.duedate));
+
+                let html = `
+                    <div class="mb-4 p-3 bg-violet-100 text-violet-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🔥 미리미리 준비하는 모습 참 잘했어요! 파이팅! 🔥
+                    </div>
+                `;
+
+                let currentDateStr = "";
+
+                weekExams.forEach(s => {
+                    if (currentDateStr !== s.dateStr) {
+                        currentDateStr = s.dateStr;
+                        html += `
+                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                                <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
+                                    <i class="fa-regular fa-calendar-check text-violet-500"></i> ${s.dateStr}
+                                </h4>
+                            </div>
+                        `;
+                    }
+
                     const isPast = !s.completed && s.duedate < todayStr;
                     const isCompletedOrPast = s.completed || isPast;
 
-                    let bgClass = s.completed ? 'border-emerald-200 bg-emerald-50' : 'border-violet-200 bg-violet-50';
+                    let bgClass = s.completed ? 'border-emerald-200 bg-emerald-50 border-l-4 border-l-emerald-500' : 'border-violet-200 bg-violet-50 border-l-4 border-l-violet-500';
                     let textClass = s.completed ? 'text-emerald-600' : 'text-violet-600';
                     let badgeClass = s.completed ? 'text-emerald-600 bg-emerald-100' : 'text-violet-600 bg-violet-100';
                     let dateBadgeClass = s.completed ? 'text-emerald-600 bg-white border-emerald-200' : 'text-violet-600 bg-white border-violet-200';
@@ -3597,7 +3747,7 @@
                     let statusText = s.completed ? '✓ 완료' : '예정';
 
                     if (isPast) {
-                        bgClass = 'border-slate-200 bg-slate-50';
+                        bgClass = 'border-slate-200 bg-slate-50 border-l-4 border-l-slate-400';
                         textClass = 'text-slate-500';
                         badgeClass = 'text-slate-500 bg-slate-200';
                         dateBadgeClass = 'text-slate-500 bg-white border-slate-300';
@@ -3605,25 +3755,27 @@
                         statusText = '✓ 완료';
                     }
 
-                    return `
-                    <div class="rounded-3xl border ${bgClass} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                    html += `
+                    <div class="rounded-3xl border ${bgClass} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
                                     <span class="${textClass}">[${s.category}]</span> ${s.content}
                                 </h4>
-                                <span class="text-xs font-bold shrink-0 ${badgeClass} px-2.5 py-1 rounded-full">${statusText}</span>
+                                <span class="text-xs font-bold shrink-0 ${badgeClass} px-2.5 py-1 rounded-full whitespace-nowrap">${statusText}</span>
                             </div>
                             <div class="flex justify-end">
                                 <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${dateBadgeClass} border px-3 py-1.5 rounded-2xl shadow-sm ${isCompletedOrPast ? '' : 'animate-pulse'}">
                                     <i class="fa-regular fa-calendar-check ${iconClass}"></i> 
-                                    기한: ${formattedDueDate}
+                                    기한: ${s.dateStr}
                                 </span>
                             </div>
-                            </div>
                         </div>
-                `}).join('')}
-            `;
+                    </div>
+                    `;
+                });
+                
+                listEl.innerHTML = html;
             }
             
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -3635,53 +3787,24 @@
             if (!modal || !activeChild) return;
             
             const weekStart = getWeekStart(new Date());
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            const weekStartStr = toLocalIsoString(weekStart);
+            const weekStartStr = getLocalIsoString(weekStart);
             
             const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr && log.completed);
             
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            const logSum = logs.reduce((sum, m) => sum + (m.stars || 0), 0);
-            const listEl = document.getElementById('weekly-coins-detail-list');
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            logs.forEach(item => {
+                const [y, m, d] = item.date.split('-');
+                const dObj = new Date(y, m - 1, d);
+                item.dateStr = `${item.date} (${weekdays[dObj.getDay()]}요일)`;
+            });
+
+            currentCoinDetailItems = logs;
+            currentCoinDetailLimit = 10;
+            currentCoinDetailMode = 'WEEKLY';
             
-            let html = `
-                <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm sm:text-base font-black text-amber-800 text-center mb-4 shadow-sm">
-                    💰 이번주 총 ${logSum}개 획득!
-                </div>
-            `;
-            
-            if (logs.length === 0) {
-                html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 확정 획득한 코인이 없습니다.</div>';
-            } else {
-                html += `
-                    <div class="mb-4 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                        🌟 일주일 동안 열심히 모은 코인이에요! 멋져요! 🌟
-                    </div>
-                `;
-                html += logs.map(m => `
-                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
-                        <div class="flex flex-col gap-3">
-                            <div class="flex items-start justify-between gap-3">
-                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="text-amber-600">[${m.subject}]</span> ${m.content || '학습내용'}
-                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${m.date}</span>
-                                </h4>
-                                <span class="text-xs font-bold shrink-0 text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full">✓ 완료</span>
-                            </div>
-                            <div class="flex justify-end">
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
-                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
-                                    코인 ${m.stars || 0}개 획득! 🎉
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-            listEl.innerHTML = html;
+            renderCoinDetailList();
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
@@ -3699,70 +3822,165 @@
             
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
-            const expectedTotal = activeChild.stars + totalUsedCoins;
-            const logSum = logs.reduce((sum, m) => sum + (m.stars || 0), 0);
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            logs.forEach(item => {
+                const [y, m, d] = item.date.split('-');
+                const dObj = new Date(y, m - 1, d);
+                item.dateStr = `${item.date} (${weekdays[dObj.getDay()]}요일)`;
+            });
             
-            const listEl = document.getElementById('total-coins-detail-list');
+            currentCoinDetailItems = logs;
+            currentCoinDetailLimit = 10;
+            currentCoinDetailMode = 'TOTAL';
             
-            let html = `
-                <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-sm sm:text-base font-black text-emerald-800 text-center mb-4 shadow-sm">
-                    💎 총 누적 코인: ${expectedTotal}개
-                </div>
-            `;
-            
-            if (logs.length === 0 && expectedTotal === logSum) {
-                html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">누적 확정 획득한 코인이 없습니다.</div>';
-            } else {
+            renderCoinDetailList();
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function renderCoinDetailList() {
+            const activeChild = state.children[state.activeChildId];
+            let listEl;
+            let logSum = 0;
+            let html = '';
+
+            if (currentCoinDetailMode === 'WEEKLY') {
+                listEl = document.getElementById('weekly-coins-detail-list');
+                logSum = currentCoinDetailItems.reduce((sum, m) => sum + (m.stars || 0), 0);
+                
                 html += `
-                    <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                        🏆 꾸준히 모아온 소중한 나의 드림 코인이에요! 정말 대단해요! 🏆
+                    <div class="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm sm:text-base font-black text-amber-800 text-center mb-4 shadow-sm">
+                        💰 이번주 총 ${logSum}개 획득!
                     </div>
                 `;
-                html += logs.map(m => `
-                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
-                        <div class="flex flex-col gap-3">
-                            <div class="flex items-start justify-between gap-3">
-                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="text-emerald-600">[${m.subject}]</span> ${m.content || '학습내용'}
-                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${m.date}</span>
-                                </h4>
-                                <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full">✓ 완료</span>
-                            </div>
-                            <div class="flex justify-end">
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-emerald-300 px-3 py-1.5 rounded-2xl shadow-sm">
-                                    <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
-                                    코인 ${m.stars || 0}개 획득! 🎉
-                                </span>
-                            </div>
+
+                if (currentCoinDetailItems.length === 0) {
+                    html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 확정 획득한 코인이 없습니다.</div>';
+                } else {
+                    html += `
+                        <div class="mb-4 p-3 bg-amber-100 text-amber-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                            🌟 일주일 동안 열심히 모은 코인이에요! 멋져요! 🌟
                         </div>
-                    </div>
-                `).join('');
-            }
-            
-            if (expectedTotal !== logSum) {
-                const diff = expectedTotal - logSum;
+                    `;
+                }
+
+            } else {
+                listEl = document.getElementById('total-coins-detail-list');
+                logSum = currentCoinDetailItems.reduce((sum, m) => sum + (m.stars || 0), 0);
+                const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+                const expectedTotal = activeChild.stars + totalUsedCoins;
+
                 html += `
-                    <div class="rounded-3xl border border-slate-200 bg-slate-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
-                        <div class="flex flex-col gap-3">
-                            <div class="flex items-start justify-between gap-3">
-                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="text-slate-500">[시스템 보정]</span> 과거 내역 동기화 보정 코인
-                                </h4>
-                            </div>
-                            <div class="flex justify-end">
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-slate-600 bg-white border border-slate-300 px-3 py-1.5 rounded-2xl shadow-sm">
-                                    <i class="fa-solid fa-coins text-slate-400"></i> 
-                                    코인 ${diff > 0 ? '+' : ''}${diff}개
-                                </span>
+                    <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-sm sm:text-base font-black text-emerald-800 text-center mb-4 shadow-sm">
+                        💎 총 누적 코인: ${expectedTotal}개
+                    </div>
+                `;
+
+                if (currentCoinDetailItems.length === 0 && expectedTotal === logSum) {
+                    html += '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">누적 확정 획득한 코인이 없습니다.</div>';
+                } else {
+                    html += `
+                        <div class="mb-4 p-3 bg-emerald-100 text-emerald-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                            🏆 꾸준히 모아온 소중한 나의 드림 코인이에요! 정말 대단해요! 🏆
+                        </div>
+                    `;
+                }
+            }
+
+            const displayedItems = currentCoinDetailItems.slice(0, currentCoinDetailLimit);
+            let currentDateStr = "";
+
+            displayedItems.forEach(item => {
+                if (currentDateStr !== item.dateStr) {
+                    currentDateStr = item.dateStr;
+                    html += `
+                        <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
+                                <i class="fa-regular fa-calendar-check text-amber-500"></i> ${item.dateStr}
+                            </h4>
+                        </div>
+                    `;
+                }
+
+                if (currentCoinDetailMode === 'WEEKLY') {
+                    html += `
+                        <div class="rounded-3xl border border-amber-200 bg-amber-50 border-l-4 border-l-amber-500 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-start justify-between gap-3">
+                                    <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                        <span class="text-amber-600">[${item.subject}]</span> ${item.content || '학습내용'}
+                                    </h4>
+                                    <span class="text-xs font-bold shrink-0 text-amber-600 bg-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">✓ 완료</span>
+                                </div>
+                                <div class="flex justify-end">
+                                    <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-amber-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                        <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                        코인 ${item.stars || 0}개 획득! 🎉
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 border-l-4 border-l-emerald-500 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-start justify-between gap-3">
+                                    <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                        <span class="text-emerald-600">[${item.subject}]</span> ${item.content || '학습내용'}
+                                    </h4>
+                                    <span class="text-xs font-bold shrink-0 text-emerald-600 bg-emerald-100 px-2.5 py-1 rounded-full whitespace-nowrap">✓ 완료</span>
+                                </div>
+                                <div class="flex justify-end">
+                                    <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-amber-600 bg-white border border-emerald-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                        <i class="fa-solid fa-coins text-amber-500 animate-bounce"></i> 
+                                        코인 ${item.stars || 0}개 획득! 🎉
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (currentCoinDetailItems.length > currentCoinDetailLimit) {
+                const btnBgClass = currentCoinDetailMode === 'WEEKLY' ? 'hover:bg-amber-50 text-slate-600 hover:text-amber-600' : 'hover:bg-emerald-50 text-slate-600 hover:text-emerald-600';
+                html += `
+                    <button onclick="loadMoreCoinDetailItems()" class="w-full py-3 mt-2 mb-4 bg-white ${btnBgClass} border border-slate-200 font-bold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-chevron-down"></i> 더 보기 (${currentCoinDetailLimit} / ${currentCoinDetailItems.length})
+                    </button>
                 `;
             }
 
+            if (currentCoinDetailMode === 'TOTAL') {
+                const expectedTotal = activeChild.stars + (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+                if (expectedTotal !== logSum) {
+                    const diff = expectedTotal - logSum;
+                    html += `
+                        <div class="rounded-3xl border border-slate-200 bg-slate-50 border-l-4 border-l-slate-400 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
+                            <div class="flex flex-col gap-3">
+                                <div class="flex items-start justify-between gap-3">
+                                    <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                                        <span class="text-slate-500">[시스템 보정]</span> 과거 내역 동기화 보정 코인
+                                    </h4>
+                                </div>
+                                <div class="flex justify-end">
+                                    <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-slate-600 bg-white border border-slate-300 px-3 py-1.5 rounded-2xl shadow-sm">
+                                        <i class="fa-solid fa-coins text-slate-400"></i> 
+                                        코인 ${diff > 0 ? '+' : ''}${diff}개
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
             listEl.innerHTML = html;
-            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function loadMoreCoinDetailItems() {
+            currentCoinDetailLimit += 10;
+            renderCoinDetailList();
         }
 
         function closeTotalCoinsDetail() {
@@ -3830,10 +4048,6 @@
             let startDate, endDate;
             const now = new Date();
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            
             if (state.isParentMode) {
                 const childId = document.getElementById('db-filter-child').value;
                 activeChild = state.children[childId];
@@ -3848,7 +4062,7 @@
                 if (targetWeek === 'ALL') {
                     startDate = `${targetYear}-${targetMonth}-01`;
                     const end = new Date(year, month + 1, 0);
-                    endDate = toLocalIsoString(end);
+                    endDate = getLocalIsoString(end);
                 } else {
                     const weekNum = parseInt(targetWeek.replace('W', ''));
                     let startDay, endDay;
@@ -3867,14 +4081,14 @@
                 activeChild = state.children[state.activeChildId];
                 const filter = childChartFilters.completion || 'WEEK';
                 if (filter === 'WEEK') {
-                    startDate = toLocalIsoString(getWeekStart(now));
+                    startDate = getLocalIsoString(getWeekStart(now));
                     const end = new Date(getWeekStart(now));
                     end.setDate(end.getDate() + 6);
-                    endDate = toLocalIsoString(end);
+                    endDate = getLocalIsoString(end);
                 } else if (filter === 'MONTH') {
                     startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
                     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                    endDate = toLocalIsoString(end);
+                    endDate = getLocalIsoString(end);
                 } else if (filter === 'YEAR') {
                     startDate = `${now.getFullYear()}-01-01`;
                     endDate = `${now.getFullYear()}-12-31`;
@@ -3885,12 +4099,12 @@
 
             let items = [];
             const logs = getValidStudyLogs(activeChild).filter(log => log.date >= startDate && log.date <= endDate);
-            items = logs.map(m => ({ date: m.date, subject: m.subject, content: m.content, completed: m.completed }));
+            items = logs.map(m => ({ date: m.date, subject: m.subject, content: m.content, range: m.range, actualRange: m.actualRange, completed: m.completed }));
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString(now);
             if (todayStr >= startDate && todayStr <= endDate) {
                 const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
-                tMissions.forEach(m => items.push({ date: todayStr, subject: m.subject, content: m.content, completed: false }));
+                tMissions.forEach(m => items.push({ date: todayStr, subject: m.subject, content: m.content, range: m.range, actualRange: m.actualRange, completed: false }));
             }
 
             if (mode === 'COMPLETED') {
@@ -3905,6 +4119,17 @@
 
             items.sort((a,b) => new Date(b.date) - new Date(a.date));
 
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            items.forEach(item => {
+                const [y, m, d] = item.date.split('-');
+                const dObj = new Date(y, m - 1, d);
+                item.dateStr = `${item.date} (${weekdays[dObj.getDay()]}요일)`;
+            });
+
+            currentCompletionItems = items;
+            currentCompletionLimit = 10;
+            currentCompletionMode = mode;
+
             const titleEl = modal.querySelector('h3');
             if (titleEl) {
                 let titleText = '📊 학습 전체 상세 내역';
@@ -3918,46 +4143,80 @@
                 titleEl.innerText = titleText;
             }
 
+            renderCompletionDetailList();
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function renderCompletionDetailList() {
             const listEl = document.getElementById('completion-detail-list');
-            if (items.length === 0) {
+            if (currentCompletionItems.length === 0) {
                 listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">해당 조건의 내역이 없습니다.</div>';
+                return;
+            }
+
+            const displayedItems = currentCompletionItems.slice(0, currentCompletionLimit);
+            
+            let html = '';
+            if (currentCompletionMode === 'COMPLETED' || currentCompletionMode === 'ALL') {
+                html += `
+                    <div class="mb-4 p-3 bg-indigo-100 text-indigo-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        📚 열심히 공부한 흔적이에요! 아주 훌륭해요! 📚
+                    </div>
+                `;
             } else {
-                let html = '';
-                if (mode === 'COMPLETED' || mode === 'ALL') {
+                html += `
+                    <div class="mb-4 p-3 bg-slate-100 text-slate-600 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
+                        🔥 조금만 더 힘내서 미완료 항목들을 없애볼까요? 🔥
+                    </div>
+                `;
+            }
+
+            let currentDateStr = "";
+
+            displayedItems.forEach(item => {
+                if (currentDateStr !== item.dateStr) {
+                    currentDateStr = item.dateStr;
                     html += `
-                        <div class="mb-4 p-3 bg-indigo-100 text-indigo-800 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                            📚 열심히 공부한 흔적이에요! 아주 훌륭해요! 📚
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="mb-4 p-3 bg-slate-100 text-slate-600 rounded-2xl text-center font-black text-sm shadow-sm animate-pulse">
-                            🔥 조금만 더 힘내서 미완료 항목들을 없애볼까요? 🔥
+                        <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
+                                <i class="fa-regular fa-calendar-check text-indigo-500"></i> ${item.dateStr}
+                            </h4>
                         </div>
                     `;
                 }
-                html += items.map(item => `
-                    <div class="rounded-3xl border ${item.completed ? 'border-indigo-200 bg-indigo-50' : 'border-slate-200 bg-slate-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+
+                const rangeText = item.actualRange || item.range || '';
+                const rangeHtml = rangeText ? `<span class="text-slate-500 font-normal"> / ${rangeText}</span>` : '';
+
+                html += `
+                    <div class="rounded-3xl border ${item.completed ? 'border-indigo-200 bg-indigo-50 border-l-4 border-l-indigo-500' : 'border-slate-200 bg-slate-50 border-l-4 border-l-slate-400'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
                                     <span class="${item.completed ? 'text-indigo-600' : 'text-slate-500'}">[${item.subject}]</span> ${item.content || '학습내용'}
-                                    <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${item.date}</span>
+                                    ${rangeHtml}
                                 </h4>
-                                <span class="text-xs font-bold shrink-0 ${item.completed ? 'text-indigo-600 bg-indigo-100' : 'text-slate-500 bg-slate-200'} px-2.5 py-1 rounded-full">${item.completed ? '✓ 완료' : '미완료'}</span>
-                            </div>
-                            <div class="flex justify-end">
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${item.completed ? 'text-indigo-600 bg-white border-indigo-300' : 'text-slate-500 bg-white border-slate-300'} border px-3 py-1.5 rounded-2xl shadow-sm ${item.completed ? '' : 'animate-pulse'}">
-                                    <i class="fa-solid ${item.completed ? 'fa-check-circle text-indigo-500 animate-bounce' : 'fa-circle-xmark text-slate-400'}"></i> 
-                                    ${item.completed ? '학습 완료! 👏' : '아직 진행중!'}
-                                </span>
+                                <span class="text-xs font-bold shrink-0 ${item.completed ? 'text-indigo-600 bg-indigo-100' : 'text-slate-500 bg-slate-200'} px-2.5 py-1 rounded-full whitespace-nowrap">${item.completed ? '✓ 완료' : '미완료'}</span>
                             </div>
                         </div>
                     </div>
-                `).join('');
-                listEl.innerHTML = html;
+                `;
+            });
+
+            if (currentCompletionItems.length > currentCompletionLimit) {
+                html += `
+                    <button onclick="loadMoreCompletionItems()" class="w-full py-3 mt-2 mb-4 bg-white hover:bg-indigo-50 border border-slate-200 text-slate-600 hover:text-indigo-600 font-bold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-chevron-down"></i> 더 보기 (${currentCompletionLimit} / ${currentCompletionItems.length})
+                    </button>
+                `;
             }
-            modal.classList.remove('opacity-0', 'pointer-events-none');
+
+            listEl.innerHTML = html;
+        }
+
+        function loadMoreCompletionItems() {
+            currentCompletionLimit += 10;
+            renderCompletionDetailList();
         }
 
         function closeCompletionDetail() {
@@ -3971,7 +4230,7 @@
         }
 
         function updateChildHeaderDashboard(activeChild) {
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             
             // 오늘 할일 건수
             const todayMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
@@ -3992,11 +4251,8 @@
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            const weekStartStr = toLocalIsoString(weekStart);
-            const weekEndStr = toLocalIsoString(weekEnd);
+            const weekStartStr = getLocalIsoString(weekStart);
+            const weekEndStr = getLocalIsoString(weekEnd);
             
             const rawSchedules = activeChild.schedules || [];
             const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
@@ -4039,6 +4295,7 @@
         }
 
         function openScheduleModal(dateStr = "") {
+            currentScheduleLimit = 10;
             const modal = document.getElementById('schedule-calendar-modal');
             const box = document.getElementById('schedule-calendar-box');
             if (!modal || !box) return;
@@ -4050,7 +4307,7 @@
                 } else {
                 const modeInput = document.getElementById('form-sched-mode');
                 if (!modeInput || modeInput.value !== "EDIT") {
-                    const todayStr = new Date().toISOString().split('T')[0];
+                    const todayStr = getLocalIsoString();
                     dateInput.value = todayStr;
                 }
                 }
@@ -4132,7 +4389,7 @@
             if(idInput) idInput.value = "";
             if(categoryInput) categoryInput.value = "시험";
             if(contentInput) contentInput.value = "";
-            if(duedateInput) duedateInput.value = new Date().toISOString().split('T')[0];
+            if(duedateInput) duedateInput.value = getLocalIsoString();
             if(repeatInput) { repeatInput.value = "NONE"; repeatInput.disabled = false; }
             if(repeatEndDateInput) { repeatEndDateInput.value = ""; repeatEndDateInput.disabled = true; }
             if(btn) btn.innerText = "일정 등록";
@@ -4218,7 +4475,13 @@
                 currentCalMonth = 0;
                 currentCalYear++;
             }
+            currentScheduleLimit = 10;
             renderScheduleCalendar();
+            renderScheduleCalendarModal();
+        }
+
+        function loadMoreSchedules() {
+            currentScheduleLimit += 10;
             renderScheduleCalendarModal();
         }
 
@@ -4249,19 +4512,16 @@
                 let html = weekdays.map(day => `<div class="text-center font-bold text-slate-400 mb-2">${day}</div>`).join('');
 
             const now = new Date();
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            const todayStr = toLocalIsoString(now);
+            const todayStr = getLocalIsoString(now);
             
             const weekStart = getWeekStart(now);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
-            const weekStartStr = toLocalIsoString(weekStart);
-            const weekEndStr = toLocalIsoString(weekEnd);
+            const weekStartStr = getLocalIsoString(weekStart);
+            const weekEndStr = getLocalIsoString(weekEnd);
 
             for (let i = 0; i < firstDay; i++) {
-                html += '<div class="min-h-[90px] rounded-3xl border border-slate-100 bg-slate-50"></div>';
+                html += '<div class="min-h-[70px] sm:min-h-[90px] rounded-2xl sm:rounded-3xl border border-slate-100 bg-slate-50"></div>';
             }
             for (let day = 1; day <= lastDate; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -4281,16 +4541,18 @@
                 }
 
                 html += `
-                    <div onclick="openScheduleModal('${dateStr}')" class="min-h-[90px] rounded-3xl p-3 border ${borderBgClass} text-[11px] cursor-pointer transition">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="${dayTextClass}">${day}</span>
-                            ${items.length ? `<span class="text-[10px] ${dateStr === todayStr || (dateStr >= weekStartStr && dateStr <= weekEndStr) ? 'text-indigo-700 bg-indigo-200' : 'text-orange-700 bg-orange-100'} px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
+                    <div onclick="openScheduleModal('${dateStr}')" class="min-h-[70px] sm:min-h-[90px] rounded-2xl sm:rounded-3xl p-1 sm:p-2 lg:p-3 border ${borderBgClass} cursor-pointer transition overflow-hidden">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-1 sm:mb-2 gap-0.5 lg:gap-0">
+                            <span class="${dayTextClass} leading-none">${day}</span>
+                            ${items.length ? `<span class="text-[9px] sm:text-[10px] ${dateStr === todayStr || (dateStr >= weekStartStr && dateStr <= weekEndStr) ? 'text-indigo-700 bg-indigo-200' : 'text-orange-700 bg-orange-100'} px-1 sm:px-1.5 py-0.5 rounded-full whitespace-nowrap leading-none">${items.length}개</span>` : ''}
                         </div>
-                        ${items.slice(0, 2).map(item => {
-                            const isPast = !item.completed && item.duedate < todayStr;
-                            const itemBg = getCategoryStyleClass(item.category, item.completed, isPast);
-                            return `<div onclick="editSchedule('${item.id}'); event.stopPropagation();" class="flex items-center gap-1.5 text-[10px] mb-1 px-1.5 py-0.5 rounded font-medium cursor-pointer transition ${itemBg}"><span>${getCategoryIcon(item.category)}</span><span class="truncate ${item.completed ? 'line-through' : ''}">${item.content}</span></div>`;
-                        }).join('')}
+                        <div class="flex flex-col gap-0.5 sm:gap-1">
+                            ${items.slice(0, 2).map(item => {
+                                const isPast = !item.completed && item.duedate < todayStr;
+                                const itemBg = getCategoryStyleClass(item.category, item.completed, isPast);
+                                return `<div onclick="editSchedule('${item.id}'); event.stopPropagation();" class="flex items-center gap-1 text-[9px] sm:text-[10px] px-1 py-0.5 rounded font-medium cursor-pointer transition ${itemBg} w-full overflow-hidden"><span class="shrink-0 text-[8px] sm:text-[10px]">${getCategoryIcon(item.category)}</span><span class="truncate leading-tight ${item.completed ? 'line-through' : ''}">${item.content}</span></div>`;
+                            }).join('')}
+                        </div>
                     </div>
                 `;
             }
@@ -4323,7 +4585,7 @@
             const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
             let html = weekdays.map(day => `<div class="text-center text-[10px] sm:text-[11px] font-bold text-slate-400 mb-1 sm:mb-2">${day}</div>`).join('');
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
 
             for (let i = 0; i < firstDay; i++) {
             html += '<div class="min-h-[60px] sm:min-h-[80px] rounded-2xl sm:rounded-3xl border border-slate-100 bg-slate-50"></div>';
@@ -4332,16 +4594,18 @@
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const items = scheduleByDate[dateStr] || [];
                 html += `
-                <div onclick="setScheduleFormDate('${dateStr}')" class="min-h-[60px] sm:min-h-[80px] rounded-2xl sm:rounded-3xl p-1.5 sm:p-3 border ${items.length ? 'border-orange-200 bg-orange-50' : 'border-slate-100 bg-slate-50'} text-[10px] sm:text-[11px] cursor-pointer hover:border-orange-400 transition">
-                    <div class="flex items-center justify-between mb-1 sm:mb-2">
-                            <span class="font-bold text-slate-700">${day}</span>
-                            ${items.length ? `<span class="text-[10px] text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full">${items.length}개</span>` : ''}
+                <div onclick="setScheduleFormDate('${dateStr}')" class="min-h-[60px] sm:min-h-[80px] rounded-2xl sm:rounded-3xl p-1 sm:p-1.5 lg:p-3 border ${items.length ? 'border-orange-200 bg-orange-50' : 'border-slate-100 bg-slate-50'} cursor-pointer hover:border-orange-400 transition overflow-hidden">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-1 sm:mb-2 gap-0.5 lg:gap-0">
+                            <span class="font-bold text-slate-700 text-[10px] sm:text-[11px] leading-none">${day}</span>
+                            ${items.length ? `<span class="text-[9px] sm:text-[10px] text-orange-700 bg-orange-100 px-1 sm:px-1.5 py-0.5 rounded-full whitespace-nowrap leading-none">${items.length}개</span>` : ''}
                         </div>
-                        ${items.slice(0, 2).map(item => {
-                            const isPast = !item.completed && item.duedate < todayStr;
-                            const itemBg = getCategoryStyleClass(item.category, item.completed, isPast);
-                            return `<div onclick="editSchedule('${item.id}'); event.stopPropagation();" class="flex items-center gap-1.5 text-[10px] mb-1 px-1.5 py-0.5 rounded font-medium cursor-pointer transition ${itemBg}"><span>${getCategoryIcon(item.category)}</span><span class="truncate ${item.completed ? 'line-through' : ''}">${item.content}</span></div>`;
-                        }).join('')}
+                        <div class="flex flex-col gap-0.5 sm:gap-1">
+                            ${items.slice(0, 2).map(item => {
+                                const isPast = !item.completed && item.duedate < todayStr;
+                                const itemBg = getCategoryStyleClass(item.category, item.completed, isPast);
+                                return `<div onclick="editSchedule('${item.id}'); event.stopPropagation();" class="flex items-center gap-1 text-[9px] sm:text-[10px] px-1 py-0.5 rounded font-medium cursor-pointer transition ${itemBg} w-full overflow-hidden"><span class="shrink-0 text-[8px] sm:text-[10px]">${getCategoryIcon(item.category)}</span><span class="truncate leading-tight ${item.completed ? 'line-through' : ''}">${item.content}</span></div>`;
+                            }).join('')}
+                        </div>
                     </div>
                 `;
             }
@@ -4361,9 +4625,10 @@
                 return;
             }
 
-            itemsEl.innerHTML = monthSchedules
-                .sort((a, b) => (a.duedate || '').localeCompare(b.duedate || ''))
-                .map(item => {
+            const sortedSchedules = monthSchedules.sort((a, b) => (a.duedate || '').localeCompare(b.duedate || ''));
+            const displayedSchedules = sortedSchedules.slice(0, currentScheduleLimit);
+
+            let itemsHtml = displayedSchedules.map(item => {
                     const isPast = !item.completed && item.duedate < todayStr;
                     const isCompletedOrPast = item.completed || isPast;
 
@@ -4413,27 +4678,37 @@
                     const formattedDueDate = `${item.duedate} ${dWeek}요일`;
 
                     return `
-                    <div onclick="editSchedule('${item.id}')" class="rounded-3xl border ${bgClass} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 cursor-pointer">
-                        <div class="flex flex-col gap-3">
-                            <div class="flex items-start justify-between gap-3">
-                                <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
+                    <div onclick="editSchedule('${item.id}')" class="rounded-2xl sm:rounded-3xl border ${bgClass} p-3 sm:p-4 shadow-sm transition-all hover:scale-[1.02] mb-2 sm:mb-3 cursor-pointer">
+                        <div class="flex flex-col gap-2 sm:gap-3">
+                            <div class="flex items-start justify-between gap-2 sm:gap-3">
+                                <h4 class="text-[13px] sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
                                     <span class="${textClass}">[${item.category}]</span> ${item.content}
                                 </h4>
-                                <div class="flex items-center gap-2 shrink-0">
-                                    <button onclick="editSchedule('${item.id}'); event.stopPropagation();" class="text-slate-400 hover:text-indigo-600 transition text-sm"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteSchedule('${item.id}', event)" class="text-slate-400 hover:text-rose-600 transition text-sm"><i class="fa-solid fa-trash"></i></button>
+                                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                                    <button onclick="editSchedule('${item.id}'); event.stopPropagation();" class="text-slate-400 hover:text-indigo-600 transition text-xs sm:text-sm"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteSchedule('${item.id}', event)" class="text-slate-400 hover:text-rose-600 transition text-xs sm:text-sm"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
-                            <div class="flex justify-end items-center gap-2">
-                                <span class="text-xs font-bold ${badgeClass} px-2.5 py-1 rounded-full mr-auto">${statusText}</span>
-                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${dateBadgeClass} border px-3 py-1.5 rounded-2xl shadow-sm ${isCompletedOrPast ? '' : 'animate-pulse'}">
+                            <div class="flex justify-between items-center gap-1 sm:gap-2 mt-1 sm:mt-0">
+                                <span class="text-[10px] sm:text-xs font-bold ${badgeClass} px-2 sm:px-2.5 py-1 rounded-full">${statusText}</span>
+                                <span class="inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-sm font-black ${dateBadgeClass} border px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl shadow-sm ${isCompletedOrPast ? '' : 'animate-pulse'}">
                                     <i class="fa-regular fa-calendar-check ${iconClass}"></i> 
-                                    기한: ${formattedDueDate}
+                                    <span class="hidden sm:inline">기한: </span>${formattedDueDate}
                                 </span>
                             </div>
                         </div>
                     </div>
                 `}).join('');
+
+            if (sortedSchedules.length > currentScheduleLimit) {
+                itemsHtml += `
+                    <button onclick="loadMoreSchedules()" class="w-full py-3 mt-1 mb-4 bg-white hover:bg-orange-50 border border-slate-200 text-slate-600 hover:text-orange-600 font-bold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-chevron-down"></i> 더 보기 (${currentScheduleLimit} / ${sortedSchedules.length})
+                    </button>
+                `;
+            }
+
+            itemsEl.innerHTML = itemsHtml;
         }
 
         function setChildStoreStatusFilter(status) {
@@ -4469,7 +4744,7 @@
                     const selectedYear = yearEl.value;
                     const selectedMonth = monthEl.value;
                     requests = requests.filter(req => {
-                        const dateSource = req.deliveredAt || req.requestedOn || new Date().toISOString().split('T')[0];
+                        const dateSource = req.deliveredAt || req.requestedOn || getLocalIsoString();
                         const parts = dateSource.split('-');
                         if (parts.length >= 2) {
                             return parts[0] === selectedYear && parts[1] === selectedMonth;
@@ -4486,17 +4761,17 @@
                 const statusBadge = (req.status === 'SHIPPING') ? '배송중' : (req.status === 'DELIVERED' ? '배송완료' : '교환신청');
                 return `
                     <div class="rounded-3xl border border-slate-100 p-4 bg-white text-xs">
-                        <div class="flex items-center justify-between gap-3 mb-3">
-                            <div>
-                                <p class="font-bold text-slate-800">${req.title}</p>
-                                <p class="text-[11px] text-slate-500">코인 ${req.cost}개 | ${req.requestedOn || req.timestamp || '-'}</p>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-800 text-[13px] leading-snug break-keep">${req.title}</p>
+                                <p class="text-[11px] text-slate-500 mt-1">코인 ${req.cost}개 | ${req.requestedOn || req.timestamp || '-'}</p>
                             </div>
-                            <span class="text-[10px] ${req.status === 'DELIVERED' ? 'text-emerald-700 bg-emerald-100' : 'text-orange-700 bg-orange-100'} px-2 py-1 rounded-full">${statusBadge}</span>
+                            <span class="text-[10px] ${req.status === 'DELIVERED' ? 'text-emerald-700 bg-emerald-100' : 'text-orange-700 bg-orange-100'} px-2.5 py-1 rounded-full w-max shrink-0">${statusBadge}</span>
                         </div>
-                        <div class="flex items-center justify-between gap-2">
-                ${!req.status || req.status === 'REQUESTED' ? `<button onclick="cancelRewardRequest('${req.id}')" class="bg-slate-100 hover:bg-rose-50 text-rose-600 font-bold px-3 py-2 rounded-2xl text-xs transition">취소</button>` : ''}
-                            ${req.status === 'SHIPPING' ? `<p class="text-[11px] text-slate-500">배송 중입니다. 부모님 확인 후 배송완료 됩니다.</p>` : ''}
-                            ${req.status === 'DELIVERED' ? `<p class="text-[11px] text-slate-500">배송완료: ${req.deliveredAt}</p>` : ''}
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t border-slate-50 pt-2">
+                ${!req.status || req.status === 'REQUESTED' ? `<button onclick="cancelRewardRequest('${req.id}')" class="bg-slate-50 hover:bg-rose-50 text-rose-600 border border-slate-200 hover:border-rose-200 font-bold px-3 py-2 rounded-xl text-xs transition w-full sm:w-auto">취소</button>` : ''}
+                            ${req.status === 'SHIPPING' ? `<p class="text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg w-full text-center sm:text-left">배송 중입니다. 부모님 확인 후 배송완료 됩니다.</p>` : ''}
+                            ${req.status === 'DELIVERED' ? `<p class="text-[11px] text-slate-500 font-medium">배송완료: ${req.deliveredAt}</p>` : ''}
                         </div>
                     </div>
                 `;
@@ -4564,7 +4839,7 @@
             const targetChild = state.children[childId];
             const req = targetChild.rewardRequests.find(r => String(r.id) === String(requestId));
             if (!req) return;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             req.status = 'DELIVERED';
             req.deliveredAt = todayStr;
             
@@ -4584,13 +4859,10 @@
             const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
             const yearStart = new Date(now.getFullYear(), 0, 1);
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            const weekStartStr = toLocalIsoString(weekStart);
-            const monthStartStr = toLocalIsoString(monthStart);
-            const yearStartStr = toLocalIsoString(yearStart);
-            const nowStr = toLocalIsoString(now);
+            const weekStartStr = getLocalIsoString(weekStart);
+            const monthStartStr = getLocalIsoString(monthStart);
+            const yearStartStr = getLocalIsoString(yearStart);
+            const nowStr = getLocalIsoString(now);
             
             const scheduleCounts = (periodStartStr) => {
                 const logs = getValidStudyLogs(activeChild).filter(log => log.date >= periodStartStr && log.date <= nowStr);
@@ -4636,10 +4908,7 @@
             const now = new Date();
             const weekStart = getWeekStart(now);
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            const weekStartStr = toLocalIsoString(weekStart);
+            const weekStartStr = getLocalIsoString(weekStart);
             
             const weeklyLogs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr && log.completed);
             const weeklyEarned = weeklyLogs.reduce((sum, log) => sum + (log.stars || 0), 0);
@@ -4674,8 +4943,7 @@
 
             const now = new Date();
             const weekStart = getWeekStart(now);
-            const toLocalIsoString = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            const weekStartStr = toLocalIsoString(weekStart);
+            const weekStartStr = getLocalIsoString(weekStart);
 
             const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
             const logs = (activeChild.studyLogs || []).filter(log => log.date >= weekStartStr);
@@ -4707,19 +4975,15 @@
             const now = new Date();
             let startDate, endDate;
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            
             if (filter === 'WEEK') {
-                startDate = toLocalIsoString(getWeekStart(now));
+                startDate = getLocalIsoString(getWeekStart(now));
                 const end = new Date(getWeekStart(now));
                 end.setDate(end.getDate() + 6);
-                endDate = toLocalIsoString(end);
+                endDate = getLocalIsoString(end);
             } else if (filter === 'MONTH') {
                 startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
                 const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                endDate = toLocalIsoString(end);
+                endDate = getLocalIsoString(end);
             } else if (filter === 'YEAR') {
                 startDate = `${now.getFullYear()}-01-01`;
                 endDate = `${now.getFullYear()}-12-31`;
@@ -4729,7 +4993,7 @@
             let total = 0;
 
             const logs = getValidStudyLogs(activeChild).filter(log => log.date >= startDate && log.date <= endDate);
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString(now);
             const includesToday = todayStr >= startDate && todayStr <= endDate;
             
             completed = logs.filter(l => l.completed).length;
@@ -4807,20 +5071,16 @@
                 labels = months;
             }
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            
             const coinData = labels.map((_, idx) => {
                 if (filter === 'WEEK') {
                     const checkDate = new Date(startDate);
                     checkDate.setDate(checkDate.getDate() + idx);
-                    const dateStr = toLocalIsoString(checkDate);
+                    const dateStr = getLocalIsoString(checkDate);
                     const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr && l.completed);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 } else if (filter === 'MONTH') {
                     const checkDate = new Date(now.getFullYear(), now.getMonth(), idx + 1);
-                    const dateStr = toLocalIsoString(checkDate);
+                    const dateStr = getLocalIsoString(checkDate);
                     const logs = getValidStudyLogs(activeChild).filter(l => l.date === dateStr && l.completed);
                     return logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                 } else {
@@ -4880,19 +5140,15 @@
             const now = new Date();
             let startDate, endDate;
             
-            const toLocalIsoString = (date) => {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            };
-            
             if (filter === 'WEEK') {
-                startDate = toLocalIsoString(getWeekStart(now));
+                startDate = getLocalIsoString(getWeekStart(now));
                 const end = new Date(getWeekStart(now));
                 end.setDate(end.getDate() + 6);
-                endDate = toLocalIsoString(end);
+                endDate = getLocalIsoString(end);
             } else if (filter === 'MONTH') {
                 startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
                 const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                endDate = toLocalIsoString(end);
+                endDate = getLocalIsoString(end);
             } else if (filter === 'YEAR') {
                 startDate = `${now.getFullYear()}-01-01`;
                 endDate = `${now.getFullYear()}-12-31`;
@@ -4907,7 +5163,7 @@
                 if (log.completed) subjectData[log.subject].completed++;
             });
             
-            const todayStr = toLocalIsoString(now);
+            const todayStr = getLocalIsoString(now);
             if (todayStr >= startDate && todayStr <= endDate) {
                 const uncompletedToday = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
                 uncompletedToday.forEach(m => {
@@ -5509,7 +5765,6 @@
             document.getElementById('today-full-date-sentence').innerText = `오늘은 ${year}년 ${month}월 ${date}일 ${dayName}요일입니다.`;
 
             // 오늘 아침 요일 기본 미션 동기화 배치 수립
-            syncTodayMissionsWithDefault(activeChild, dayName);
             const isModified = syncTodayMissionsWithDefault(activeChild, dayName);
             if (isModified) {
                 saveStateToFirestore();
@@ -5547,24 +5802,33 @@
             const targetM = String(targetDateObj.getMonth() + 1).padStart(2, '0');
             const targetD = String(targetDateObj.getDate()).padStart(2, '0');
             const targetDateStr = `${targetY}-${targetM}-${targetD}`;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             
             // 1. 오래된(어제 이전) '미완료' 미션만 정리하여 메모리 및 데이터 최적화
-            const origLength = activeChild.todayMissions.length;
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                 const mDate = m.date || (m.id ? new Date(m.id).toISOString().split('T')[0] : '');
                 if (!m.completed && mDate < todayStr) {
                     // 미완료된 미션을 studyLogs에 병합 기록하여 전체 통계의 분모(total) 손실을 방지합니다.
                     if (!activeChild.studyLogs) activeChild.studyLogs = [];
-                    activeChild.studyLogs.push({
-                        missionId: m.id,
-                        date: mDate,
-                        subject: m.subject,
-                        content: m.content || "",
-                        timeSpent: 0,
-                        completed: false,
-                        stars: m.stars || 0
-                    });
+                    const isAlreadyInLogs = activeChild.studyLogs.some(log => 
+                        (log.missionId && String(log.missionId) === String(m.id)) ||
+                        (log.date === mDate && log.subject === m.subject && (log.content || '') === (m.content || ''))
+                    );
+                    
+                    if (!isAlreadyInLogs) {
+                        activeChild.studyLogs.push({
+                            missionId: m.id,
+                            date: mDate,
+                            subject: m.subject,
+                            content: m.content || "",
+                            range: m.range || "",
+                            timeSpent: 0,
+                            completed: false,
+                            stars: m.stars || 0,
+                            defaultMissionId: m.defaultMissionId,
+                            isCustom: m.isCustom
+                        });
+                    }
                     isModified = true;
                     return false;
                 }
@@ -5659,7 +5923,7 @@
                 return;
             }
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             let html = "";
             filtered.forEach(s => {
                 const isPast = !s.completed && s.duedate < todayStr;
@@ -5687,7 +5951,6 @@
             if (activeChild) {
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const targetDayName = dayNames[currentChecklistDate.getDay()];
-                syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
                 const isModified = syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
                 if (isModified) {
                     saveStateToFirestore();
@@ -5702,7 +5965,6 @@
             if (activeChild) {
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const targetDayName = dayNames[currentChecklistDate.getDay()];
-                syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
                 const isModified = syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
                 if (isModified) {
                     saveStateToFirestore();
@@ -5724,7 +5986,7 @@
             const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
             const targetDayName = dayNames[currentChecklistDate.getDay()];
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
             const titleEl = document.getElementById('checklist-title');
             const subtitleEl = document.getElementById('checklist-subtitle');
             const addBtn = document.getElementById('checklist-add-btn');
@@ -5876,9 +6138,9 @@
                     if (tReward) {
                         const progress = Math.min(100, Math.round((activeChild.stars / tReward.cost) * 100));
                         targetSection.innerHTML = `
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-black text-slate-700 text-xs"><i class="fa-solid fa-bullseye text-orange-500"></i> 나의 목표: ${tReward.title}</h4>
-                                <button onclick="setTargetReward('')" class="text-[10px] text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-xmark"></i> 목표 취소</button>
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1.5 sm:gap-0">
+                                <h4 class="font-black text-slate-700 text-[11px] sm:text-xs leading-snug break-keep"><i class="fa-solid fa-bullseye text-orange-500"></i> 나의 목표: ${tReward.title}</h4>
+                                <button onclick="setTargetReward('')" class="text-[10px] text-slate-400 hover:text-rose-500 transition self-end sm:self-auto shrink-0 bg-white sm:bg-transparent px-2 py-1 sm:p-0 rounded border border-slate-200 sm:border-none shadow-sm sm:shadow-none"><i class="fa-solid fa-xmark"></i> 목표 취소</button>
                             </div>
                             <div class="w-full bg-orange-200/50 rounded-full h-3 mb-1 overflow-hidden relative">
                                 <div class="bg-gradient-to-r from-orange-400 to-amber-500 h-full rounded-full transition-all duration-700 ease-out" style="width: ${progress}%"></div>
@@ -5912,23 +6174,23 @@
                 else if (r.icon === "fa-pizza-slice") displayIcon = "🍕";
 
                 html += `
-                    <div class="p-3 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between gap-2 hover:shadow-sm transition">
+                    <div class="p-3 sm:p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-2 hover:shadow-sm transition">
                         <div class="flex items-center gap-3 overflow-hidden w-full">
                             <span class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-inner text-lg text-amber-500 shrink-0">
                                 ${displayIcon}
                             </span>
-                            <div class="flex-grow flex items-center justify-between gap-2 overflow-hidden">
-                                <h4 class="font-black text-slate-800 text-sm tracking-tight truncate">${r.title}</h4>
-                                <p class="text-sm text-amber-600 font-black flex items-center gap-1 shrink-0 bg-amber-100 px-2 py-1 rounded-lg">
+                            <div class="flex-grow flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 overflow-hidden">
+                                <h4 class="font-black text-slate-800 text-[13px] sm:text-sm tracking-tight leading-snug break-keep sm:truncate">${r.title}</h4>
+                                <p class="text-[11px] sm:text-sm text-amber-600 font-black flex items-center gap-1 shrink-0 bg-amber-100 px-2 py-0.5 sm:py-1 rounded-lg w-max">
                                     <i class="fa-solid fa-coins"></i> ${r.cost}개
                                 </p>
                             </div>
                         </div>
-                        <div class="flex gap-1 shrink-0 ml-2">
-                            <button type="button" onclick="setTargetReward('${r.id}')" class="bg-white hover:bg-orange-50 border border-slate-200 text-slate-500 hover:text-orange-600 font-bold text-[11px] px-2.5 py-1.5 rounded-xl transition">
+                        <div class="flex gap-2 shrink-0 sm:ml-2 w-full sm:w-auto">
+                            <button type="button" onclick="setTargetReward('${r.id}')" class="flex-1 sm:flex-none bg-white hover:bg-orange-50 border border-slate-200 text-slate-500 hover:text-orange-600 font-bold text-[11px] sm:text-xs px-2.5 py-2 sm:py-1.5 rounded-xl transition">
                                 목표설정
                             </button>
-                            <button type="button" onclick="purchaseReward('${r.id}')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] px-3 py-1.5 rounded-xl shadow-sm transition">
+                            <button type="button" onclick="purchaseReward('${r.id}')" class="flex-1 sm:flex-none bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] sm:text-xs px-3 py-2 sm:py-1.5 rounded-xl shadow-sm transition">
                                 교환신청
                             </button>
                         </div>
@@ -6271,7 +6533,10 @@
 
             const totalTime = filteredLogs.reduce((acc, curr) => acc + (curr.timeSpent || 0), 0);
             
-            const todayStr = new Date().toISOString().split('T')[0];
+            const toLocalIsoString = (date) => {
+                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            };
+            const todayStr = toLocalIsoString(new Date());
 
             // === 일자별/평균 미션 달성률 계산 수정 (미션 전체 건 = 오늘의 할일 + 자녀등록) ===
             const daysInMonth = new Date(targetYear, parseInt(targetMonth), 0).getDate();
@@ -6292,19 +6557,29 @@
                 
                 if (dateStr > todayStr) continue;
 
-                let dTotal = 0;
-                let dCompleted = 0;
+                const dLogs = filteredLogs.filter(l => l.date === dateStr);
+                let dCompleted = dLogs.filter(l => l.completed).length;
+                let dTotal = dLogs.length;
 
-                if (dateStr === todayStr) {
-                    const tMissions = (child.todayMissions || []).filter(m => m.date === todayStr || !m.date);
-                    dTotal = tMissions.length;
-                    dCompleted = tMissions.filter(m => m.completed).length;
-                } else {
-                    const dLogs = getValidStudyLogs(child).filter(l => l.date === dateStr);
-                    dTotal = dLogs.length;
-                    dCompleted = dLogs.filter(l => l.completed !== false).length;
-                }
                 
+                if (dateStr === todayStr) {
+                    const uncompletedToday = (child.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
+                    
+                    const seenUncompleted = new Set();
+                    const uniqueUncompleted = [];
+                    for (let m of uncompletedToday) {
+                        let key = `${m.subject}_${m.content || ''}_${m.range || ''}`;
+                        if (!seenUncompleted.has(key)) {
+                            const alreadyInLogs = dLogs.some(l => l.subject === m.subject && (l.content || '') === (m.content || '') && (l.range || '') === (m.range || ''));
+                            if (!alreadyInLogs) {
+                                seenUncompleted.add(key);
+                                uniqueUncompleted.push(m);
+                            }
+                        }
+                    }
+                    dTotal += uniqueUncompleted.length;
+                }
+
                 periodTotal += dTotal;
                 periodCompleted += dCompleted;
                 chartDateMap[`${targetMonth}-${String(d).padStart(2, '0')}`] = { total: dTotal, completed: dCompleted };
@@ -6553,7 +6828,7 @@
             const eMonth = String(endRange.getMonth() + 1).padStart(2, '0');
             const eDate = String(endRange.getDate()).padStart(2, '0');
             const endRangeStr = `${eYear}-${eMonth}-${eDate}`;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalIsoString();
 
             let totalMissionsCount = weeklyLogs.length;
             let completedMissionsCount = weeklyLogs.filter(l => l.completed).length;
