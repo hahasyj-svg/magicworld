@@ -334,7 +334,9 @@
                                     <h4 class="font-black text-slate-800 text-base sm:text-lg" id="monthly-calendar-title"></h4>
                                     <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-xl shadow-sm text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-base"></i></button>
                                     </div>
-                                    <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 text-[10px] sm:text-[11px]"></div>
+                                    <div class="overflow-x-auto hide-scrollbar pb-2">
+                                        <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-2 text-[10px] sm:text-[11px] min-w-[600px] lg:min-w-full"></div>
+                                    </div>
                                     <div id="calendar-event-preview" class="mt-4 grid gap-3"></div>
                                 </div>
                             </div>
@@ -1064,7 +1066,9 @@
                         <h4 class="font-black text-slate-800 text-base sm:text-lg" id="modal-calendar-title"></h4>
                         <button onclick="changeCalendarMonth(1)" class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:text-orange-500 hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i></button>
                     </div>
-                    <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-1 sm:gap-2 text-[10px] sm:text-[11px]"></div>
+                    <div class="overflow-x-auto hide-scrollbar pb-2">
+                        <div id="schedule-calendar-grid-modal" class="grid grid-cols-7 gap-1 sm:gap-2 text-[10px] sm:text-[11px] min-w-[600px] lg:min-w-full"></div>
+                    </div>
                 </div>
 
                 <!-- 우측 목록 -->
@@ -1609,6 +1613,10 @@
                 
                 if (docSnap.exists() && docSnap.data().state) {
                     const remoteState = docSnap.data().state;
+                    
+                    // 1. 데이터를 먼저 정규화
+                    normalizeState(remoteState);
+
                     // UI 상태(현재 보고 있는 탭, 뷰 모드 등)는 로컬 화면 기준을 유지하여 작업 방해 최소화
                     remoteState.isParentMode = state.isParentMode;
                     if (state.activeChildId) remoteState.activeChildId = state.activeChildId;
@@ -1616,6 +1624,7 @@
                     remoteState.parentActiveTab = state.parentActiveTab;
                     remoteState.childStatFilter = state.childStatFilter;
                     remoteState.scheduleFilter = state.scheduleFilter;
+                    remoteState.childStoreStatusFilter = state.childStoreStatusFilter;
                     
                     const remoteStateStr = stringifyStable(remoteState);
                     
@@ -1623,13 +1632,15 @@
                     if (lastSavedStateStr && remoteStateStr === lastSavedStateStr) {
                         return;
                     }
+                    
+                    // 3. 로컬 상태도 최신 상태로 정규화하여 비교 시 불일치 방지
+                    normalizeState(state);
                     // 로컬 상태와 원격 상태가 실질적으로 같은 경우에도 무시
                     if (stringifyStable(state) === remoteStateStr) {
                         return;
                     }
 
                     state = remoteState;
-                    normalizeState(state);
                     syncDOM();
                 }
             });
@@ -1658,6 +1669,7 @@
                 const data = localDB[uid];
                 if (data && data.state) {
                     state = data.state;
+                    state.isParentMode = false;
                     normalizeState(state);
                 } else {
                     initDefaultStateForUser();
@@ -1673,6 +1685,7 @@
                 const snap = await getDoc(docRef);
                 if (snap.exists() && snap.data().state) {
                     state = snap.data().state;
+                    state.isParentMode = false;
                     normalizeState(state);
                 } else {
                     initDefaultStateForUser();
@@ -1692,7 +1705,6 @@
 
         function normalizeState(st) {
             if (!st) return;
-            st.isParentMode = false; // DB 로드 시 부모 모드 자동 진입을 차단 (보안 강화 및 모달 버그 해결)
             if (!st.subjects) st.subjects = ['국어', '영어', '수학', '독서', '예체능', '생활', '한자'];
             if (st.rewards && !Array.isArray(st.rewards)) {
                 st.rewards = Object.values(st.rewards).filter(Boolean);
