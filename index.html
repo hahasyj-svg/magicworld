@@ -332,7 +332,7 @@
                                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                                         <div>
                                             <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-award text-rose-500"></i> 이번 주 칭찬 스티커판</h3>
-                                            <p class="text-xs text-slate-500">그날의 모든 미션을 완료하면 예쁜 마법 스티커가 찍혀요!</p>
+                                            <p class="text-xs text-slate-500">오늘의 체크리스트를 완료하면 예쁜 마법 스티커가 찍혀요! 일주일 스티커를 모두 모으면 드림코인이 두배!</p>
                                         </div>
                                     </div>
                                     <div class="flex justify-between items-center gap-2 overflow-x-auto hide-scrollbar py-2" id="weekly-sticker-board">
@@ -979,6 +979,14 @@
                             </div>
                         </div>
 
+                    <div class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                        <h4 class="font-bold text-slate-700 mb-2 text-sm flex items-center gap-2"><i class="fa-solid fa-flask text-indigo-500"></i> 테스트 설정</h4>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="test-mode-toggle" onchange="toggleTestMode(this)" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+                            <span class="text-xs font-bold text-slate-600">과거/미래 일자 할일 완료 및 취소 허용 (원더위크 테스트용)</span>
+                        </label>
+                    </div>
+
                         <div class="overflow-x-auto bg-slate-50 rounded-2xl border border-slate-100 p-4">
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
@@ -1069,13 +1077,13 @@
                         <div id="repeat-weekly-options" class="col-span-full lg:col-span-2 hidden">
                             <label class="block text-slate-500 font-bold mb-2">반복 요일 선택</label>
                             <div class="flex gap-2 flex-wrap text-[11px]">
-                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="0" class="text-indigo-500 focus:ring-indigo-400"> 일</label>
                                 <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="1" class="text-indigo-500 focus:ring-indigo-400"> 월</label>
                                 <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="2" class="text-indigo-500 focus:ring-indigo-400"> 화</label>
                                 <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="3" class="text-indigo-500 focus:ring-indigo-400"> 수</label>
                                 <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="4" class="text-indigo-500 focus:ring-indigo-400"> 목</label>
                                 <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="5" class="text-indigo-500 focus:ring-indigo-400"> 금</label>
                                 <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="6" class="text-indigo-500 focus:ring-indigo-400"> 토</label>
+                                <label class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer text-slate-600 font-bold"><input type="checkbox" name="repeat-day" value="0" class="text-indigo-500 focus:ring-indigo-400"> 일</label>
                             </div>
                         </div>
                         <div id="repeat-monthly-options" class="col-span-full lg:col-span-2 hidden">
@@ -1429,6 +1437,7 @@
         window.rejectRewardRequest = rejectRewardRequest;
         window.approveCustomMissionRequest = approveCustomMissionRequest;
         window.rejectCustomMissionRequest = rejectCustomMissionRequest;
+        window.toggleTestMode = toggleTestMode;
         window.updateParentDashboard = updateParentDashboard;
         
         window.handleSaveRewardStoreItem = handleSaveRewardStoreItem;
@@ -2363,6 +2372,16 @@
                 }
                 loadSystemUserList();
             });
+        }
+
+        function toggleTestMode(cb) {
+            if (cb.checked) {
+                localStorage.setItem('magic_test_mode', 'true');
+                showToast("테스트 모드가 활성화되었습니다. 과거/미래 일자 미션 완료/취소가 가능합니다.");
+            } else {
+                localStorage.removeItem('magic_test_mode');
+                showToast("테스트 모드가 비활성화되었습니다.");
+            }
         }
 
         // ==================== 플래너 비즈니스 로직 함수 정의 ====================
@@ -4430,10 +4449,22 @@
             const boardEl = document.getElementById('weekly-sticker-board');
             if (!activeChild || !boardEl) return;
 
-            const now = new Date();
-            const weekStart = getWeekStart(now);
-            const todayStr = getLocalIsoString(now);
-            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            const targetDate = currentChecklistDate || new Date();
+            const weekStart = getWeekStart(targetDate);
+            const realTodayStr = getLocalIsoString(new Date());
+            const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+
+            const titleEl = boardEl.parentElement.querySelector('h3');
+            if (titleEl) {
+                const targetM = targetDate.getMonth() + 1;
+                const targetWeekOfMonth = Math.ceil(targetDate.getDate() / 7);
+                const currentWeekStartStr = getLocalIsoString(getWeekStart(new Date()));
+                if (getLocalIsoString(weekStart) === currentWeekStartStr) {
+                    titleEl.innerHTML = `<i class="fa-solid fa-award text-rose-500"></i> 이번 주 칭찬 스티커판`;
+                } else {
+                    titleEl.innerHTML = `<i class="fa-solid fa-award text-rose-500"></i> ${targetM}월 ${targetWeekOfMonth}주차 칭찬 스티커판`;
+                }
+            }
 
             let html = "";
             let perfectDaysCount = 0;
@@ -4441,14 +4472,15 @@
                 const d = new Date(weekStart);
                 d.setDate(d.getDate() + i);
                 const dStr = getLocalIsoString(d);
-                const isFuture = dStr > todayStr;
-                const isToday = dStr === todayStr;
+                const isFuture = dStr > realTodayStr;
+                const isToday = dStr === realTodayStr;
 
                 let total = 0;
                 let completed = 0;
 
-                if (isToday) {
-                    const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === dStr || !m.date));
+                const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === dStr || (!m.date && isToday)));
+                
+                if (tMissions.length > 0) {
                     total = tMissions.length;
                     completed = tMissions.filter(m => m.completed).length;
                 } else {
@@ -4508,7 +4540,7 @@
                         const weekStartStr = getLocalIsoString(weekStart);
                         if (!activeChild.perfectWeeksClaimed) activeChild.perfectWeeksClaimed = [];
                         
-                        if (!activeChild.perfectWeeksClaimed.includes(weekStartStr)) {
+                         if (!activeChild.perfectWeeksClaimed.includes(weekStartStr) && weekStartStr <= realTodayStr) {
                             activeChild.perfectWeeksClaimed.push(weekStartStr);
                             
                             const weekEnd = new Date(weekStart);
@@ -4887,7 +4919,6 @@
                 acc[item.duedate].push(item);
                 return acc;
             }, {});
-
                 const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
                 let html = weekdays.map(day => `<div class="text-center font-bold text-slate-400 mb-2">${day}</div>`).join('');
 
@@ -6369,6 +6400,7 @@
                 }
             }
             renderTodayMissionsList();
+            renderWeeklyStickerBoard();
         }
 
         function resetChecklistDate() {
@@ -6383,6 +6415,7 @@
                 }
             }
             renderTodayMissionsList();
+            renderWeeklyStickerBoard();
         }
 
         function renderTodayMissionsList() {
@@ -6404,6 +6437,8 @@
             const addBtn = document.getElementById('checklist-add-btn');
             const isPastDate = targetDateStr < todayStr;
             const isFutureDate = targetDateStr > todayStr;
+            const isTestMode = localStorage.getItem('magic_test_mode') === 'true';
+            const disableControls = !isTestMode && (isPastDate || isFutureDate);
             
             if (titleEl && subtitleEl) {
                 if (targetDateStr === todayStr) {
@@ -6415,7 +6450,7 @@
                 }
             }
             if (addBtn) {
-                addBtn.style.display = isPastDate ? 'none' : 'flex';
+                addBtn.style.display = (!isTestMode && isPastDate) ? 'none' : 'flex';
             }
 
             renderAiCheerMessage(activeChild);
@@ -6464,7 +6499,7 @@
                                 <i class="fa-solid fa-coins text-amber-500"></i> ${earnableStars}개 ${isAwaiting ? '대기' : '지급'}
                             </span>
                             
-                            ${isPastDate ? '' : `
+                            ${(!isTestMode && isPastDate) ? '' : `
                         <div class="flex justify-end pt-3 border-t ${isAwaiting ? 'border-amber-200' : 'border-emerald-200'} mt-1">
                             <button onclick="cancelMissionProgress('${m.id}')" class="px-4 py-2 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-xl font-bold transition flex items-center gap-1.5 border border-slate-200 hover:border-rose-200 shadow-sm text-xs">
                                         <i class="fa-solid fa-rotate-left"></i> 완료 취소
@@ -6476,7 +6511,7 @@
                 } else {
                     html += `
                         <div id="mission-card-${m.id}" class="${m.isCustom ? 'p-4 bg-emerald-50/40 border-2 border-emerald-400 shadow-md shadow-emerald-100/50 rounded-2xl text-xs relative' : 'p-4 bg-blue-50/40 border-2 border-blue-400 shadow-md shadow-blue-100/50 rounded-2xl text-xs relative'}">
-                            ${(m.isCustom && !isPastDate) ? `
+                            ${(m.isCustom && (!isPastDate || isTestMode)) ? `
                         <button onclick="deleteChildCustomMission('${m.id}')" class="absolute -top-2 -right-2 bg-white rounded-full text-slate-400 hover:text-rose-500 transition shadow-sm border border-slate-200 w-7 h-7 flex items-center justify-center z-10">
                                     <i class="fa-solid fa-xmark text-sm"></i>
                                 </button>
@@ -6500,7 +6535,7 @@
                                 <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
                                     <div class="w-full sm:w-32 shrink-0">
                                         <label class="block text-[11px] text-slate-500 font-bold mb-1">공부 시간 선택</label>
-                                        <select id="time-${m.id}" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-sm text-slate-700" ${isPastDate || isFutureDate ? 'disabled' : ''}>
+                                        <select id="time-${m.id}" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-sm text-slate-700" ${disableControls ? 'disabled' : ''}>
                                             <option value="10">10분</option>
                                             <option value="20">20분</option>
                                             <option value="30" selected>30분</option>
@@ -6518,8 +6553,8 @@
                                     <div class="flex-1 w-full">
                                         <label class="block text-[11px] text-slate-500 font-bold mb-1">오늘 한 일 내용</label>
                                         <div class="flex flex-col sm:flex-row gap-2">
-                                            <input type="text" id="range-${m.id}" placeholder="예: 3장 다 풀고 오답정리 완료" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" ${isPastDate || isFutureDate ? 'disabled' : ''}>
-                                <button onclick="submitMissionProgress('${m.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl transition shrink-0 shadow-md text-sm whitespace-nowrap ${isPastDate || isFutureDate ? 'opacity-50 cursor-not-allowed' : ''}" ${isPastDate || isFutureDate ? 'disabled' : ''}>
+                                            <input type="text" id="range-${m.id}" placeholder="예: 3장 다 풀고 오답정리 완료" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" ${disableControls ? 'disabled' : ''}>
+                                <button onclick="submitMissionProgress('${m.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl transition shrink-0 shadow-md text-sm whitespace-nowrap ${disableControls ? 'opacity-50 cursor-not-allowed' : ''}" ${disableControls ? 'disabled' : ''}>
                                                 ${m.isCustom ? '부모님께 확인 요청' : '오늘의 할일 끝냈어요.'}
                                             </button>
                                         </div>
@@ -7414,6 +7449,11 @@
                 childCloseBtn.addEventListener('click', closeChildManageModal);
             }
             
+            const testModeToggle = document.getElementById('test-mode-toggle');
+            if (testModeToggle) {
+                testModeToggle.checked = localStorage.getItem('magic_test_mode') === 'true';
+            }
+
             domEventsInitialized = true;
         }
 
