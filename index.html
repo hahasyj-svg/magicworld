@@ -84,7 +84,6 @@
         }
     </script>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col transition-colors duration-300" id="app-body">
 <body class="text-slate-800 min-h-[100dvh] flex flex-col transition-colors duration-300" id="app-body">
 
     <!-- ==================== 1. 로그인 / 회원가입 게이트웨이 화면 ==================== -->
@@ -130,7 +129,7 @@
                     <div>
                         <label class="block text-slate-500 mb-1 font-bold">패밀리 ID (영문/숫자)</label>
                         <div class="flex gap-2">
-                            <input type="text" id="reg-id" required placeholder="예: yoonfamily" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                            <input type="text" id="reg-id" required placeholder="예: yoonfamily" oninput="isUsernameChecked = false; document.getElementById('dup-check-result').innerText = 'ID 중복 검사를 먼저 진행해 주세요.'; document.getElementById('dup-check-result').className = 'text-[10px] mt-1 font-medium text-slate-400';" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
                             <button type="button" onclick="checkUsernameDuplicate()" class="bg-slate-800 text-white font-bold px-3 py-2.5 rounded-xl text-[11px] hover:bg-slate-900 transition shrink-0">중복 확인</button>
                         </div>
                         <p id="dup-check-result" class="text-[10px] mt-1 font-medium text-slate-400">ID 중복 검사를 먼저 진행해 주세요.</p>
@@ -168,7 +167,7 @@
                     <div>
                         <label class="block text-slate-500 mb-1 font-bold">가입하신 패밀리 ID</label>
                         <div class="flex gap-2">
-                            <input type="text" id="forgot-id" required placeholder="ID를 입력하세요" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none">
+                            <input type="text" id="forgot-id" required placeholder="ID를 입력하세요" oninput="document.getElementById('recovery-question-area').classList.add('hidden');" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:outline-none">
                             <button type="button" onclick="loadRecoveryQuestion()" class="bg-slate-800 text-white font-bold px-3 py-2.5 rounded-xl text-[11px] hover:bg-slate-900 transition shrink-0">질문 불러오기</button>
                         </div>
                     </div>
@@ -240,7 +239,7 @@
                     </div>
 
                     <!-- 부모 모드 전환 단추 -->
-                <button id="role-toggle-btn" class="bg-slate-800 text-white hover:bg-slate-900 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0">
+                <button id="role-toggle-btn" onclick="requestParentMode()" class="bg-slate-800 text-white hover:bg-slate-900 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0">
                         <i class="fa-solid fa-lock"></i>
                         <span>부모 모드로 전환</span>
                     </button>
@@ -1017,7 +1016,6 @@
 
     <!-- ==================== 전역 상세 정보 팝업 모달 ==================== -->
     <div id="schedule-calendar-modal" onclick="if(event.target === this) closeScheduleModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[210] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-        <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-5xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[95vh] overflow-y-auto" id="schedule-calendar-box">
         <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-5xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[95dvh] overflow-y-auto" id="schedule-calendar-box">
             <button onclick="closeScheduleModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-4">
@@ -1263,10 +1261,10 @@
         <div class="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300" id="parent-auth-box">
             <h3 class="text-lg font-black text-slate-800 mb-2">🎡 관리자 인증</h3>
             <p class="text-xs text-slate-400 mb-4 leading-relaxed">비밀번호를 입력하여 관리자 화면으로 진입합니다.</p>
-            <input type="password" id="parent-password-input" placeholder="비밀번호 4자리" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6 text-center font-bold text-lg tracking-widest">
+            <input type="password" id="parent-password-input" onkeydown="if(event.key === 'Enter') { event.preventDefault(); submitParentPassword(); }" placeholder="비밀번호 4자리" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-6 text-center font-bold text-lg tracking-widest">
             <div class="flex justify-end gap-2">
-                <button id="parent-auth-cancel-btn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">취소</button>
-                <button id="parent-auth-submit-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl transition shadow-md">인증하기</button>
+                <button id="parent-auth-cancel-btn" onclick="closeParentAuthModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">취소</button>
+                <button id="parent-auth-submit-btn" onclick="submitParentPassword()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl transition shadow-md">인증하기</button>
             </div>
         </div>
     </div>
@@ -1300,8 +1298,8 @@
                             <i class="fa-solid fa-face-smile"></i>
                         </div>
                         <div class="flex-grow">
-                            <input type="file" id="child-modal-photo-input" accept="image/*" class="hidden">
-                            <button type="button" id="child-modal-photo-trigger" class="bg-white hover:bg-slate-100 text-slate-700 font-bold py-1.5 px-3 rounded-lg border border-slate-200 transition text-[11px] shadow-sm">
+                            <input type="file" id="child-modal-photo-input" accept="image/*" onchange="handlePhotoFileSelect(event)" class="hidden">
+                            <button type="button" id="child-modal-photo-trigger" onclick="document.getElementById('child-modal-photo-input').click()" class="bg-white hover:bg-slate-100 text-slate-700 font-bold py-1.5 px-3 rounded-lg border border-slate-200 transition text-[11px] shadow-sm">
                                 <i class="fa-solid fa-image-portrait"></i> 기기에서 사진 찾기...
                             </button>
                             <p class="text-[10px] text-slate-400 mt-1">정사각형에 가까운 정면 프로필 사진을 권장합니다.</p>
@@ -1310,7 +1308,7 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
-                    <button type="button" id="child-modal-close-btn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">취소</button>
+                    <button type="button" id="child-modal-close-btn" onclick="closeChildManageModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">취소</button>
                     <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-md">정보 저장하기</button>
                 </div>
             </form>
@@ -1435,6 +1433,7 @@
         window.closeChildManageModal = closeChildManageModal;
         window.saveChildData = saveChildData;
         window.deleteChild = deleteChild;
+        window.handlePhotoFileSelect = handlePhotoFileSelect;
         window.approveRewardRequest = approveRewardRequest;
         window.rejectRewardRequest = rejectRewardRequest;
         window.approveCustomMissionRequest = approveCustomMissionRequest;
@@ -1676,6 +1675,17 @@
             }
             // -----------------------------------------------------------------------------------------
 
+            // 항상 최신 상태를 로컬 DB에 백업 (온/오프라인 무관하게 최신화)
+            localDB[uid] = {
+                id: uid,
+                password: localDB[uid]?.password || "1234",
+                recoveryQuestion: localDB[uid]?.recoveryQuestion || "",
+                recoveryAnswer: localDB[uid]?.recoveryAnswer || "",
+                registerDate: localDB[uid]?.registerDate || "2026-06-06",
+                state: JSON.parse(JSON.stringify(state))
+            };
+            localStorage.setItem('magic_land_local_db', JSON.stringify(localDB));
+
             if (isOfflineMode) {
                 // 오프라인 로컬 저장
                 localDB[uid] = {
@@ -1787,9 +1797,29 @@
                     state = snap.data().state;
                     state.isParentMode = false;
                     normalizeState(state);
+                    
+                    // 클라우드 데이터를 바탕으로 로컬 캐시도 즉시 최신화
+                    localDB[uid] = {
+                        id: uid,
+                        password: snap.data().password || "1234",
+                        recoveryQuestion: snap.data().recoveryQuestion || "",
+                        recoveryAnswer: snap.data().recoveryAnswer || "",
+                        registerDate: snap.data().registerDate || "2026-06-06",
+                        state: JSON.parse(JSON.stringify(state))
+                    };
+                    localStorage.setItem('magic_land_local_db', JSON.stringify(localDB));
                 } else {
-                    initDefaultStateForUser();
-                    await saveStateToFirestore();
+                    // 클라우드에 비어 있다면 바로 초기화하지 않고 로컬DB(오프라인 기록)를 1차 점검합니다.
+                    const localData = localDB[uid];
+                    if (localData && localData.state) {
+                        state = localData.state;
+                        state.isParentMode = false;
+                        normalizeState(state);
+                        await saveStateToFirestore();
+                    } else {
+                        initDefaultStateForUser();
+                        await saveStateToFirestore();
+                    }
                 }
                 applyInitialSettings();
                 if (!skipDOMSync) syncDOM();
@@ -1797,7 +1827,15 @@
                 attachRealtimeSync(uid);
             } catch (error) {
                 console.error("클라우드 정보 수신 에러:", error);
-                initDefaultStateForUser();
+                // 네트워크 오류로 수신 실패 시 정보가 지워지는 것을 방지하고 로컬DB를 복구합니다.
+                const localData = localDB[uid];
+                if (localData && localData.state) {
+                    state = localData.state;
+                    state.isParentMode = false;
+                    normalizeState(state);
+                } else {
+                    initDefaultStateForUser();
+                }
                 applyInitialSettings();
                 if (!skipDOMSync) syncDOM();
             }
