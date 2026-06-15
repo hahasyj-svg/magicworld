@@ -85,6 +85,7 @@
     </script>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col transition-colors duration-300" id="app-body">
+<body class="text-slate-800 min-h-[100dvh] flex flex-col transition-colors duration-300" id="app-body">
 
     <!-- ==================== 1. 로그인 / 회원가입 게이트웨이 화면 ==================== -->
     <div id="auth-gateway" class="flex-grow flex items-center justify-center p-4">
@@ -1017,6 +1018,7 @@
     <!-- ==================== 전역 상세 정보 팝업 모달 ==================== -->
     <div id="schedule-calendar-modal" onclick="if(event.target === this) closeScheduleModal()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[210] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-5xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[95vh] overflow-y-auto" id="schedule-calendar-box">
+        <div class="bg-white rounded-3xl p-4 sm:p-6 max-w-5xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300 relative max-h-[95dvh] overflow-y-auto" id="schedule-calendar-box">
             <button onclick="closeScheduleModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-4">
                 <div>
@@ -6209,6 +6211,11 @@
             renderChildApprovalPanel();
             renderScheduleCalendarModal();
             renderScheduleCalendar();
+            
+            const schedModal = document.getElementById('schedule-calendar-modal');
+            if (schedModal && !schedModal.classList.contains('opacity-0')) {
+                renderScheduleCalendarModal();
+            }
             
             if(state.isParentMode) {
                 renderParentView();
