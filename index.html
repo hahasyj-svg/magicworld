@@ -1336,6 +1336,14 @@
     <!-- 토스트 메시지 팝업창 -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 pointer-events-none"></div>
 
+    <!-- 동물 캐릭터 칭찬 팝업창 -->
+    <div id="character-cheer-container" class="fixed bottom-0 right-5 sm:right-10 z-[350] transition-transform duration-500 transform translate-y-full flex items-end pointer-events-none pb-4">
+        <div class="bg-white border-2 border-orange-300 rounded-t-3xl rounded-bl-3xl p-3 sm:p-4 shadow-xl flex items-center gap-3 relative mr-2 mb-4">
+            <div class="absolute -bottom-2 right-4 w-4 h-4 bg-white border-b-2 border-r-2 border-orange-300 transform rotate-45"></div>
+            <p class="text-xs sm:text-sm font-black text-slate-700 whitespace-nowrap" id="character-cheer-message">참 잘했어요!</p>
+        </div>
+        <div class="text-6xl sm:text-7xl drop-shadow-md animate-bounce origin-bottom" id="character-cheer-emoji">🐶</div>
+    </div>
 
     <!-- ==================== Firebase 클라우드 DB 연동 & 앱 구동 엔진 ==================== -->
     <script type="module">
@@ -1429,6 +1437,7 @@
         window.toggleChildCustomForm = toggleChildCustomForm;
         window.handleChildCreateMission = handleChildCreateMission;
         window.deleteChildCustomMission = deleteChildCustomMission;
+        window.showCharacterCheer = showCharacterCheer;
         window.openChildManageModal = openChildManageModal;
         window.closeChildManageModal = closeChildManageModal;
         window.saveChildData = saveChildData;
@@ -3322,6 +3331,7 @@
                 } else {
                     targetChild.stars += mission.stars;
                     animateFlyingStars(`mission-card-${missionId}`);
+                    showCharacterCheer(mission.stars);
                 }
                 
                 // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
@@ -6122,6 +6132,7 @@
                         confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
                     }
                     showToast("목표 일정을 달성했습니다! 👏");
+                showCharacterCheer();
                 }
             
             // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
@@ -6235,6 +6246,47 @@
                 modal.classList.add('pointer-events-none', 'opacity-0');
                 box.classList.add('scale-95');
             }
+        }
+
+        function showCharacterCheer(stars) {
+            const container = document.getElementById('character-cheer-container');
+            const msgEl = document.getElementById('character-cheer-message');
+            const emojiEl = document.getElementById('character-cheer-emoji');
+            if (!container || !msgEl || !emojiEl) return;
+
+            const animals = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸'];
+            let messages = [];
+            
+            if (stars) {
+                messages = [
+                    `우와! 정말 대단해! 코인 ${stars}개 획득!`,
+                    `최고야 최고! 코인 ${stars}개 획득!`,
+                    `너무 멋진걸? 코인 ${stars}개 획득!`,
+                    `참 잘했어요! 코인 ${stars}개 획득!`,
+                    `훌륭해! 코인 ${stars}개 획득!`
+                ];
+            } else {
+                messages = [
+                    `우와! 정말 대단해!`,
+                    `최고야 최고! 멋져!`,
+                    `너무 멋진걸? 잘했어!`,
+                    `참 잘했어요! 짝짝짝!`,
+                    `훌륭해! 계속 파이팅!`
+                ];
+            }
+
+            emojiEl.innerText = animals[Math.floor(Math.random() * animals.length)];
+            msgEl.innerText = messages[Math.floor(Math.random() * messages.length)];
+
+            container.classList.remove('translate-y-full');
+            
+            if (container.dataset.timerId) {
+                clearTimeout(parseInt(container.dataset.timerId));
+            }
+            const timerId = setTimeout(() => {
+                container.classList.add('translate-y-full');
+            }, 3000);
+            container.dataset.timerId = timerId;
         }
 
         function renderSubjectManageList() {
