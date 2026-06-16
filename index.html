@@ -1613,9 +1613,7 @@
                     } else {
                         const childList = getSortedChildren();
                         if (childList.length > 0 && !state.isParentMode) {
-                                document.documentElement.classList.add('is-logged-in');
-                                document.getElementById('auth-gateway').classList.add('hidden');
-                                document.getElementById('planner-main-app').classList.remove('hidden');
+                            await showMainApp(); // 배경 화면을 먼저 완전히 렌더링
                             openChildSelectionModal();
                         } else {
                             await showMainApp();
@@ -2106,9 +2104,7 @@
                     if (loginType === 'CHILD') {
                         const childList = getSortedChildren();
                         if (childList.length > 0) {
-                            document.documentElement.classList.add('is-logged-in');
-                            document.getElementById('auth-gateway').classList.add('hidden');
-                            document.getElementById('planner-main-app').classList.remove('hidden');
+                            await showMainApp(); // 배경 화면을 먼저 완전히 렌더링
                             openChildSelectionModal();
                         } else {
                             await showMainApp();
@@ -2303,7 +2299,7 @@
             box.classList.add('scale-95');
 
             showToast(`환영합니다, ${state.children[childId].name} 대원님!`);
-            await showMainApp();
+            syncDOM(); // 이미 화면이 켜져 있으므로 데이터 동기화만 진행
         }
 
         async function skipChildSelection() {
@@ -2312,7 +2308,6 @@
             modal.classList.add('pointer-events-none', 'opacity-0');
             box.classList.add('scale-95');
 
-            await showMainApp();
         }
 
         // ==================== 🛠️ 시스템 총괄 관리자 비즈니스 로직 (yoonadmin) ====================
@@ -3329,6 +3324,13 @@
                     animateFlyingStars(`mission-card-${missionId}`);
                 }
                 
+                // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
+                document.getElementById('global-star-count').innerText = targetChild.stars;
+                renderTodayMissionsList();
+                renderWeeklyStickerBoard();
+                updateChildHeaderDashboard(targetChild);
+                renderChildDashboardStats();
+                
                 await saveStateToFirestore();
                 syncDOM();
             }
@@ -3410,6 +3412,14 @@
                 }
 
                 showToast("오늘 도전 미션이 진행 중 상태로 원상복구되었습니다.", "error");
+                
+                // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
+                document.getElementById('global-star-count').innerText = targetChild.stars;
+                renderTodayMissionsList();
+                renderWeeklyStickerBoard();
+                updateChildHeaderDashboard(targetChild);
+                renderChildDashboardStats();
+                
                 await saveStateToFirestore();
                 syncDOM();
             });
@@ -5517,6 +5527,7 @@
             const now = new Date();
             const weekStart = getWeekStart(now);
             const weekStartStr = getLocalIsoString(weekStart);
+            const todayStr = getLocalIsoString(now);
 
             const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
             const logs = (activeChild.studyLogs || []).filter(log => log.date >= weekStartStr);
@@ -5526,8 +5537,20 @@
             const rate = total > 0 ? (completed / total) : 0;
             const earnedCoins = logs.filter(l => l.completed && !pendingIds.includes(String(l.missionId))).reduce((sum, l) => sum + (l.stars || 0), 0);
 
+            const todayMissions = (activeChild.todayMissions || []).filter(m => m.date === todayStr || !m.date);
+            const todayTotal = todayMissions.length;
+            const todayCompleted = todayMissions.filter(m => m.completed).length;
+
             let message = "";
-            if (rate >= 0.8 && total > 0) {
+            if (todayTotal > 0 && todayCompleted === todayTotal) {
+                message = `오늘의 모든 미션을 완벽하게 해냈어요! 정말 대단해요! 🎉`;
+            } else if (todayTotal > 0 && todayCompleted === Math.ceil(todayTotal / 2) && todayTotal > 1) {
+                message = `벌써 절반이나 해냈어요! 조금만 더 힘내면 오늘의 목표 달성! 💪`;
+            } else if (todayTotal > 0 && todayCompleted === 1) {
+                message = `오늘의 첫 미션을 멋지게 완료했군요! 시작이 반이에요! 🚀`;
+            } else if (todayTotal > 0 && todayCompleted > 1) {
+                message = `잘하고 있어요! 오늘의 목표를 향해 한 걸음 더 전진! ✨`;
+            } else if (rate >= 0.8 && total > 0) {
                 message = `우와! 이번 주 학습 달성률이 엄청나요! 🚀 끝까지 파이팅!`;
             } else if (earnedCoins >= 15) {
                 message = `코인이 쑥쑥 쌓이고 있어요! 🪙✨ 상점에서 멋진 선물을 골라볼까요?`;
@@ -6100,6 +6123,13 @@
                     }
                     showToast("목표 일정을 달성했습니다! 👏");
                 }
+            
+            // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
+            renderSchedulesList();
+            renderScheduleCalendar();
+            renderScheduleCalendarModal();
+            updateChildHeaderDashboard(targetChild);
+            
                 await saveStateToFirestore();
                 syncDOM();
             }
