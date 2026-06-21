@@ -2669,6 +2669,54 @@
             }
         }
 
+        function updateOrCleanTodayMissionsForDefault(missionId, deleted = false) {
+            let ownerChildId = null;
+            let defaultMission = null;
+            
+            if (!deleted) {
+                for (const cid in state.children) {
+                    const dm = (state.children[cid].defaultMissions || []).find(m => String(m.id) === String(missionId));
+                    if (dm) {
+                        ownerChildId = cid;
+                        defaultMission = dm;
+                        break;
+                    }
+                }
+            }
+
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+
+            for (const cid in state.children) {
+                const child = state.children[cid];
+                if (!child.todayMissions) continue;
+
+                child.todayMissions = child.todayMissions.filter(m => {
+                    if (!m.isCustom && String(m.defaultMissionId) === String(missionId)) {
+                        if (m.completed) return true;
+                        
+                        if (deleted || ownerChildId !== cid) {
+                            return false;
+                        }
+                        
+                        if (m.date) {
+                            const [y, mm, d] = m.date.split('-');
+                            const dObj = new Date(y, mm - 1, d);
+                            const mDayName = weekdays[dObj.getDay()];
+                            if (mDayName !== defaultMission.day) {
+                                return false;
+                            }
+                        }
+                        
+                        m.subject = defaultMission.subject;
+                        m.content = defaultMission.content || "";
+                        m.range = defaultMission.range;
+                        m.stars = defaultMission.stars || 1;
+                    }
+                    return true;
+                });
+            }
+        }
+
         async function handleSaveDefaultMission(e) {
             e.preventDefault();
             const mode = document.getElementById('p-form-mode') ? document.getElementById('p-form-mode').value : 'ADD';
@@ -2698,18 +2746,73 @@
                 state.children[childId].defaultMissions.push(newDefault);
                 showToast('매직 기본 계획이 성공적으로 추가되었습니다.');
             } else if (mode === "EDIT") {
-                const child = state.children[childId];
-                if (child) {
-                    const mission = child.defaultMissions.find(m => String(m.id) === String(missionId));
-                    if (mission) {
+                // 원래 계획이 어느 자녀의 것이었는지 검색합니다.
+                let originalChildId = null;
+                let originalMissionIndex = -1;
+                for (const cid in state.children) {
+                    const idx = (state.children[cid].defaultMissions || []).findIndex(m => String(m.id) === String(missionId));
+                    if (idx !== -1) {
+                        originalChildId = cid;
+                        originalMissionIndex = idx;
+                        break;
+                    }
+                }
+
+                if (originalChildId) {
+                    if (originalChildId === childId) {
+                        // 대상 자녀가 동일한 경우: 기존 계획 수정
+                        const mission = state.children[childId].defaultMissions[originalMissionIndex];
                         mission.day = day;
                         mission.subject = subject;
                         mission.content = content;
                         mission.range = range;
                         mission.stars = stars;
-                        showToast('매직 기본 계획이 성공적으로 수정되었습니다.');
+                    } else {
+                        // 대상 자녀가 변경된 경우: 기존 자녀 목록에서 삭제 후 새 자녀 목록에 추가
+                        const [mission] = state.children[originalChildId].defaultMissions.splice(originalMissionIndex, 1);
+                        mission.day = day;
+                        mission.subject = subject;
+                        mission.content = content;
+                        mission.range = range;
+                        mission.stars = stars;
+                        
+                        if (!state.children[childId].defaultMissions) {
+                            state.children[childId].defaultMissions = [];
+                        }
+                        state.children[childId].defaultMissions.push(mission);
+                        
+                        // 기존 자녀와 새 자녀의 미션 동기화 (오늘 요일 및 현재 선택된 날짜 기준)
+                        const days = ['일', '월', '화', '수', '목', '금', '토'];
+                        const now = new Date();
+                        const dayName = days[now.getDay()];
+                        const selDate = currentChecklistDate || new Date();
+                        const selDayName = days[selDate.getDay()];
+                        
+                        syncTodayMissionsWithDefault(state.children[originalChildId], dayName, now);
+                        syncTodayMissionsWithDefault(state.children[originalChildId], selDayName, selDate);
+                        syncTodayMissionsWithDefault(state.children[childId], dayName, now);
+                        syncTodayMissionsWithDefault(state.children[childId], selDayName, selDate);
+                    }
+                    showToast('매직 기본 계획이 성공적으로 수정되었습니다.');
+                } else {
+                    // 예외 대응: 원래 자녀를 찾을 수 없는 경우
+                    const child = state.children[childId];
+                    if (child) {
+                        const mission = child.defaultMissions.find(m => String(m.id) === String(missionId));
+                        if (mission) {
+                            mission.day = day;
+                            mission.subject = subject;
+                            mission.content = content;
+                            mission.range = range;
+                            mission.stars = stars;
+                            showToast('매직 기본 계획이 성공적으로 수정되었습니다.');
+                        }
                     }
                 }
+            }
+            
+            if (mode === "EDIT" && missionId) {
+                updateOrCleanTodayMissionsForDefault(missionId);
             }
             
             await saveStateToFirestore();
@@ -2752,6 +2855,7 @@
         async function deleteDefaultMission(childId, missionId) {
             showConfirm("기본 플랜 삭제", "해당 요일의 기본 반복 계획을 목록에서 삭제할까요?", async () => {
                 state.children[childId].defaultMissions = state.children[childId].defaultMissions.filter(m => String(m.id) !== String(missionId));
+                updateOrCleanTodayMissionsForDefault(missionId, true);
                 showToast("성공적으로 계획이 삭제되었습니다.");
                 renderParentDefaultMissionsTable();
                 await saveStateToFirestore();
@@ -6482,100 +6586,100 @@
             }
         }
 
-        // 매일 아침 접속 시 요일 반복 미션 로딩 알고리즘
-        function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj = new Date()) {
-            if (!activeChild.todayMissions) activeChild.todayMissions = [];
-            let isModified = false;
+ // ====================================================================
+// [수정된 함수] 매일 아침 접속 시 요일 반복 미션 로딩 알고리즘
+// ====================================================================
+function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj = new Date()) {
+    if (!activeChild.todayMissions) activeChild.todayMissions = [];
+    let isModified = false;
+    
+    const targetY = targetDateObj.getFullYear();
+    const targetM = String(targetDateObj.getMonth() + 1).padStart(2, '0');
+    const targetD = String(targetDateObj.getDate()).padStart(2, '0');
+    const targetDateStr = `${targetY}-${targetM}-${targetD}`;
+    const todayStr = getLocalIsoString();
+    
+    // 1. 오래된(어제 이전) '미완료' 미션 정리 및 로그 백업
+    activeChild.todayMissions = activeChild.todayMissions.filter(m => {
+        let mDate = m.date || '';
+        if (!mDate && m.id) {
+            try { mDate = new Date(m.id).toISOString().split('T')[0]; } catch(e) {}
+        }
+        if (!m.completed && mDate && mDate < todayStr) {
+            if (!activeChild.studyLogs) activeChild.studyLogs = [];
+            const isAlreadyInLogs = activeChild.studyLogs.some(log => 
+                (log.missionId && String(log.missionId) === String(m.id)) ||
+                (log.date === mDate && log.subject === m.subject && (log.content || '') === (m.content || ''))
+            );
             
-            const targetY = targetDateObj.getFullYear();
-            const targetM = String(targetDateObj.getMonth() + 1).padStart(2, '0');
-            const targetD = String(targetDateObj.getDate()).padStart(2, '0');
-            const targetDateStr = `${targetY}-${targetM}-${targetD}`;
-            const todayStr = getLocalIsoString();
-            
-            // 1. 오래된(어제 이전) '미완료' 미션만 정리하여 메모리 및 데이터 최적화
-            activeChild.todayMissions = activeChild.todayMissions.filter(m => {
-                let mDate = m.date || '';
-                if (!mDate && m.id) {
-                    try { mDate = new Date(m.id).toISOString().split('T')[0]; } catch(e) {}
-                }
-                if (!m.completed && mDate && mDate < todayStr) {
-                    // 미완료된 미션을 studyLogs에 병합 기록하여 전체 통계의 분모(total) 손실을 방지합니다.
-                    if (!activeChild.studyLogs) activeChild.studyLogs = [];
-                    const isAlreadyInLogs = activeChild.studyLogs.some(log => 
-                        (log.missionId && String(log.missionId) === String(m.id)) ||
-                        (log.date === mDate && log.subject === m.subject && (log.content || '') === (m.content || ''))
-                    );
-                    
-                    if (!isAlreadyInLogs) {
-                        activeChild.studyLogs.push({
-                            missionId: m.id,
-                            date: mDate,
-                            subject: m.subject,
-                            content: m.content || "",
-                            range: m.range || "",
-                            timeSpent: 0,
-                            completed: false,
-                            stars: m.stars || 0,
-                            defaultMissionId: m.defaultMissionId,
-                            isCustom: m.isCustom
-                        });
-                    }
-                    isModified = true;
-                    return false;
-                }
-                return true;
-            });
+            if (!isAlreadyInLogs) {
+                activeChild.studyLogs.push({
+                    missionId: m.id,
+                    date: mDate,
+                    subject: m.subject,
+                    content: m.content || "",
+                    range: m.range || "",
+                    timeSpent: 0,
+                    completed: false,
+                    stars: m.stars || 0,
+                    defaultMissionId: m.defaultMissionId,
+                    isCustom: m.isCustom
+                });
+            }
+            isModified = true;
+            return false;
+        }
+        return true;
+    });
 
-            // 2. 타겟 요일에 해당하는 학습 플랜(defaultMissions)을 미션에 동기화
-            const defaults = activeChild.defaultMissions || [];
-            const currentDefaultIds = [];
+    // 2. 타겟 요일에 해당하는 학습 플랜(defaultMissions)을 미션에 동기화
+    const defaults = activeChild.defaultMissions || [];
+    const currentDefaultIds = [];
+    
+    defaults.forEach(d => {
+        if (d.day === currentDayName) {
+            currentDefaultIds.push(d.id);
             
-            defaults.forEach(d => {
-                if (d.day === currentDayName) {
-                    currentDefaultIds.push(d.id);
-                    // 이미 동기화된 기본 미션인지 확인
-                    const alreadyExists = activeChild.todayMissions.some(m => 
-                        m.date === targetDateStr &&
-                        ((m.defaultMissionId && String(m.defaultMissionId) === String(d.id)) || 
-                        (!m.isCustom && m.subject === d.subject && m.range === d.range))
-                    );
-                    
-                    if (!alreadyExists) {
-                        activeChild.todayMissions.push({
-                            id: Date.now() + Math.random(),
-                            defaultMissionId: d.id, // 동기화 식별용 키
-                            subject: d.subject,
-                            content: d.content || "",
-                            range: d.range,
-                            stars: d.stars || 1,
-                            completed: false,
-                            isCustom: false,
-                            timeSpent: 0,
-                            actualRange: "",
-                            date: targetDateStr
-                        });
-                        isModified = true;
-                    }
-                }
-            });
-
-            // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 해당 일자의 미션에서도 제외 (단, 이미 완료한 건 제외)
-            const beforeFilterLen = activeChild.todayMissions.length;
-            activeChild.todayMissions = activeChild.todayMissions.filter(m => {
-                if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
-                    if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-            if (activeChild.todayMissions.length !== beforeFilterLen) {
+            // [버그 수정]: 과목명/범위 중복 체크 방식을 제외하고, 오직 고유 defaultMissionId 기준으로만 중복 체크합니다.
+            const alreadyExists = activeChild.todayMissions.some(m => 
+                m.date === targetDateStr && !m.isCustom && String(m.defaultMissionId) === String(d.id)
+            );
+            
+            if (!alreadyExists) {
+                activeChild.todayMissions.push({
+                    id: Date.now() + Math.random(),
+                    defaultMissionId: d.id, 
+                    subject: d.subject,
+                    content: d.content || "",
+                    range: d.range,
+                    stars: d.stars || 1,
+                    completed: false,
+                    isCustom: false,
+                    timeSpent: 0,
+                    actualRange: "",
+                    date: targetDateStr
+                });
                 isModified = true;
             }
-            
-            return isModified;
         }
+    });
+
+    // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 오늘 할 일에서도 실시간 제외 (미완료 건만)
+    const beforeFilterLen = activeChild.todayMissions.length;
+    activeChild.todayMissions = activeChild.todayMissions.filter(m => {
+        if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
+            if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
+                return false;
+            }
+        }
+        return true;
+    });
+    if (activeChild.todayMissions.length !== beforeFilterLen) {
+        isModified = true;
+    }
+    
+    return isModified;
+}
 
         function renderChildDashboardStats() {
             const activeChild = state.children[state.activeChildId];
@@ -6730,7 +6834,7 @@
                 return;
             }
             
-            // 부모가 등록한 학습플랜을 상위로, 그 중에서도 미완료 건을 최상위로 정렬
+            // 부모가 등록한 학습플랜을 상위로, 그 중에서도 미완료 건을 최상위로 정렬하고 동일 우선순위는 과목 가나다순 정렬
             const sortedMissions = [...missions].sort((a, b) => {
                 const getPriority = (m) => {
                     let score = 0;
@@ -6738,7 +6842,20 @@
                     if (!m.isCustom) score += 5;   // 부모(기본) 플랜 우선
                     return score;
                 };
-                return getPriority(b) - getPriority(a);
+                const priorityDiff = getPriority(b) - getPriority(a);
+                if (priorityDiff !== 0) return priorityDiff;
+                
+                // 과목 가나다순 정렬
+                const subjA = a.subject || "";
+                const subjB = b.subject || "";
+                if (subjA !== subjB) {
+                    return subjA.localeCompare(subjB);
+                }
+                
+                // 과목이 같으면 내용 가나다순 정렬
+                const contA = a.content || "";
+                const contB = b.content || "";
+                return contA.localeCompare(contB);
             });
 
             let html = "";
