@@ -77,9 +77,53 @@
         html.is-logged-in #auth-gateway {
             display: none !important;
         }
+
+        /* 칭찬 스티커(따봉) 화려한 애니메이션 효과 */
+        @keyframes praiseStickerPop {
+            0% {
+                transform: scale(0) rotate(-720deg);
+                opacity: 0;
+            }
+            45% {
+                transform: scale(2.0) rotate(30deg);
+                opacity: 0.95;
+                filter: drop-shadow(0 0 25px rgba(244, 63, 94, 0.95)) drop-shadow(0 0 15px rgba(251, 191, 36, 0.8));
+            }
+            65% {
+                transform: scale(0.85) rotate(-15deg);
+            }
+            80% {
+                transform: scale(1.15) rotate(10deg);
+            }
+            95% {
+                transform: scale(0.95) rotate(-5deg);
+            }
+            100% {
+                transform: scale(1) rotate(var(--rot-deg, 0deg));
+                opacity: 1;
+                filter: drop-shadow(0 6px 12px rgba(244, 63, 94, 0.45)) drop-shadow(0 0 8px rgba(244, 63, 94, 0.25));
+            }
+        }
+        
+        @keyframes praiseStickerGlow {
+            0%, 100% {
+                box-shadow: 0 0 12px 3px rgba(244, 63, 94, 0.55), inset 0 0 4px rgba(244, 63, 94, 0.25);
+                transform: rotate(var(--rot-deg, 0deg)) scale(1.0);
+            }
+            50% {
+                box-shadow: 0 0 28px 10px rgba(244, 63, 94, 0.9), 0 0 16px 6px rgba(251, 191, 36, 0.75), inset 0 0 10px rgba(244, 63, 94, 0.55);
+                transform: rotate(var(--rot-deg, 0deg)) scale(1.25);
+            }
+        }
+        
+        .praise-sticker-today {
+            animation: praiseStickerPop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+                       praiseStickerGlow 2.0s ease-in-out infinite 1.2s;
+            transform-origin: center center;
+        }
     </style>
     <script>
-        if (sessionStorage.getItem('magic_logged_in_user')) {
+        if (localStorage.getItem('magic_logged_in_user')) {
             document.documentElement.classList.add('is-logged-in');
         }
     </script>
@@ -304,7 +348,7 @@
                                     <p class="text-2xl font-black child-font text-amber-200" id="child-header-today-coins">0</p>
                                 </button>
                             <button onclick="showWeekExamsDetail()" class="bg-white/20 hover:bg-white/30 border border-white/30 rounded-2xl sm:rounded-3xl p-2 sm:p-3 text-center transition transform hover:scale-105 cursor-pointer flex flex-col justify-center">
-                                    <p class="text-[13px] sm:text-sm uppercase tracking-tight whitespace-nowrap text-slate-100 font-bold mb-1">📚 이번주 시험/숙제</p>
+                                    <p class="text-[13px] sm:text-sm uppercase tracking-tight whitespace-nowrap text-slate-100 font-bold mb-1">📅 이번주 챙길 것</p>
                                     <p class="text-2xl font-black child-font text-violet-200" id="child-header-week-exams">0</p>
                                 </button>
                             </div>
@@ -812,7 +856,7 @@
                         </div>
 
                         <!-- 반복 학습 플랜 수립 -->
-                        <form onsubmit="handleSaveDefaultMission(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6 text-xs font-semibold">
+                        <form onsubmit="handleSaveDefaultMission(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-3 mb-6 text-xs font-semibold">
                             <input type="hidden" id="p-form-mode" value="ADD">
                             <input type="hidden" id="p-form-mission-id" value="">
                             <div class="col-span-1">
@@ -831,7 +875,15 @@
                                     <option value="일">일요일</option>
                                 </select>
                             </div>
-                            <div class="col-span-1 sm:col-span-2 md:col-span-1 xl:col-span-1">
+                            <div class="col-span-1">
+                                <label class="block text-slate-500 font-bold mb-1">시작일자</label>
+                                <input type="date" id="p-form-startdate" required class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 font-bold text-indigo-600">
+                            </div>
+                            <div class="col-span-1">
+                                <label class="block text-slate-500 font-bold mb-1">종료일자</label>
+                                <input type="date" id="p-form-enddate" required class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 font-bold text-indigo-600">
+                            </div>
+                            <div class="col-span-1">
                                 <label class="block text-slate-500 font-bold mb-1 flex justify-between items-center">
                                     <span>학습 과목명</span>
                                     <button type="button" onclick="openSubjectManageModal()" class="text-[10px] text-indigo-500 hover:text-indigo-700 transition"><i class="fa-solid fa-gear"></i> 과목 관리</button>
@@ -1170,13 +1222,13 @@
         </div>
     </div>
 
-    <!-- 상세 정보 팝업: 이번주 시험 -->
+    <!-- 상세 정보 팝업: 이번주 챙길 것 -->
     <div id="week-exams-detail-modal" onclick="if(event.target === this) closeWeekExamsDetail()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[220] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
         <div class="bg-white rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl border border-slate-200 transform scale-95 transition-all duration-300">
             <div class="flex items-center justify-between gap-3 mb-4">
                 <div>
-                    <h3 class="text-xl font-black text-slate-800">📚 이번주 시험 및 숙제</h3>
-                    <p class="text-xs text-slate-500 mt-1">이번주 예정된 모든 시험 및 숙제를 확인하세요.</p>
+                    <h3 class="text-xl font-black text-slate-800">📅 이번주 챙길 것</h3>
+                    <p class="text-xs text-slate-500 mt-1">이번주 예정된 모든 시험, 과제, 준비물 및 행사를 확인하세요.</p>
                 </div>
                 <button onclick="closeWeekExamsDetail()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -1342,7 +1394,7 @@
             <div class="absolute -bottom-2 right-4 w-4 h-4 bg-white border-b-2 border-r-2 border-orange-300 transform rotate-45"></div>
             <p class="text-xs sm:text-sm font-black text-slate-700 whitespace-nowrap" id="character-cheer-message">참 잘했어요!</p>
         </div>
-        <div class="text-6xl sm:text-7xl drop-shadow-md animate-bounce origin-bottom" id="character-cheer-emoji">🐶</div>
+        <div class="text-6xl sm:text-7xl drop-shadow-md animate-bounce origin-bottom transition-transform duration-300 hover:scale-125 cursor-pointer" id="character-cheer-emoji">🐶</div>
     </div>
 
     <!-- ==================== Firebase 클라우드 DB 연동 & 앱 구동 엔진 ==================== -->
@@ -1613,7 +1665,7 @@
             }
 
             // 자동 로그인 복구 시도
-            const savedSession = sessionStorage.getItem('magic_logged_in_user');
+            const savedSession = localStorage.getItem('magic_logged_in_user');
             if (savedSession) {
                 try {
                     loggedInUser = JSON.parse(savedSession);
@@ -1631,7 +1683,7 @@
                     }
                 } catch (parseErr) {
                     console.error("세션 정보 손상으로 로그아웃 처리됩니다:", parseErr);
-                    sessionStorage.removeItem('magic_logged_in_user');
+                    localStorage.removeItem('magic_logged_in_user');
                     document.documentElement.classList.remove('is-logged-in');
                 }
             }
@@ -2051,7 +2103,7 @@
             // 총괄 관리자 사전 체크
             if (id === 'yoonadmin' && pw === 'yoonadmin0123') {
                 loggedInUser = { id: 'yoonadmin', role: 'admin' };
-                sessionStorage.setItem('magic_logged_in_user', JSON.stringify(loggedInUser));
+                localStorage.setItem('magic_logged_in_user', JSON.stringify(loggedInUser));
                 showToast("매직 총괄 관리자님 환영합니다! 시스템 통제실 진입.");
                 if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
                 await showMainApp();
@@ -2111,7 +2163,7 @@
             if (authSuccess) {
                 try {
                     loggedInUser = { id: id, role: 'user' };
-                    sessionStorage.setItem('magic_logged_in_user', JSON.stringify(loggedInUser));
+                    localStorage.setItem('magic_logged_in_user', JSON.stringify(loggedInUser));
                     
                     await loadUserData(true);
                     if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = originalBtnHtml; }
@@ -2227,7 +2279,7 @@
 
         // 로그아웃
         function handleUserLogout() {
-            sessionStorage.removeItem('magic_logged_in_user');
+            localStorage.removeItem('magic_logged_in_user');
             document.documentElement.classList.remove('is-logged-in');
             if (unsubSnapshot) {
                 unsubSnapshot();
@@ -2705,6 +2757,11 @@
                             if (mDayName !== defaultMission.day) {
                                 return false;
                             }
+                            const start = defaultMission.startdate || '2026-06-22';
+                            const end = defaultMission.enddate || '2099-12-31';
+                            if (m.date < start || m.date > end) {
+                                return false;
+                            }
                         }
                         
                         m.subject = defaultMission.subject;
@@ -2727,6 +2784,8 @@
             const content = document.getElementById('p-form-content').value.trim();
             const range = document.getElementById('p-form-range').value.trim();
             const stars = parseInt(document.getElementById('p-form-stars').value) || 1;
+            const startdate = document.getElementById('p-form-startdate').value || '2026-06-22';
+            const enddate = document.getElementById('p-form-enddate').value || '2099-12-31';
             
             if (!childId) {
                 showAlert("입력 실패", "자녀 설정을 통해 모험가를 먼저 등록해 주세요.");
@@ -2740,7 +2799,9 @@
                     subject: subject,
                     content: content,
                     range: range,
-                    stars: stars
+                    stars: stars,
+                    startdate: startdate,
+                    enddate: enddate
                 };
                 if (!state.children[childId].defaultMissions) state.children[childId].defaultMissions = [];
                 state.children[childId].defaultMissions.push(newDefault);
@@ -2767,6 +2828,8 @@
                         mission.content = content;
                         mission.range = range;
                         mission.stars = stars;
+                        mission.startdate = startdate;
+                        mission.enddate = enddate;
                     } else {
                         // 대상 자녀가 변경된 경우: 기존 자녀 목록에서 삭제 후 새 자녀 목록에 추가
                         const [mission] = state.children[originalChildId].defaultMissions.splice(originalMissionIndex, 1);
@@ -2775,6 +2838,8 @@
                         mission.content = content;
                         mission.range = range;
                         mission.stars = stars;
+                        mission.startdate = startdate;
+                        mission.enddate = enddate;
                         
                         if (!state.children[childId].defaultMissions) {
                             state.children[childId].defaultMissions = [];
@@ -2805,6 +2870,8 @@
                             mission.content = content;
                             mission.range = range;
                             mission.stars = stars;
+                            mission.startdate = startdate;
+                            mission.enddate = enddate;
                             showToast('매직 기본 계획이 성공적으로 수정되었습니다.');
                         }
                     }
@@ -2822,6 +2889,8 @@
             document.getElementById('p-form-mission-id').value = "";
             document.getElementById('p-form-content').value = "";
             document.getElementById('p-form-range').value = "";
+            document.getElementById('p-form-startdate').value = getLocalIsoString();
+            document.getElementById('p-form-enddate').value = "2099-12-31";
             document.getElementById('p-form-submit-btn').innerHTML = `<i class="fa-solid fa-plus"></i> 등록`;
             
             renderParentDefaultMissionsTable();
@@ -2842,6 +2911,8 @@
             document.getElementById('p-form-content').value = mission.content || "";
             document.getElementById('p-form-range').value = mission.range;
             document.getElementById('p-form-stars').value = mission.stars || 1;
+            document.getElementById('p-form-startdate').value = mission.startdate || '2026-06-22';
+            document.getElementById('p-form-enddate').value = mission.enddate || '2099-12-31';
 
             const btn = document.getElementById('p-form-submit-btn');
             if (btn) btn.innerHTML = `<i class="fa-solid fa-check"></i> 수정`;
@@ -2873,6 +2944,8 @@
                         <tr class="border-b-2 border-orange-200 bg-amber-50/50 text-slate-500 font-bold">
                                 <th class="p-2.5 whitespace-nowrap border-r border-orange-100">자녀이름</th>
                                 <th class="p-2.5 whitespace-nowrap border-r border-orange-100">요일</th>
+                                <th class="p-2.5 whitespace-nowrap border-r border-orange-100">시작일자</th>
+                                <th class="p-2.5 whitespace-nowrap border-r border-orange-100">종료일자</th>
                                 <th class="p-2.5 whitespace-nowrap border-r border-orange-100">과목</th>
                                 <th class="p-2.5 whitespace-nowrap">학습 내용</th>
                                 <th class="p-2.5 whitespace-nowrap">기본 할 일 범위</th>
@@ -2917,7 +2990,7 @@
             });
 
             if (allMissions.length === 0) {
-                tableHtml += `<tr><td colspan="7" class="p-6 text-center text-slate-400">등록된 기본 계획이 없습니다.</td></tr>`;
+                tableHtml += `<tr><td colspan="9" class="p-6 text-center text-slate-400">등록된 기본 계획이 없습니다.</td></tr>`;
             } else {
                 let prevChild = null;
                 let prevDay = null;
@@ -2946,6 +3019,8 @@
                                     </div>
                                 </td>
                                 <td class="p-2.5 whitespace-nowrap border-r border-slate-100 bg-slate-50/30 text-center"><span class="px-2 py-0.5 ${isNewDay ? 'bg-violet-100 text-violet-800' : 'bg-slate-100 text-slate-500'} font-bold rounded">${m.day}요일</span></td>
+                                <td class="p-2.5 whitespace-nowrap border-r border-slate-100 text-center text-slate-500">${m.startdate || '2026-06-22'}</td>
+                                <td class="p-2.5 whitespace-nowrap border-r border-slate-100 text-center text-slate-500">${m.enddate || '2099-12-31'}</td>
                                 <td class="p-2.5 font-bold text-slate-800 whitespace-nowrap border-r border-slate-100">${m.subject}</td>
                                 <td class="p-2.5 text-slate-500 min-w-[120px] break-keep">${m.content || '-'}</td>
                                 <td class="p-2.5 text-slate-500 min-w-[100px] break-keep">${m.range}</td>
@@ -3447,6 +3522,22 @@
                 // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
                 document.getElementById('global-star-count').innerText = targetChild.stars;
                 renderTodayMissionsList();
+
+                // 오늘 미션이 모두 완료되었는지 확인하여 첫 달성 시 confetti 효과 추가
+                const todayMissions = (targetChild.todayMissions || []).filter(m => m.date === targetDateStr || (!m.date && targetDateStr === todayStr));
+                const isNowPerfect = todayMissions.length > 0 && todayMissions.every(m => m.completed);
+                if (isNowPerfect && typeof confetti === 'function') {
+                    setTimeout(() => {
+                        confetti({
+                            particleCount: 120,
+                            spread: 80,
+                            origin: { y: 0.5 },
+                            zIndex: 9999,
+                            colors: ['#f43f5e', '#ec4899', '#fbbf24', '#f59e0b', '#10b981']
+                        });
+                    }, 500); // coin flying animation ends around 500ms
+                }
+
                 renderWeeklyStickerBoard();
                 updateChildHeaderDashboard(targetChild);
                 renderChildDashboardStats();
@@ -3833,6 +3924,18 @@
                 const rejectIdx = tempRejected.findIndex(r => r.date === log.date && r.subject === log.subject && (r.stars || 1) === (log.stars || 1));
                 if (rejectIdx >= 0) { tempRejected.splice(rejectIdx, 1); continue; }
                 
+                // 반복 플랜의 시작일자/종료일자 범위 밖인 경우 집계 제외
+                if (log.defaultMissionId && !log.isCustom) {
+                    const dMission = (activeChild.defaultMissions || []).find(dm => String(dm.id) === String(log.defaultMissionId));
+                    if (dMission) {
+                        const start = dMission.startdate || '2026-06-22';
+                        const end = dMission.enddate || '2099-12-31';
+                        if (log.date < start || log.date > end) {
+                            continue;
+                        }
+                    }
+                }
+                
                 // 완벽한 중복 제거를 위해 missionId 대신 내용 기반 고유키 사용 (오염된 DB의 가짜 ID 증식 방어)
                 let uniqueKey = `${log.date}_${log.subject}_${log.content || ''}_${log.range || ''}`;
                 
@@ -4082,13 +4185,14 @@
                 if (!s.duedate) return false;
                 const parts = s.duedate.split('-');
                 const schedDate = new Date(parts[0], parts[1] - 1, parts[2]);
-                return schedDate >= weekStart && schedDate <= weekEnd && (s.category === '시험' || s.category === '숙제');
+                return schedDate >= weekStart && schedDate <= weekEnd && 
+                    (s.category === '시험' || s.category === '숙제' || s.category === '준비물' || s.category === '행사');
             });
             
             const todayStr = getLocalIsoString();
 
             if (weekExams.length === 0) {
-                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주 예정된 시험 및 숙제가 없습니다.</div>';
+                listEl.innerHTML = '<div class="rounded-3xl p-4 bg-slate-50 border border-slate-100 text-slate-400 text-center text-xs">이번주에 챙겨야 할 일정이 없습니다.</div>';
             } else {
                 const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
                 weekExams.forEach(s => {
@@ -4100,8 +4204,8 @@
                 weekExams.sort((a, b) => a.duedate.localeCompare(b.duedate));
 
                 let html = `
-                    <div class="mb-4 p-3 bg-violet-100 text-violet-800 rounded-2xl text-center font-black text-sm shadow-sm">
-                        🔥 미리미리 준비하는 모습 참 잘했어요! 파이팅! 🔥
+                    <div class="mb-4 p-3 bg-indigo-100 text-indigo-800 rounded-2xl text-center font-black text-sm shadow-sm">
+                        🔥 이번주 주요 일정을 확인하고 미리 준비해 보아요! 파이팅! 🔥
                     </div>
                 `;
 
@@ -4113,7 +4217,7 @@
                         html += `
                             <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                                 <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
-                                    <i class="fa-regular fa-calendar-check text-violet-500"></i> ${s.dateStr}
+                                    <i class="fa-regular fa-calendar text-indigo-500"></i> ${s.dateStr}
                                 </h4>
                             </div>
                         `;
@@ -4122,20 +4226,64 @@
                     const isPast = !s.completed && s.duedate < todayStr;
                     const isCompletedOrPast = s.completed || isPast;
 
-                    let bgClass = s.completed ? 'border-emerald-200 bg-emerald-50 border-l-4 border-l-emerald-500' : 'border-violet-200 bg-violet-50 border-l-4 border-l-violet-500';
-                    let textClass = s.completed ? 'text-emerald-600' : 'text-violet-600';
-                    let badgeClass = s.completed ? 'text-emerald-600 bg-emerald-100' : 'text-violet-600 bg-violet-100';
-                    let dateBadgeClass = s.completed ? 'text-emerald-600 bg-white border-emerald-200' : 'text-violet-600 bg-white border-violet-200';
-                    let iconClass = s.completed ? 'text-emerald-500 animate-bounce' : 'text-violet-500';
+                    let bgClass = '';
+                    let textClass = '';
+                    let badgeClass = '';
+                    let dateBadgeClass = '';
+                    let iconClass = '';
                     let statusText = s.completed ? '✓ 완료' : '예정';
 
-                    if (isPast) {
+                    if (s.completed) {
+                        bgClass = 'border-slate-200 bg-slate-50 border-l-4 border-l-slate-400 opacity-80';
+                        textClass = 'text-slate-400 line-through';
+                        badgeClass = 'text-slate-400 bg-slate-200';
+                        dateBadgeClass = 'text-slate-400 bg-slate-50 border-slate-200';
+                        iconClass = 'fa-solid fa-circle-check text-slate-400';
+                    } else if (isPast) {
                         bgClass = 'border-slate-200 bg-slate-50 border-l-4 border-l-slate-400';
                         textClass = 'text-slate-500';
                         badgeClass = 'text-slate-500 bg-slate-200';
                         dateBadgeClass = 'text-slate-500 bg-white border-slate-300';
-                        iconClass = 'text-slate-400';
-                        statusText = '✓ 완료';
+                        iconClass = 'fa-solid fa-circle-exclamation text-slate-400';
+                        statusText = '미완료';
+                    } else {
+                        switch (s.category) {
+                            case '시험':
+                                bgClass = 'border-rose-200 bg-rose-50 border-l-4 border-l-rose-500';
+                                textClass = 'text-rose-600';
+                                badgeClass = 'text-rose-600 bg-rose-100';
+                                dateBadgeClass = 'text-rose-600 bg-white border-rose-200';
+                                iconClass = 'fa-solid fa-file-signature text-rose-500';
+                                break;
+                            case '숙제':
+                                bgClass = 'border-violet-200 bg-violet-50 border-l-4 border-l-violet-500';
+                                textClass = 'text-violet-600';
+                                badgeClass = 'text-violet-600 bg-violet-100';
+                                dateBadgeClass = 'text-violet-600 bg-white border-violet-200';
+                                iconClass = 'fa-solid fa-book text-violet-500';
+                                break;
+                            case '준비물':
+                                bgClass = 'border-emerald-200 bg-emerald-50 border-l-4 border-l-emerald-500';
+                                textClass = 'text-emerald-600';
+                                badgeClass = 'text-emerald-600 bg-emerald-100';
+                                dateBadgeClass = 'text-emerald-600 bg-white border-emerald-200';
+                                iconClass = 'fa-solid fa-pen-ruler text-emerald-500';
+                                break;
+                            case '행사':
+                                bgClass = 'border-amber-200 bg-amber-50 border-l-4 border-l-amber-500';
+                                textClass = 'text-amber-600';
+                                badgeClass = 'text-amber-600 bg-amber-100';
+                                dateBadgeClass = 'text-amber-600 bg-white border-amber-200';
+                                iconClass = 'fa-solid fa-wand-magic-sparkles text-amber-500';
+                                break;
+                            default:
+                                bgClass = 'border-blue-200 bg-blue-50 border-l-4 border-l-blue-500';
+                                textClass = 'text-blue-600';
+                                badgeClass = 'text-blue-600 bg-blue-100';
+                                dateBadgeClass = 'text-blue-600 bg-white border-blue-200';
+                                iconClass = 'fa-solid fa-calendar-check text-blue-500';
+                                break;
+                        }
                     }
 
                     html += `
@@ -4149,7 +4297,7 @@
                             </div>
                             <div class="flex justify-end">
                                 <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black ${dateBadgeClass} border px-3 py-1.5 rounded-2xl shadow-sm">
-                                    <i class="fa-regular fa-calendar-check ${iconClass}"></i> 
+                                    <i class="${iconClass}"></i> 
                                     기한: ${s.dateStr}
                                 </span>
                             </div>
@@ -4698,7 +4846,7 @@
                 .reduce((sum, m) => sum + (m.stars || 0), 0);
             document.getElementById('child-header-today-coins').innerText = String(coinsEarnedToday);
             
-            // 이번주 시험 건수
+            // 이번주 시험/과제/준비물/행사 건수
             const weekStart = getWeekStart(new Date());
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekEnd.getDate() + 6);
@@ -4710,7 +4858,8 @@
             const schedulesArray = Array.isArray(rawSchedules) ? rawSchedules : Object.values(rawSchedules);
             const weekExams = schedulesArray.filter(s => {
                 if (!s.duedate) return false;
-                return s.duedate >= weekStartStr && s.duedate <= weekEndStr && (s.category === '시험' || s.category === '숙제');
+                return s.duedate >= weekStartStr && s.duedate <= weekEndStr && 
+                    (s.category === '시험' || s.category === '숙제' || s.category === '준비물' || s.category === '행사');
             });
             document.getElementById('child-header-week-exams').innerText = String(weekExams.length);
         }
@@ -4767,9 +4916,13 @@
                 let animationClass = "";
                 
                 if (isPerfect) {
-                    const rot = (Math.random() - 0.5) * 30; 
-                    stickerHtml = `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-rose-500 flex items-center justify-center text-xl sm:text-2xl shadow-md border-4 border-rose-500 border-double opacity-90" style="transform: rotate(${rot}deg);"><i class="fa-solid fa-thumbs-up"></i></div>`;
-                    if (isToday) animationClass = "animate-bounce";
+                    const rot = Math.round((Math.random() - 0.5) * 30); 
+                    if (isToday) {
+                        stickerHtml = `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-rose-500 flex items-center justify-center text-xl sm:text-2xl border-4 border-rose-500 border-double opacity-100 praise-sticker-today" style="--rot-deg: ${rot}deg; transform: rotate(${rot}deg);"><i class="fa-solid fa-thumbs-up"></i></div>`;
+                        animationClass = "";
+                    } else {
+                        stickerHtml = `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-rose-500 flex items-center justify-center text-xl sm:text-2xl shadow-md border-4 border-rose-500 border-double opacity-90" style="transform: rotate(${rot}deg);"><i class="fa-solid fa-thumbs-up"></i></div>`;
+                    }
                 } else if (isFuture) {
                     stickerHtml = `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/50 border-2 border-dashed border-rose-200 text-rose-200 flex items-center justify-center text-lg sm:text-xl"><i class="fa-solid fa-lock"></i></div>`;
                 } else if (isToday) {
@@ -5655,7 +5808,7 @@
             const todayStr = getLocalIsoString(now);
 
             const pendingIds = (activeChild.missionRequests || []).map(r => String(r.missionId));
-            const logs = (activeChild.studyLogs || []).filter(log => log.date >= weekStartStr);
+            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr);
 
             const completed = logs.filter(l => l.completed).length;
             const total = logs.length;
@@ -6393,15 +6546,34 @@
             emojiEl.innerText = animals[Math.floor(Math.random() * animals.length)];
             msgEl.innerText = messages[Math.floor(Math.random() * messages.length)];
 
-            container.classList.remove('translate-y-full');
+            container.classList.remove('translate-y-full', 'pointer-events-none');
+            container.classList.add('pointer-events-auto');
             
             if (container.dataset.timerId) {
                 clearTimeout(parseInt(container.dataset.timerId));
             }
             const timerId = setTimeout(() => {
-                container.classList.add('translate-y-full');
-            }, 3000);
+                container.classList.add('translate-y-full', 'pointer-events-none');
+                container.classList.remove('pointer-events-auto');
+            }, 6000);
             container.dataset.timerId = timerId;
+
+            // 마우스 호버 시 팝업 유지 처리
+            container.onmouseenter = () => {
+                if (container.dataset.timerId) {
+                    clearTimeout(parseInt(container.dataset.timerId));
+                    container.dataset.timerId = "";
+                }
+            };
+            container.onmouseleave = () => {
+                if (!container.classList.contains('translate-y-full')) {
+                    const newTimerId = setTimeout(() => {
+                        container.classList.add('translate-y-full', 'pointer-events-none');
+                        container.classList.remove('pointer-events-auto');
+                    }, 4000); // 마우스가 벗어난 후 4초 대기 후 슬라이드 다운
+                    container.dataset.timerId = newTimerId;
+                }
+            };
         }
 
         function renderSubjectManageList() {
@@ -6638,6 +6810,11 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
     
     defaults.forEach(d => {
         if (d.day === currentDayName) {
+            const start = d.startdate || '2026-06-22';
+            const end = d.enddate || '2099-12-31';
+            if (targetDateStr < start || targetDateStr > end) {
+                return;
+            }
             currentDefaultIds.push(d.id);
             
             // [버그 수정]: 과목명/범위 중복 체크 방식을 제외하고, 오직 고유 defaultMissionId 기준으로만 중복 체크합니다.
@@ -7797,31 +7974,6 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             
             initFilterDateOptions();
 
-            const toggleBtn = document.getElementById('role-toggle-btn');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', requestParentMode);
-            }
-
-            const authCancelBtn = document.getElementById('parent-auth-cancel-btn');
-            if (authCancelBtn) {
-                authCancelBtn.addEventListener('click', closeParentAuthModal);
-            }
-
-            const authSubmitBtn = document.getElementById('parent-auth-submit-btn');
-            if (authSubmitBtn) {
-                authSubmitBtn.addEventListener('click', submitParentPassword);
-            }
-
-            const pwInput = document.getElementById('parent-password-input');
-            if (pwInput) {
-                pwInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        submitParentPassword();
-                    }
-                });
-            }
-
             const photoTrigger = document.getElementById('child-modal-photo-trigger');
             const photoInput = document.getElementById('child-modal-photo-input');
             if (photoTrigger && photoInput) {
@@ -7837,6 +7989,15 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             const testModeToggle = document.getElementById('test-mode-toggle');
             if (testModeToggle) {
                 testModeToggle.checked = localStorage.getItem('magic_test_mode') === 'true';
+            }
+
+            const pStartdate = document.getElementById('p-form-startdate');
+            if (pStartdate) {
+                pStartdate.value = getLocalIsoString();
+            }
+            const pEnddate = document.getElementById('p-form-enddate');
+            if (pEnddate) {
+                pEnddate.value = "2099-12-31";
             }
 
             domEventsInitialized = true;
