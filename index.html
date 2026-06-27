@@ -121,6 +121,32 @@
                        praiseStickerGlow 2.0s ease-in-out infinite 1.2s;
             transform-origin: center center;
         }
+
+        /* 아바타 둥둥 떠다니기 애니메이션 */
+        @keyframes avatarFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+        .animate-avatar-float {
+            animation: avatarFloat 3s ease-in-out infinite;
+        }
+
+        /* 아바타 클릭 시 팅기는 팝 애니메이션 */
+        @keyframes avatarBounceClick {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.25) rotate(10deg);
+            }
+        }
+        .animate-avatar-bounce-click {
+            animation: avatarBounceClick 0.4s ease-in-out;
+        }
     </style>
     <script>
         if (localStorage.getItem('magic_logged_in_user')) {
@@ -354,13 +380,55 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- 수호 아바타 성장 배너 -->
+                    <div id="child-avatar-banner-container" class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300">
+                        <div class="absolute -left-6 -bottom-6 opacity-10 text-9xl">
+                            <i class="fa-solid fa-paw"></i>
+                        </div>
+                        <div class="relative z-10 flex items-center gap-5 w-full md:w-auto">
+                            <!-- 클릭 가능 아바타 스프라이트 영역 -->
+                            <div id="avatar-sprite-container" class="relative cursor-pointer select-none group transform hover:scale-105 active:scale-95 transition duration-200" onclick="interactWithAvatar()">
+                                <div class="absolute inset-0 bg-white/20 rounded-full blur-xl group-hover:bg-white/30 transition duration-200"></div>
+                                <div class="w-20 h-20 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-5xl shadow-md shrink-0 relative animate-avatar-float" id="avatar-banner-emoji-box">
+                                    🥚
+                                </div>
+                                <span class="absolute -bottom-2.5 left-1/2 transform -translate-x-1/2 bg-slate-900/80 text-[9px] text-yellow-300 px-2 py-0.5 rounded-full font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition duration-200 shadow-sm">클릭해봐! ✨</span>
+                            </div>
+                            
+                            <!-- 레벨 지표 및 정보 -->
+                            <div class="flex-grow">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-yellow-300 text-purple-900 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm" id="avatar-banner-level-tag">Lv.1</span>
+                                    <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-1.5" id="avatar-banner-display-name">수호 아바타 알</h3>
+                                </div>
+                                <p class="text-[11px] text-purple-100 mt-1 font-medium" id="avatar-banner-growth-desc">누적 0코인 • 다음 성장까지 100코인 남음</p>
+                                <!-- 마스터리 게이지 바 -->
+                                <div class="w-full sm:w-64 bg-white/20 rounded-full h-3 mt-2 overflow-hidden border border-white/10 p-[1px]">
+                                    <div class="bg-gradient-to-r from-yellow-300 to-amber-300 h-full rounded-full transition-all duration-500 ease-out" id="avatar-banner-progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 둥둥 떠있는 아바타 말풍선 -->
+                        <div class="relative z-10 w-full md:w-auto flex-grow max-w-sm">
+                            <div class="bg-white text-slate-800 rounded-2xl p-4 shadow-lg border border-purple-100 flex items-start gap-3 relative before:absolute before:content-[''] before:w-3 before:h-3 before:bg-white before:rotate-45 before:-left-1.5 before:top-1/2 before:-translate-y-1/2 before:hidden md:before:block after:absolute after:content-[''] after:w-3 after:h-3 after:bg-white after:rotate-45 after:-top-1.5 after:left-1/2 after:-translate-x-1/2 md:after:hidden">
+                                <div class="text-lg shrink-0">💬</div>
+                                <div>
+                                    <h4 class="text-[9px] font-black text-purple-500 uppercase tracking-wider mb-0.5" id="avatar-banner-talker-title">수호신의 응원</h4>
+                                    <p class="text-xs font-bold text-slate-700 leading-relaxed" id="avatar-banner-cheer-message">나를 깨워줘! 아래의 '나의 캐릭터' 탭에서 나를 깨울 아바타를 고를 수 있어! 🐣</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-xs sm:text-sm font-bold text-slate-700">
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 text-xs sm:text-sm font-bold text-slate-700">
                         <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center gap-1 sm:gap-1.5">📝 학습계획</button>
                         <button id="child-tab-btn-schedule" onclick="switchChildTab('SCHEDULE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">📅 일정관리</button>
                         <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🎪 코인상점</button>
                         <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🏆 성취도</button>
+                        <button id="child-tab-btn-avatar" onclick="switchChildTab('AVATAR')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🦁 나의 캐릭터</button>
                         </div>
                     </div>
 
@@ -609,6 +677,83 @@
                             <div>
                                 <h4 class="text-[11px] font-black text-indigo-400 mb-0.5 tracking-wide">AI 선생님의 응원</h4>
                                 <p class="text-sm font-bold text-slate-700" id="child-ai-cheer-message">매일매일 조금씩 자라나는 모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 나의 캐릭터 탭 패널 -->
+                    <div id="child-tab-avatar" class="space-y-6 hidden">
+                        <!-- 🏆 명예의 전당 배너 -->
+                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 text-amber-700 flex items-center justify-center text-xl shadow-sm shrink-0">
+                                    <i class="fa-solid fa-trophy animate-bounce"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-800 text-sm md:text-base">🏆 명예의 전당 (Hall of Fame)</h4>
+                                    <p class="text-[11px] text-slate-500 font-medium">Lv.6(1500코인)을 달성하여 졸업한 수호 아바타들의 명예로운 요람입니다!</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 pr-2" id="avatar-hall-of-fame-slots">
+                                <!-- JS로 4종류 동물 상태 동적 렌더링 -->
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_1.9fr] gap-6">
+                            <!-- 좌측: 아바타 선택 및 이름 변경 -->
+                            <div class="space-y-6">
+                                <!-- 캐릭터 선택 카드 -->
+                                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                    <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-paw text-indigo-500"></i> 마법 동물 선택하기</h3>
+                                    <p class="text-xs text-slate-400 mb-4">언제든 원하는 종류의 마법 동물로 바꿀 수 있어요. (누적 코인은 유지됩니다!)</p>
+                                    <div class="grid grid-cols-1 gap-2.5" id="avatar-selector-list">
+                                        <!-- JS로 동적 렌더링 -->
+                                    </div>
+                                </div>
+
+                                <!-- 닉네임 설정 카드 -->
+                                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                                    <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-signature text-orange-500"></i> 아바타 이름 지어주기</h3>
+                                    <p class="text-xs text-slate-400 mb-4">나의 수호 아바타에게 예쁜 이름을 선물해 주세요!</p>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="avatar-nickname-input" placeholder="예: 아기냥이, 용맹호돌이" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold" maxlength="10">
+                                        <button onclick="saveAvatarNickname()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition shadow-sm shrink-0">이름 저장 💾</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 우측: 진화 도감 및 현재 상태 -->
+                            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-6">
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i class="fa-solid fa-book-open-reader text-emerald-500"></i> 성장 도감 및 레벨업 현황</h3>
+                                        <p class="text-xs text-slate-400">누적 획득 코인이 100개씩 쌓일 때마다 아바타가 더 멋지고 귀엽게 진화해요!</p>
+                                    </div>
+                                    <div class="bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-2xl px-4 py-2 text-right">
+                                        <span class="text-[10px] font-bold block leading-tight">나의 누적 코인</span>
+                                        <span class="text-lg font-black child-font" id="avatar-tab-cumulative-coins">0</span><span class="text-xs font-bold"> 개</span>
+                                    </div>
+                                </div>
+
+                                <!-- 현재 단계 메인 카드 -->
+                                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100 flex flex-col sm:flex-row items-center gap-5">
+                                    <div class="w-24 h-24 rounded-full bg-white border-2 border-indigo-200 flex items-center justify-center text-5xl shadow-md shrink-0 animate-avatar-float" id="avatar-tab-current-emoji">
+                                        🥚
+                                    </div>
+                                    <div class="text-center sm:text-left space-y-1">
+                                        <span class="bg-indigo-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full" id="avatar-tab-current-level-badge">Lv.1 알 단계</span>
+                                        <h4 class="text-xl font-black text-slate-800" id="avatar-tab-current-display-name">마법의 알</h4>
+                                        <p class="text-xs text-slate-500 font-medium leading-relaxed" id="avatar-tab-current-stage-desc">진화 설명글...</p>
+                                    </div>
+                                </div>
+
+                                <!-- 진화 단계 로드맵 (6단계 전체 목록) -->
+                                <div>
+                                    <h4 class="font-bold text-xs text-slate-600 mb-3 uppercase tracking-wider">전체 진화 로드맵</h4>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="avatar-evolution-roadmap">
+                                        <!-- JS로 동적 렌더링 -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1549,6 +1694,8 @@
 
         // 임시 사진 데이터 보관함
         let currentPhotoBase64 = "";
+        let lastActiveChildId = "";
+        let childPreviousLevels = {};
 
         // 회원 인증 정보 구조
         let loggedInUser = null; // { id: "yoonfamily", role: "user" / "admin" }
@@ -5019,7 +5166,7 @@
 
         function switchChildTab(tabName) {
             state.childActiveTab = tabName;
-            const tabs = ['PLAN', 'SCHEDULE', 'STORE', 'ACHIEVEMENT'];
+            const tabs = ['PLAN', 'SCHEDULE', 'STORE', 'ACHIEVEMENT', 'AVATAR'];
             tabs.forEach(id => {
                 const panel = document.getElementById(`child-tab-${id.toLowerCase()}`);
                 const button = document.getElementById(`child-tab-btn-${id.toLowerCase()}`);
@@ -5032,7 +5179,7 @@
             });
             const selectedTab = document.getElementById('child-header-selected-tab');
             if (selectedTab) {
-                selectedTab.innerText = tabName === 'PLAN' ? '학습계획관리' : tabName === 'SCHEDULE' ? '일정관리' : tabName === 'STORE' ? '코인상점' : '학업성취도 조회';
+                selectedTab.innerText = tabName === 'PLAN' ? '학습계획관리' : tabName === 'SCHEDULE' ? '일정관리' : tabName === 'STORE' ? '코인상점' : tabName === 'AVATAR' ? '나의 캐릭터' : '학업성취도 조회';
             }
             if (tabName === 'PLAN') {
                 renderChildPlanReport();
@@ -5047,6 +5194,13 @@
             } else if (tabName === 'ACHIEVEMENT') {
                 renderChildAchievementStats();
                 renderChildAchievementCharts();
+            } else if (tabName === 'AVATAR') {
+                if (typeof renderAvatarSelectorList === 'function') {
+                    renderAvatarSelectorList();
+                }
+                if (typeof renderAvatarTabDetails === 'function') {
+                    renderAvatarTabDetails();
+                }
             }
         }
 
@@ -6748,6 +6902,21 @@
             renderScheduleCalendarModal();
             renderScheduleCalendar();
             
+            // 수호 아바타 배너 및 응원 메시지 실시간 업데이트
+            if (state.activeChildId !== lastActiveChildId) {
+                lastActiveChildId = state.activeChildId;
+                window.isLevelUpMessageActive = false;
+                if (window.levelUpMessageTimer) {
+                    clearTimeout(window.levelUpMessageTimer);
+                }
+                if (typeof initAvatarCheerMessage === 'function') {
+                    initAvatarCheerMessage();
+                }
+            }
+            if (typeof renderAvatarBanner === 'function') {
+                renderAvatarBanner();
+            }
+            
             const schedModal = document.getElementById('schedule-calendar-modal');
             if (schedModal && !schedModal.classList.contains('opacity-0')) {
                 renderScheduleCalendarModal();
@@ -8020,6 +8189,674 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
         });
 
         initDOMEvents();
+        // ==================== [신규기능] 아바타 성장 시스템 ====================
+        const AVATAR_GRADUATION_STEP = 1500; // 운영용 값 (임시 테스트 시에만 150으로 변경)
+        
+        // 아바타 진화 단계 정의 (각 동물 종류별 6단계)
+        const AVATAR_EVOLUTIONS = {
+            DOG: {
+                name: "강아지",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐶", title: "아기 강아지", desc: "꼬리를 살랑살랑 흔드는 귀여운 아기 강아지입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐕", title: "어린 강아지", desc: "호기심 많은 어린 강아지입니다. 달리기를 좋아해요!" },
+                    { level: 4, minCoins: 600, emoji: "🦮", title: "훈련생 리트리버", desc: "사람들을 도울 준비를 하는 똑똑한 훈련생 강아지입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🐕‍🦺", title: "멋진 안내견", desc: "용감하고 듬직하게 성장하여 사람들을 돕는 수호 견공입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🦁", title: "영웅 전설견", desc: "누적 1500코인을 넘긴 대가! 모두에게 감동을 주는 우주 최고의 영웅견입니다! 👑" }
+                ]
+            },
+            CAT: {
+                name: "아기냥이",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐱", title: "아기 고양이", desc: "야옹 소리를 내는 아주 작고 사랑스러운 솜털 고양이입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐈", title: "장난꾸러기 냥이", desc: "실타래를 굴리며 노는 에너자이저 장난꾸러기 고양이입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🐯", title: "꼬마 호랑이냥", desc: "사냥 놀이에 자신감이 붙어 날렵해진 꼬마 호랑이 고양이입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🦁", title: "황금 사자냥", desc: "화려한 털빛을 뽐내며 도도한 자태를 풍기는 귀족 고양이입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🦄", title: "우주 대스타 냥신", desc: "누적 1500코인을 넘긴 대가! 신비로운 마법으로 소원을 이뤄주는 냥신입니다! 👑" }
+                ]
+            },
+            PANDA: {
+                name: "판다",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐼", title: "아기 판다", desc: "뒹굴뒹굴 구르는 솜사탕 같은 아기 판다입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐨", title: "유칼립 판다", desc: "대나무와 나뭇가지를 꼭 껴안고 잠드는 귀여운 판다입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🐻", title: "숲속 아기곰", desc: "대나무 먹방의 달인이 되어 숲속을 지배하는 꼬마 판다곰입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🐻‍❄️", title: "늠름한 북극 판다", desc: "눈빛이 반짝이고 듬직하여 그 어떤 추위도 이겨내는 든든한 판다곰입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🦖", title: "전설의 용사 쿵푸판다", desc: "누적 1500코인을 넘긴 대가! 정의를 위해 대나무 검을 휘두르는 우주 평화의 수호자입니다! 👑" }
+                ]
+            },
+            DRAGON: {
+                name: "용(드래곤)",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🦎", title: "아기 도마뱀용", desc: "앙증맞은 날개와 꼬리를 꼬물거리는 귀여운 해츨링입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🦖", title: "초록 날개 아기용", desc: "작은 불꽃을 내뿜으며 비행 연습을 하는 장난꾸러기 아기용입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🐊", title: "숲의 파수꾼 녹색용", desc: "바람을 가르고 날며 자연의 숲을 보호하는 정의로운 수호 드래곤입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🦕", title: "하늘의 지배자 청룡", desc: "은빛 날개를 펴고 구름 위를 날아다니는 신비한 하늘의 드래곤입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🐉", title: "신화 속 골드 드래곤", desc: "누적 1500코인을 넘긴 대가! 황금빛 신성한 기운으로 윤자매를 지키는 전설의 신룡입니다! 👑" }
+                ]
+            },
+            BUNNY: {
+                name: "마법 토끼",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐰", title: "아기 토끼", desc: "폴짝폴짝 뛰어다니는 솜사탕같이 새하얀 아기 토끼입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐇", title: "어린 토끼", desc: "귀를 쫑긋 세우고 당근을 사랑하는 활발한 어린 토끼입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🦝", title: "꼬마 너구리토끼", desc: "영리한 눈빛과 재빠른 발걸음으로 숲 속을 탐험하는 너구리입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🦊", title: "황금빛 마법 여우", desc: "빛나는 황금빛 꼬리를 가진 신비롭고 영리한 마법 여우입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🐺", title: "전설의 달빛 늑대", desc: "누적 1500코인을 넘긴 대가! 달빛 아래 늠름하게 포효하는 전설의 수호 늑대입니다! 👑" }
+                ]
+            },
+            BIRD: {
+                name: "마법 새",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐣", title: "깨어나는 아기 새", desc: "톡! 껍질을 깨고 나온 세상이 궁금한 귀여운 아기 병아리입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐤", title: "노란 병아리", desc: "삐약삐약! 세상 모든 것이 신기한 귀여운 노란 병아리입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🦆", title: "물 위를 나는 오리", desc: "물 위를 우아하게 떠다니며 하늘을 꿈꾸는 매력적인 오리입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🦅", title: "하늘의 독수리", desc: "넓은 하늘을 자유롭게 날며 바람을 가르는 용맹한 독수리입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🦚", title: "전설의 무지개 공작", desc: "누적 1500코인을 넘긴 대가! 화려한 무지개 깃털로 온 세상을 빛내는 전설의 공작새입니다! 👑" }
+                ]
+            },
+            SEA: {
+                name: "바다 생물",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐠", title: "아기 열대어", desc: "형형색색의 아름다운 무늬를 자랑하는 귀여운 아기 열대어입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐬", title: "장난꾸러기 돌고래", desc: "파도를 가르며 점프하는 활발하고 영리한 돌고래입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🦭", title: "바다의 꼬마 물개", desc: "물 속을 자유롭게 헤엄치고 귀여운 재롱을 부리는 물개입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🐋", title: "대양의 거대 고래", desc: "바다를 지배하며 신비로운 노래를 부르는 거대한 혹등고래입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🦈", title: "전설의 무적 상어왕", desc: "누적 1500코인을 넘긴 대가! 바다의 모든 생물을 지키는 최강의 수호 상어왕입니다! 👑" }
+                ]
+            }
+        };
+
+        // 아바타 응원 한마디 메시지 리스트
+        const AVATAR_CHEER_MESSAGES = [
+            "오늘도 한걸음 더 나아가는 네 모습이 너무 멋져! 화이팅! 💖",
+            "꾸준히 공부하는 네가 정말 자랑스러워! 오늘도 힘내자! ✨",
+            "어려운 일도 포기하지 않고 해내는 너는 진정한 마법사야! 🧙",
+            "너의 모든 노력이 너를 빛나게 만들고 있어! 최고야! 👍",
+            "오늘도 나랑 같이 성장해보자! 공부 끝나고 맛있는 간식도 잊지 마! 🍪",
+            "천천히 가도 괜찮아, 포기하지 않는 게 중요한 거야! 😉"
+        ];
+
+        // 현재 아바타 상태 정보 추출 유틸리티
+        function getAvatarStatus(activeChild) {
+            const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const cumulativeCoins = (activeChild.stars || 0) + totalUsedCoins;
+            
+            // 학습완료 취소 등으로 누적 코인이 줄어든 경우 명예의 전당 등록 취소 및 오프셋 조정
+            let offset = activeChild.avatarCoinsOffset || 0;
+            let graduated = activeChild.graduatedAvatars || [];
+            let changed = false;
+            
+            while (offset > 0 && cumulativeCoins < offset) {
+                if (graduated.length > 0) {
+                    const removed = graduated.pop();
+                    console.log(`[아바타] 코인 감소로 인한 졸업 등록 취소: ${removed}`);
+                }
+                offset = Math.max(0, offset - AVATAR_GRADUATION_STEP);
+                changed = true;
+            }
+            
+            if (changed) {
+                activeChild.avatarCoinsOffset = offset;
+                activeChild.graduatedAvatars = graduated;
+                // 비동기로 데이터베이스 동기화
+                saveStateToFirestore().catch(err => console.error("Firestore sync error on graduation undo:", err));
+            }
+            
+            // 현재 활성화된 아바타의 실제 성장 코인 (전체 누적 - 졸업 오프셋)
+            const currentCoins = Math.max(0, cumulativeCoins - offset);
+            
+            const selectedType = activeChild.avatarType || "DOG";
+            const evolutionData = AVATAR_EVOLUTIONS[selectedType] || AVATAR_EVOLUTIONS.DOG;
+            
+            // 현재 활성화된 아바타 코인 기준 현재 단계 결정
+            let currentStage = evolutionData.stages[0];
+            for (let i = 0; i < evolutionData.stages.length; i++) {
+                if (currentCoins >= evolutionData.stages[i].minCoins) {
+                    currentStage = evolutionData.stages[i];
+                }
+            }
+            
+            // 다음 레벨 및 필요 코인 산정
+            let nextStage = null;
+            const currentIdx = evolutionData.stages.findIndex(s => s.level === currentStage.level);
+            if (currentIdx !== -1 && currentIdx < evolutionData.stages.length - 1) {
+                nextStage = evolutionData.stages[currentIdx + 1];
+            }
+            
+            const nickname = activeChild.avatarNickname || `${evolutionData.name} 아바타`;
+            
+            return {
+                type: selectedType,
+                nickname: nickname,
+                level: currentStage.level,
+                emoji: currentStage.emoji,
+                title: currentStage.title,
+                desc: currentStage.desc,
+                minCoins: currentStage.minCoins,
+                cumulativeCoins: cumulativeCoins,
+                currentCoins: currentCoins,
+                nextStage: nextStage
+            };
+        }
+
+        // 아바타 선택 목록 렌더링
+        function renderAvatarSelectorList() {
+            const listEl = document.getElementById("avatar-selector-list");
+            if (!listEl) return;
+            
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            const currentStatus = getAvatarStatus(activeChild);
+            
+            let html = "";
+            Object.keys(AVATAR_EVOLUTIONS).forEach(key => {
+                const isSelected = currentStatus.type === key;
+                const animClass = isSelected ? "border-indigo-500 bg-indigo-50/40" : "border-slate-200 bg-white hover:bg-slate-50";
+                
+                // 각 타입별 현재 코인 점수 기준 어떤 에모지 상태인지 가져오기
+                const evoData = AVATAR_EVOLUTIONS[key];
+                let displayEmoji = evoData.stages[0].emoji;
+                for (let i = 0; i < evoData.stages.length; i++) {
+                    if (currentStatus.currentCoins >= evoData.stages[i].minCoins) {
+                        displayEmoji = evoData.stages[i].emoji;
+                    }
+                }
+
+                html += `
+                    <button onclick="selectAvatarType('${key}')" class="w-full text-left p-3.5 border-2 rounded-2xl flex items-center justify-between transition-all duration-200 ${animClass}">
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-3xl shadow-sm shrink-0">
+                                ${displayEmoji}
+                            </span>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${evoData.name}</h4>
+                                <p class="text-[10px] text-slate-500 font-medium">Lv.${currentStatus.level} 현재 형태</p>
+                            </div>
+                        </div>
+                        <div>
+                            ${isSelected ? '<span class="text-indigo-600 bg-indigo-100 px-3 py-1.5 rounded-xl text-xs font-black">수호신 지정됨 ✨</span>' : '<span class="text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold">지정하기</span>'}
+                        </div>
+                    </button>
+                `;
+            });
+            listEl.innerHTML = html;
+        }
+
+        // 아바타 이름 저장하기
+        async function saveAvatarNickname() {
+            const inputEl = document.getElementById("avatar-nickname-input");
+            if (!inputEl) return;
+            
+            const nickname = inputEl.value.trim();
+            if (!nickname) {
+                alert("이름을 입력해 주세요!");
+                return;
+            }
+            
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            activeChild.avatarNickname = nickname;
+            
+            // UI 업데이트 및 클라우드 동기화
+            renderAvatarBanner();
+            renderAvatarTabDetails();
+            await saveStateToFirestore();
+            
+            // 명시적으로 인풋 필드 동기화 (버그 방지)
+            if (inputEl) {
+                inputEl.value = nickname;
+            }
+            
+            alert(`아바타 이름이 '${nickname}'(으)로 변경되었습니다! 🎉`);
+        }
+
+        // 아바타 종류 변경하기
+        async function selectAvatarType(type) {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            activeChild.avatarType = type;
+            
+            // UI 업데이트 및 클라우드 동기화
+            renderAvatarSelectorList();
+            renderAvatarBanner();
+            renderAvatarTabDetails();
+            await saveStateToFirestore();
+        }
+
+        // 아바타 탭 내 도감 로드맵 렌더링
+        function renderAvatarTabDetails() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            const status = getAvatarStatus(activeChild);
+
+            // 명예의 전당 (Hall of Fame) 슬롯 렌더링
+            const hofSlotsEl = document.getElementById("avatar-hall-of-fame-slots");
+            if (hofSlotsEl) {
+                const graduated = activeChild.graduatedAvatars || [];
+                let slotsHtml = "";
+                
+                Object.keys(AVATAR_EVOLUTIONS).forEach(key => {
+                    const evo = AVATAR_EVOLUTIONS[key];
+                    const isGraduated = graduated.includes(key);
+                    const maxStage = evo.stages[5]; // Lv.6가 최고 등급
+                    
+                    if (isGraduated) {
+                        slotsHtml += `
+                            <div class="flex flex-col items-center gap-0.5">
+                                <div class="w-10 h-10 rounded-full bg-white border-2 border-amber-400 flex items-center justify-center text-xl shadow-sm cursor-help" title="${evo.name} 졸업 등극! (${maxStage.title})">
+                                    ${maxStage.emoji}
+                                </div>
+                                <span class="text-[9px] font-black text-amber-700 shrink-0">${evo.name}</span>
+                            </div>
+                        `;
+                    } else {
+                        slotsHtml += `
+                            <div class="flex flex-col items-center gap-0.5 opacity-40">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-slate-400 flex items-center justify-center text-sm font-black" title="아직 졸업 전입니다">
+                                    ?
+                                </div>
+                                <span class="text-[9px] font-bold text-slate-500 shrink-0">${evo.name}</span>
+                            </div>
+                        `;
+                    }
+                });
+                hofSlotsEl.innerHTML = slotsHtml;
+            }
+            
+            // 누적 코인 수치 채우기
+            const coinsEl = document.getElementById("avatar-tab-cumulative-coins");
+            if (coinsEl) coinsEl.innerText = status.cumulativeCoins;
+            
+            // 닉네임 입력란 기본값 설정 (만약 아직 비어있다면)
+            const inputEl = document.getElementById("avatar-nickname-input");
+            if (inputEl) {
+                inputEl.value = activeChild.avatarNickname || "";
+            }
+            
+            // 현재 단계 메인 정보 카드
+            const currentEmojiEl = document.getElementById("avatar-tab-current-emoji");
+            if (currentEmojiEl) currentEmojiEl.innerText = status.emoji;
+            
+            const levelBadgeEl = document.getElementById("avatar-tab-current-level-badge");
+            if (levelBadgeEl) levelBadgeEl.innerText = `Lv.${status.level} 단계`;
+            
+            const displayNameEl = document.getElementById("avatar-tab-current-display-name");
+            if (displayNameEl) displayNameEl.innerText = `${status.nickname} (${status.title})`;
+            
+            const stageDescEl = document.getElementById("avatar-tab-current-stage-desc");
+            if (stageDescEl) {
+                let descText = status.desc;
+                if (status.level === 6) {
+                    descText += `<div class="mt-3.5 pt-3 border-t border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/60 p-3 rounded-xl border border-indigo-100">
+                        <span class="text-[11px] text-indigo-700 font-bold">🎉 축하합니다! 이 아바타를 졸업시키고 명예의 전당에 등록할 수 있어요!</span>
+                        <button onclick="graduateCurrentAvatar()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-3.5 py-2 rounded-xl text-[10px] transition shadow-sm shrink-0 flex items-center gap-1">
+                            <i class="fa-solid fa-graduation-cap"></i> 명예의 전당 등록하기 🎓
+                        </button>
+                    </div>`;
+                }
+                stageDescEl.innerHTML = descText;
+            }
+            
+            // 로드맵 6단계 카드 렌더링
+            const roadmapEl = document.getElementById("avatar-evolution-roadmap");
+            if (roadmapEl) {
+                const evolutionData = AVATAR_EVOLUTIONS[status.type] || AVATAR_EVOLUTIONS.DOG;
+                let html = "";
+                evolutionData.stages.forEach(stage => {
+                    const isAchieved = status.currentCoins >= stage.minCoins;
+                    const isCurrent = status.level === stage.level;
+                    
+                    let cardClass = "";
+                    if (isCurrent) {
+                        cardClass = "border-indigo-500 bg-indigo-50 shadow-inner";
+                    } else if (isAchieved) {
+                        cardClass = "border-slate-200 bg-white";
+                    } else {
+                        cardClass = "border-slate-100 bg-slate-50/50 opacity-40";
+                    }
+                    
+                    html += `
+                        <div class="p-3 border rounded-xl flex flex-col items-center justify-center text-center ${cardClass}">
+                            <div class="text-3xl filter ${isAchieved ? '' : 'blur-[1.5px] grayscale'}">${stage.emoji}</div>
+                            <h5 class="text-[11px] font-black text-slate-700 mt-2">${stage.title}</h5>
+                            <span class="text-[9px] font-bold mt-1 ${isAchieved ? 'text-indigo-600 bg-indigo-100' : 'text-slate-400 bg-slate-100'} px-2 py-0.5 rounded-full">
+                                ${stage.minCoins}코인
+                            </span>
+                        </div>
+                    `;
+                });
+                roadmapEl.innerHTML = html;
+            }
+        }
+
+        // 아바타 대시보드 상단 배너 정보 동기화
+        function renderAvatarBanner() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            const status = getAvatarStatus(activeChild);
+
+            const prevLevel = childPreviousLevels[state.activeChildId];
+            if (prevLevel !== undefined && status.level > prevLevel) {
+                if (typeof triggerLevelUpFirework === 'function') {
+                    triggerLevelUpFirework();
+                    showToast(`축하합니다! ${status.nickname}이(가) Lv.${status.level}(으)로 레벨업했습니다! 🎉`, "success");
+                }
+                
+                // 오른쪽 아래 동물의 코멘트 말풍선에 축하 메시지 1분간 고정 노출
+                const cheerMessageEl = document.getElementById("avatar-banner-cheer-message");
+                if (cheerMessageEl) {
+                    cheerMessageEl.innerText = `축하합니다. ${status.nickname}이(가) Lv.${status.level}(으)로 레벨업했습니다.`;
+                    
+                    if (window.levelUpMessageTimer) {
+                        clearTimeout(window.levelUpMessageTimer);
+                    }
+                    window.isLevelUpMessageActive = true;
+                    
+                    window.levelUpMessageTimer = setTimeout(() => {
+                        window.isLevelUpMessageActive = false;
+                        initAvatarCheerMessage();
+                    }, 60000); // 1분 (60000ms)
+                }
+            }
+            childPreviousLevels[state.activeChildId] = status.level;
+            
+            const emojiBox = document.getElementById("avatar-banner-emoji-box");
+            if (emojiBox) emojiBox.innerText = status.emoji;
+            
+            const levelTag = document.getElementById("avatar-banner-level-tag");
+            if (levelTag) levelTag.innerText = `Lv.${status.level}`;
+            
+            const displayName = document.getElementById("avatar-banner-display-name");
+            if (displayName) displayName.innerText = `${status.nickname} (${status.title})`;
+            
+            // 게이지 비율 계산
+            const currentMin = status.minCoins;
+            let nextMin = currentMin + 100; // 기본구조상 100단위
+            if (status.nextStage) {
+                nextMin = status.nextStage.minCoins;
+            }
+            
+            const currentStageEarned = status.currentCoins - currentMin;
+            const stageNeeded = nextMin - currentMin;
+            const percent = Math.min(100, Math.round((currentStageEarned / stageNeeded) * 100));
+            
+            const progressBar = document.getElementById("avatar-banner-progress-bar");
+            if (progressBar) progressBar.style.width = `${percent}%`;
+            
+            const growthDesc = document.getElementById("avatar-banner-growth-desc");
+            if (growthDesc) {
+                if (status.nextStage) {
+                    const coinsLeft = nextMin - status.currentCoins;
+                    growthDesc.innerText = `현재 성장도 ${status.currentCoins}코인 • 다음 성장까지 ${coinsLeft}코인 남음`;
+                } else {
+                    growthDesc.innerText = `현재 성장도 ${status.currentCoins}코인 • 성장이 최대 단계에 도달했습니다! 🎉`;
+                }
+            }
+            
+            const talkerTitle = document.getElementById("avatar-banner-talker-title");
+            if (talkerTitle) talkerTitle.innerText = `${status.nickname}의 응원`;
+        }
+
+        // 아바타 응원 메시지 임의 선택 및 갱신
+        function initAvatarCheerMessage() {
+            if (window.isLevelUpMessageActive) return;
+            const msgEl = document.getElementById("avatar-banner-cheer-message");
+            if (!msgEl) return;
+            
+            const idx = Math.floor(Math.random() * AVATAR_CHEER_MESSAGES.length);
+            msgEl.innerText = AVATAR_CHEER_MESSAGES[idx];
+        }
+
+        // 아바타 클릭 시 상호작용
+        function interactWithAvatar() {
+            const emojiBox = document.getElementById("avatar-banner-emoji-box");
+            if (!emojiBox) return;
+            
+            // 팅기는 애니메이션 발동
+            emojiBox.classList.remove("animate-avatar-float");
+            emojiBox.classList.add("animate-avatar-bounce-click");
+            
+            // 응원 멘트 교체
+            initAvatarCheerMessage();
+            
+            setTimeout(() => {
+                emojiBox.classList.remove("animate-avatar-bounce-click");
+                emojiBox.classList.add("animate-avatar-float");
+            }, 400);
+        }
+
+        // 아바타 레벨업 시 화려한 폭죽/콘페티 효과 연출 (바닐라 JS)
+        function triggerLevelUpFirework() {
+            const canvas = document.createElement('canvas');
+            canvas.id = 'level-up-firework-canvas';
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '99999';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            const handleResize = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            };
+            window.addEventListener('resize', handleResize);
+
+            const colors = ['#FFC107', '#FF5722', '#E91E63', '#9C27B0', '#3F51B5', '#00BCD4', '#4CAF50', '#8BC34A'];
+            const particles = [];
+
+            // 폭발 중심점 (화면 중앙 부근의 3개 지점)
+            const burstPoints = [
+                { x: width * 0.25, y: height * 0.4 },
+                { x: width * 0.5, y: height * 0.3 },
+                { x: width * 0.75, y: height * 0.4 }
+            ];
+
+            // 1. 불꽃놀이 파티클 생성
+            burstPoints.forEach(point => {
+                for (let i = 0; i < 60; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 8 + 4;
+                    particles.push({
+                        x: point.x,
+                        y: point.y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed - Math.random() * 2,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        size: Math.random() * 4 + 3,
+                        alpha: 1,
+                        decay: Math.random() * 0.015 + 0.01
+                    });
+                }
+            });
+
+            // 2. 흩날리는 색종이(콘페티) 파티클 생성
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: -10 - Math.random() * 100,
+                    vx: Math.random() * 4 - 2,
+                    vy: Math.random() * 3 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 5 + 4,
+                    alpha: 1,
+                    decay: Math.random() * 0.005 + 0.005,
+                    isConfetti: true,
+                    tilt: Math.random() * 10,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+                    tiltAngle: 0
+                });
+            }
+
+            // 3. 주기적으로 추가 불꽃 및 색종이 생성 (첫 7초 동안만)
+            const intervalId = setInterval(() => {
+                if (Date.now() - startTime < 7000) {
+                    // 추가 불꽃
+                    const randomX = Math.random() * width;
+                    const randomY = Math.random() * (height * 0.4) + height * 0.1;
+                    for (let i = 0; i < 30; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = Math.random() * 6 + 3;
+                        particles.push({
+                            x: randomX,
+                            y: randomY,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed - Math.random() * 1.5,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 3 + 2,
+                            alpha: 1,
+                            decay: Math.random() * 0.012 + 0.008
+                        });
+                    }
+                    
+                    // 추가 흩날리는 색종이
+                    for (let i = 0; i < 15; i++) {
+                        particles.push({
+                            x: Math.random() * width,
+                            y: -10,
+                            vx: Math.random() * 4 - 2,
+                            vy: Math.random() * 2 + 1.5,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            size: Math.random() * 4 + 3,
+                            alpha: 1,
+                            decay: Math.random() * 0.004 + 0.004,
+                            isConfetti: true,
+                            tilt: Math.random() * 10,
+                            tiltAngleIncremental: Math.random() * 0.06 + 0.02,
+                            tiltAngle: 0
+                        });
+                    }
+                } else {
+                    clearInterval(intervalId);
+                }
+            }, 800);
+
+            let animationFrameId;
+            const startTime = Date.now();
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                let alive = false;
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    if (p.alpha <= 0) continue;
+
+                    alive = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.isConfetti) {
+                        p.vy += 0.04; // 중력
+                        p.tiltAngle += p.tiltAngleIncremental;
+                        p.tilt = Math.sin(p.tiltAngle) * 12;
+                    } else {
+                        p.vy += 0.12; // 중력
+                        p.vx *= 0.98; // 공기 저항
+                        p.vy *= 0.98;
+                    }
+
+                    p.alpha -= p.decay;
+
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    if (p.isConfetti) {
+                        ctx.rect(p.x, p.y, p.size, p.size + p.tilt);
+                    } else {
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    }
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                // 총 10초(10000ms) 동안 지속
+                if (alive && Date.now() - startTime < 10000) {
+                    animationFrameId = requestAnimationFrame(animate);
+                } else {
+                    cancelAnimationFrame(animationFrameId);
+                    clearInterval(intervalId);
+                    window.removeEventListener('resize', handleResize);
+                    canvas.remove();
+                }
+            }
+
+            animate();
+        }
+
+        // 현재 아바타 명예의 전당 등록 (졸업) 및 리셋
+        async function graduateCurrentAvatar() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            const status = getAvatarStatus(activeChild);
+            if (status.level < 6) {
+                alert("아직 최고 단계(Lv.6)에 도달하지 못해 졸업할 수 없습니다!");
+                return;
+            }
+            
+            if (!confirm(`축하합니다! 최고 레벨에 도달한 '${status.nickname}'을(를) 졸업시켜 명예의 전당에 영구 등록하시겠습니까?\n\n등록 후에는 새로운 아바타 알(Lv.1)을 다시 키울 수 있습니다!`)) {
+                return;
+            }
+            
+            // 1. 졸업한 아바타 타입 저장
+            if (!activeChild.graduatedAvatars) {
+                activeChild.graduatedAvatars = [];
+            }
+            if (!activeChild.graduatedAvatars.includes(status.type)) {
+                activeChild.graduatedAvatars.push(status.type);
+            }
+            
+            // 2. 코인 오프셋을 AVATAR_GRADUATION_STEP만큼 증가 (새 아바타는 0부터 다시 시작)
+            activeChild.avatarCoinsOffset = (activeChild.avatarCoinsOffset || 0) + AVATAR_GRADUATION_STEP;
+            
+            // 3. 아바타 닉네임 리셋
+            activeChild.avatarNickname = "";
+            
+            // 4. 저장 및 렌더링 갱신
+            await saveStateToFirestore();
+            
+            // 축하 폭죽 연출
+            if (typeof triggerLevelUpFirework === 'function') {
+                triggerLevelUpFirework();
+            }
+            
+            // 캐시 리셋
+            childPreviousLevels[state.activeChildId] = 1;
+            
+            renderAvatarSelectorList();
+            renderAvatarBanner();
+            renderAvatarTabDetails();
+            
+            alert(`🎉 '${status.nickname}'이(가) 명예의 전당에 졸업 등록되었습니다! 새로운 알을 부화시켜 다른 동물도 키워보세요!`);
+        }
+
+        // 전역 함수로 마운트
+        window.saveAvatarNickname = saveAvatarNickname;
+        window.selectAvatarType = selectAvatarType;
+        window.interactWithAvatar = interactWithAvatar;
+        window.triggerLevelUpFirework = triggerLevelUpFirework;
+        window.graduateCurrentAvatar = graduateCurrentAvatar;
+
         runFirebaseSetup();
     </script>
 </body>
