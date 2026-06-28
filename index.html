@@ -147,6 +147,21 @@
         .animate-avatar-bounce-click {
             animation: avatarBounceClick 0.4s ease-in-out;
         }
+
+        /* 편지함 비행 및 페이드인 애니메이션 */
+        @keyframes messageBubbleIn {
+            0% {
+                opacity: 0;
+                transform: translateY(15px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .msg-bubble-animate {
+            animation: messageBubbleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
     </style>
     <script>
         if (localStorage.getItem('magic_logged_in_user')) {
@@ -423,12 +438,13 @@
                     </div>
 
                     <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 text-xs sm:text-sm font-bold text-slate-700">
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 text-[11px] sm:text-sm font-bold text-slate-700">
                         <button id="child-tab-btn-plan" onclick="switchChildTab('PLAN')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-orange-500 text-white shadow-sm flex items-center justify-center gap-1 sm:gap-1.5">📝 학습계획</button>
                         <button id="child-tab-btn-schedule" onclick="switchChildTab('SCHEDULE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">📅 일정관리</button>
                         <button id="child-tab-btn-store" onclick="switchChildTab('STORE')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🎪 코인상점</button>
                         <button id="child-tab-btn-achievement" onclick="switchChildTab('ACHIEVEMENT')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🏆 성취도</button>
-                        <button id="child-tab-btn-avatar" onclick="switchChildTab('AVATAR')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🦁 나의 캐릭터</button>
+                        <button id="child-tab-btn-avatar" onclick="switchChildTab('AVATAR')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">🦁 캐릭터</button>
+                        <button id="child-tab-btn-talk" onclick="switchChildTab('TALK')" class="py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center gap-1 sm:gap-1.5">📮 우체통</button>
                         </div>
                     </div>
 
@@ -760,6 +776,44 @@
                         </div>
                     </div>
 
+                    <!-- 📮 마법 우체통 탭 패널 -->
+                    <div id="child-tab-talk" class="space-y-6 hidden">
+                        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative overflow-hidden">
+                            <!-- 헤더 -->
+                            <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+                                <span class="p-3 bg-amber-50 text-amber-500 rounded-2xl"><i class="fa-solid fa-envelope-open-text text-lg"></i></span>
+                                <div>
+                                    <h3 class="font-bold text-base sm:text-lg text-slate-800">📮 마법 우체통</h3>
+                                    <p class="text-xs text-slate-400">부모님께 마음이 담긴 편지를 보내보세요! 미션 자랑이나 격려의 말도 좋아요. ❤️</p>
+                                </div>
+                            </div>
+
+                            <!-- 메시지 피드 -->
+                            <div id="child-talk-message-feed" class="space-y-4 h-[350px] overflow-y-auto px-2 py-4 bg-slate-50 border border-slate-100 rounded-2xl hide-scrollbar flex flex-col">
+                                <!-- JS로 렌더링 -->
+                            </div>
+
+                            <!-- 빠른 메시지 버튼 리스트 -->
+                            <div class="mt-4">
+                                <p class="text-slate-400 font-bold text-[11px] mb-2"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> 빠른 편지 쓰기</p>
+                                <div class="flex flex-wrap gap-1.5" id="child-talk-quick-btns">
+                                    <button onclick="selectQuickMessage('오늘 미션 완료했어요! 확인해 주세요! 🎡❤️')" class="text-xs bg-slate-50 border border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600 font-bold px-3 py-2 rounded-xl transition">오늘 미션 완료했어요! 🎡</button>
+                                    <button onclick="selectQuickMessage('코인 상점 상품 배송해주세요! 🎁✨')" class="text-xs bg-slate-50 border border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600 font-bold px-3 py-2 rounded-xl transition">보상 배송해 주세요! 🎁</button>
+                                    <button onclick="selectQuickMessage('열심히 응원해 주셔서 신나요! 🥰')" class="text-xs bg-slate-50 border border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600 font-bold px-3 py-2 rounded-xl transition">응원해 주셔서 신나요! 🥰</button>
+                                    <button onclick="selectQuickMessage('내일도 빼먹지 않고 열심히 미션할게요! 💪')" class="text-xs bg-slate-50 border border-slate-200 hover:border-orange-300 hover:bg-orange-50 text-slate-600 font-bold px-3 py-2 rounded-xl transition">내일도 화이팅! 💪</button>
+                                </div>
+                            </div>
+
+                            <!-- 메시지 입력 영역 -->
+                            <div class="mt-4 flex gap-2">
+                                <input type="text" id="child-talk-input" onkeypress="if(event.key === 'Enter') sendChildMessage()" placeholder="부모님께 보낼 편지 내용을 써보세요..." class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 font-bold">
+                                <button onclick="sendChildMessage()" id="child-talk-send-btn" class="bg-gradient-to-r from-orange-400 to-rose-500 hover:from-orange-500 hover:to-rose-600 text-white font-bold px-5 rounded-2xl transition shadow-md flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-paper-plane"></i> 보내기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -785,6 +839,9 @@
                     </button>
                     <button onclick="switchParentTab('CHILD')" id="ptab-child" class="flex-1 min-w-[80px] py-3 px-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
                         <i class="fa-solid fa-users-gear text-[14px]"></i> 자녀 설정
+                    </button>
+                    <button onclick="switchParentTab('TALK')" id="ptab-talk" class="flex-1 min-w-[80px] py-3 px-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 relative">
+                        <i class="fa-solid fa-envelope text-[14px]"></i> 마법 우체통
                     </button>
                     <button onclick="switchParentTab('SECURITY_MGMT')" id="ptab-security_mgmt" class="flex-1 min-w-[80px] py-3 px-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
                         <i class="fa-solid fa-key text-[14px]"></i> 비밀번호 변경
@@ -1129,6 +1186,44 @@
                         
                         <!-- 자녀 목록 카드 컨테이너 -->
                         <div id="parent-child-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==================== [Tab - 신규] 마법 우체통 (메시지 수/송신) 패널 ==================== -->
+                <div id="ppanel-talk" class="space-y-6 hidden">
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-4">
+                            <span class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><i class="fa-solid fa-envelope-open-text text-lg"></i></span>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800">📮 마법 우체통</h3>
+                                <p class="text-xs text-slate-400">자녀들과 주고받는 다정다감한 대화상자입니다. 마음을 가득 담은 응원 메시지를 보내보세요.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-[1fr_2.5fr] gap-6">
+                            <!-- 좌측: 자녀 목록 및 대기 메시지 수 알림 -->
+                            <div class="space-y-3">
+                                <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider">대원 우체통 명단</h4>
+                                <div class="space-y-2" id="parent-talk-child-list">
+                                    <!-- JS로 자녀별 선택 버튼 동적 렌더링 -->
+                                </div>
+                            </div>
+
+                            <!-- 우측: 대화창 영역 -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-4 flex flex-col justify-between h-[450px] shadow-inner">
+                                <div id="parent-talk-message-feed" class="flex-1 overflow-y-auto space-y-4 px-2 py-4 mb-4 hide-scrollbar flex flex-col">
+                                    <!-- 선택된 자녀와의 대화 내역 동적 렌더링 -->
+                                </div>
+
+                                <!-- 메시지 입력창 -->
+                                <div class="flex gap-2 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+                                    <input type="text" id="parent-talk-input" onkeypress="if(event.key === 'Enter') sendParentMessage()" placeholder="아이에게 보낼 따뜻한 말을 입력하세요..." class="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold">
+                                    <button onclick="sendParentMessage()" id="parent-talk-send-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 rounded-xl transition shadow-md flex items-center justify-center gap-1 shrink-0">
+                                        <i class="fa-solid fa-paper-plane"></i> 답장하기
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1642,6 +1737,10 @@
         window.saveChildData = saveChildData;
         window.deleteChild = deleteChild;
         window.grantBonusCoinToChild = grantBonusCoinToChild;
+        window.sendChildMessage = sendChildMessage;
+        window.selectQuickMessage = selectQuickMessage;
+        window.sendParentMessage = sendParentMessage;
+        window.selectParentTalkChild = selectParentTalkChild;
         window.handlePhotoFileSelect = handlePhotoFileSelect;
         window.approveRewardRequest = approveRewardRequest;
         window.rejectRewardRequest = rejectRewardRequest;
@@ -2798,7 +2897,7 @@
         function switchParentTab(tabName) {
             state.parentActiveTab = tabName;
             
-            const panels = ['DASHBOARD', 'APPROVAL', 'PLAN', 'REWARDS_MGMT', 'CHILD', 'SECURITY_MGMT', 'ADMIN_MGMT'];
+            const panels = ['DASHBOARD', 'APPROVAL', 'PLAN', 'REWARDS_MGMT', 'CHILD', 'TALK', 'SECURITY_MGMT', 'ADMIN_MGMT'];
             panels.forEach(p => {
                 const el = document.getElementById(`ppanel-${p.toLowerCase()}`);
                 const tabBtn = document.getElementById(`ptab-${p.toLowerCase()}`);
@@ -2834,6 +2933,8 @@
                 loadSystemUserList();
             } else if (tabName === 'PLAN') {
                 renderParentDefaultMissionsTable();
+            } else if (tabName === 'TALK') {
+                renderParentTalkPanel();
             }
             syncDOM();
         }
@@ -5239,7 +5340,7 @@
 
         function switchChildTab(tabName) {
             state.childActiveTab = tabName;
-            const tabs = ['PLAN', 'SCHEDULE', 'STORE', 'ACHIEVEMENT', 'AVATAR'];
+            const tabs = ['PLAN', 'SCHEDULE', 'STORE', 'ACHIEVEMENT', 'AVATAR', 'TALK'];
             tabs.forEach(id => {
                 const panel = document.getElementById(`child-tab-${id.toLowerCase()}`);
                 const button = document.getElementById(`child-tab-btn-${id.toLowerCase()}`);
@@ -5252,7 +5353,7 @@
             });
             const selectedTab = document.getElementById('child-header-selected-tab');
             if (selectedTab) {
-                selectedTab.innerText = tabName === 'PLAN' ? '학습계획관리' : tabName === 'SCHEDULE' ? '일정관리' : tabName === 'STORE' ? '코인상점' : tabName === 'AVATAR' ? '나의 캐릭터' : '학업성취도 조회';
+                selectedTab.innerText = tabName === 'PLAN' ? '학습계획관리' : tabName === 'SCHEDULE' ? '일정관리' : tabName === 'STORE' ? '코인상점' : tabName === 'AVATAR' ? '나의 캐릭터' : tabName === 'TALK' ? '마법우체통' : '학업성취도 조회';
             }
             if (tabName === 'PLAN') {
                 renderChildPlanReport();
@@ -5274,6 +5375,8 @@
                 if (typeof renderAvatarTabDetails === 'function') {
                     renderAvatarTabDetails();
                 }
+            } else if (tabName === 'TALK') {
+                renderChildTalkPanel();
             }
         }
 
@@ -6975,6 +7078,48 @@
             renderScheduleCalendarModal();
             renderScheduleCalendar();
             
+            // 📮 [추가 구현] 자녀 모드 우체통 안읽은 메시지 수 배지 업데이트
+            if (activeChild) {
+                const childUnread = (activeChild.messages || []).filter(m => m.sender === 'PARENT' && !m.read).length;
+                const childTabTalk = document.getElementById('child-tab-btn-talk');
+                if (childTabTalk) {
+                    const existingBadge = childTabTalk.querySelector('.unread-badge');
+                    if (existingBadge) existingBadge.remove();
+                    if (childUnread > 0) {
+                        const badge = document.createElement('span');
+                        badge.className = 'unread-badge ml-1 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full';
+                        badge.innerText = childUnread;
+                        childTabTalk.appendChild(badge);
+                    }
+                }
+                
+                // 만약 현재 우체통 탭을 보고 있다면 화면 갱신
+                if (state.childActiveTab === 'TALK') {
+                    renderChildTalkPanel();
+                }
+            }
+
+            // 📮 [추가 구현] 부모 모드 우체통 안읽은 메시지 수 배지 업데이트
+            let totalUnread = 0;
+            Object.values(state.children || {}).forEach(c => {
+                const unreads = (c.messages || []).filter(m => m.sender === 'CHILD' && !m.read).length;
+                totalUnread += unreads;
+            });
+            const ptabTalk = document.getElementById('ptab-talk');
+            if (ptabTalk) {
+                const existingBadge = ptabTalk.querySelector('.unread-badge');
+                if (existingBadge) existingBadge.remove();
+                if (totalUnread > 0) {
+                    const badge = document.createElement('span');
+                    badge.className = 'unread-badge ml-1 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full';
+                    badge.innerText = totalUnread;
+                    ptabTalk.appendChild(badge);
+                }
+            }
+            if (state.isParentMode && state.parentActiveTab === 'TALK') {
+                renderParentTalkPanel();
+            }
+
             // 수호 아바타 배너 및 응원 메시지 실시간 업데이트
             if (state.activeChildId !== lastActiveChildId) {
                 lastActiveChildId = state.activeChildId;
@@ -7551,6 +7696,219 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             }
 
             renderParentDefaultMissionsTable();
+        }
+
+        // ==================== 📮 마법 우체통 (메시지) 비즈니스 로직 ====================
+        let parentSelectedTalkChildId = null;
+
+        function renderChildTalkPanel() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+
+            let isModified = false;
+            if (!activeChild.messages) activeChild.messages = [];
+            activeChild.messages.forEach(m => {
+                if (m.sender === 'PARENT' && !m.read) {
+                    m.read = true;
+                    isModified = true;
+                }
+            });
+            if (isModified) {
+                saveStateToFirestore();
+            }
+
+            const feedEl = document.getElementById('child-talk-message-feed');
+            if (feedEl) {
+                renderTalkMessageFeed(activeChild, 'CHILD', feedEl);
+            }
+        }
+
+        function renderParentTalkPanel() {
+            const children = getSortedChildren();
+            const childListEl = document.getElementById('parent-talk-child-list');
+            if (!childListEl) return;
+
+            if (children.length === 0) {
+                childListEl.innerHTML = `<div class="text-xs text-slate-400">등록된 자녀 대원이 없습니다.</div>`;
+                return;
+            }
+
+            if (!parentSelectedTalkChildId || !state.children[parentSelectedTalkChildId]) {
+                parentSelectedTalkChildId = children[0].id;
+            }
+
+            // 자녀 목록 및 배지 렌더링
+            let listHtml = "";
+            children.forEach(c => {
+                const unreadCount = (c.messages || []).filter(m => m.sender === 'CHILD' && !m.read).length;
+                const isSelected = c.id === parentSelectedTalkChildId;
+                const activeClass = isSelected 
+                    ? 'bg-indigo-600 text-white shadow-md' 
+                    : 'bg-white hover:bg-indigo-50 border border-slate-200 text-slate-700';
+                const badgeHtml = unreadCount > 0 
+                    ? `<span class="bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black ml-auto animate-bounce shadow-sm">${unreadCount}</span>` 
+                    : '';
+                
+                listHtml += `
+                    <button onclick="selectParentTalkChild('${c.id}')" class="w-full flex items-center gap-2 p-3 rounded-2xl font-bold text-xs transition duration-200 ${activeClass}">
+                        <i class="fa-solid fa-face-smile"></i> ${c.name}
+                        ${badgeHtml}
+                    </button>
+                `;
+            });
+            childListEl.innerHTML = listHtml;
+
+            // 선택된 자녀와의 대화창 및 읽음 처리
+            const selectedChild = state.children[parentSelectedTalkChildId];
+            const feedEl = document.getElementById('parent-talk-message-feed');
+            if (!selectedChild || !feedEl) return;
+
+            let isModified = false;
+            if (!selectedChild.messages) selectedChild.messages = [];
+            selectedChild.messages.forEach(m => {
+                if (m.sender === 'CHILD' && !m.read) {
+                    m.read = true;
+                    isModified = true;
+                }
+            });
+            if (isModified) {
+                saveStateToFirestore();
+            }
+
+            renderTalkMessageFeed(selectedChild, 'PARENT', feedEl);
+        }
+
+        function renderTalkMessageFeed(child, viewRole, feedEl) {
+            const msgs = child.messages || [];
+            if (msgs.length === 0) {
+                feedEl.innerHTML = `
+                    <div class="flex-1 flex flex-col items-center justify-center text-slate-400 gap-2">
+                        <i class="fa-regular fa-paper-plane text-4xl animate-avatar-float text-slate-300"></i>
+                        <p class="text-xs font-bold">주고받은 대화가 아직 없어요.</p>
+                        <p class="text-[10px]">첫 번째 편지를 보내 대화를 시작해 보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            msgs.forEach(m => {
+                const isMyMessage = (viewRole === 'CHILD' && m.sender === 'CHILD') || (viewRole === 'PARENT' && m.sender === 'PARENT');
+                
+                let alignClass, bubbleBg, textClass, senderName;
+                if (isMyMessage) {
+                    alignClass = "self-end items-end";
+                    bubbleBg = viewRole === 'CHILD' 
+                        ? "bg-gradient-to-r from-orange-400 to-rose-500 text-white rounded-2xl rounded-tr-none shadow-sm" 
+                        : "bg-indigo-600 text-white rounded-2xl rounded-tr-none shadow-sm";
+                    textClass = "text-white";
+                    senderName = "나";
+                } else {
+                    alignClass = "self-start items-start";
+                    if (viewRole === 'CHILD') {
+                        // 자녀 모드: 사랑하는 부모님의 메시지를 화사하고 예쁜 핑크-라벤더 그라데이션으로 장식
+                        bubbleBg = "bg-gradient-to-br from-indigo-50 to-pink-100 border-2 border-indigo-200 text-indigo-950 rounded-2xl rounded-tl-none shadow-[0_3px_8px_rgba(99,102,241,0.08)]";
+                        textClass = "text-indigo-950 font-black";
+                        senderName = "💖 사랑하는 부모님";
+                    } else {
+                        // 부모 모드: 자녀의 메시지를 깔끔하고 귀여운 민트-에메랄드 파스텔 톤으로 장식
+                        bubbleBg = "bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-emerald-950 rounded-2xl rounded-tl-none shadow-sm";
+                        textClass = "text-emerald-900 font-bold";
+                        senderName = child.name;
+                    }
+                }
+
+                const displayTime = m.timestamp ? m.timestamp.split(' ').slice(1).join(' ') : '';
+                
+                html += `
+                    <div class="flex flex-col max-w-[85%] ${alignClass} msg-bubble-animate mb-3 shrink-0">
+                        <span class="text-[9px] text-slate-400 font-bold mb-1 px-1">${senderName}</span>
+                        <div class="px-3.5 py-2 text-xs font-bold leading-relaxed ${bubbleBg}">
+                            <p class="${textClass} whitespace-pre-wrap break-all">${(viewRole === 'CHILD' && m.sender === 'PARENT') ? `<i class="fa-solid fa-heart text-rose-500 mr-1 animate-pulse"></i> ` : ''}${m.content}</p>
+                        </div>
+                        <span class="text-[8px] text-slate-400 font-medium mt-1 px-1 flex items-center gap-1">
+                            ${displayTime}
+                            ${(isMyMessage && !m.read) ? `<span class="text-[8px] text-rose-500 font-bold ml-1">안읽음</span>` : ''}
+                        </span>
+                    </div>
+                `;
+            });
+            feedEl.innerHTML = html;
+            
+            // 전송 후 자동 스크롤 하단 이동
+            setTimeout(() => {
+                feedEl.scrollTop = feedEl.scrollHeight;
+            }, 50);
+        }
+
+        async function sendChildMessage() {
+            const inputEl = document.getElementById('child-talk-input');
+            if (!inputEl) return;
+            const content = inputEl.value.trim();
+            if (!content) return;
+
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+
+            if (!activeChild.messages) activeChild.messages = [];
+            
+            const now = new Date();
+            const timestamp = `${getLocalIsoString(now)} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+            activeChild.messages.push({
+                id: `msg-${Date.now()}-${Math.random()}`,
+                sender: 'CHILD',
+                content: content,
+                timestamp: timestamp,
+                read: false
+            });
+
+            inputEl.value = "";
+            
+            renderChildTalkPanel();
+            await saveStateToFirestore();
+        }
+
+        function selectQuickMessage(text) {
+            const inputEl = document.getElementById('child-talk-input');
+            if (inputEl) {
+                inputEl.value = text;
+                inputEl.focus();
+            }
+        }
+
+        async function sendParentMessage() {
+            if (!parentSelectedTalkChildId) return;
+            const inputEl = document.getElementById('parent-talk-input');
+            if (!inputEl) return;
+            const content = inputEl.value.trim();
+            if (!content) return;
+
+            const child = state.children[parentSelectedTalkChildId];
+            if (!child) return;
+
+            if (!child.messages) child.messages = [];
+
+            const now = new Date();
+            const timestamp = `${getLocalIsoString(now)} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+            child.messages.push({
+                id: `msg-${Date.now()}-${Math.random()}`,
+                sender: 'PARENT',
+                content: content,
+                timestamp: timestamp,
+                read: false
+            });
+
+            inputEl.value = "";
+
+            renderParentTalkPanel();
+            await saveStateToFirestore();
+        }
+
+        function selectParentTalkChild(childId) {
+            parentSelectedTalkChildId = childId;
+            renderParentTalkPanel();
         }
 
          // 부모 모드에서 자녀에게 코인을 직접 지급하는 함수
