@@ -1548,7 +1548,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // ==========================================
         // 🚨 [매우 중요] 외부 배포 및 여러 기기 간 동기화 설정 방법
@@ -1641,6 +1641,7 @@
         window.closeChildManageModal = closeChildManageModal;
         window.saveChildData = saveChildData;
         window.deleteChild = deleteChild;
+        window.grantBonusCoinToChild = grantBonusCoinToChild;
         window.handlePhotoFileSelect = handlePhotoFileSelect;
         window.approveRewardRequest = approveRewardRequest;
         window.rejectRewardRequest = rejectRewardRequest;
@@ -1914,8 +1915,19 @@
             try {
                 const stateToSave = JSON.parse(JSON.stringify(state));
                 lastSavedStateStr = stringifyStable(stateToSave);
-                // 유저 메타데이터 보존을 위해 merge 옵션 사용 (getDoc 호출 제거로 Race Condition 원천 차단)
-                await setDoc(docRef, { state: stateToSave }, { merge: true });
+                
+                if (!state.isParentMode && state.activeChildId) {
+                    // [버그 수정] 자녀 모드: 다른 기기의 자녀 데이터 덮어쓰기 방지를 위해 활성 자녀 데이터만 부분 업데이트
+                    const updateData = {};
+                    updateData[`state.children.${state.activeChildId}`] = stateToSave.children[state.activeChildId];
+                    if (stateToSave.subjects) updateData["state.subjects"] = stateToSave.subjects;
+                    if (stateToSave.rewards) updateData["state.rewards"] = stateToSave.rewards;
+                    
+                    await updateDoc(docRef, updateData);
+                } else {
+                    // 부모 모드 또는 전체 업데이트: 전체 state 저장
+                    await setDoc(docRef, { state: stateToSave }, { merge: true });
+                }
             } catch (error) {
                 console.error("클라우드 데이터 저장 실패:", error);
                 showToast("데이터를 동기화하는 중 실패했습니다.", "error");
@@ -2509,6 +2521,7 @@
 
         async function selectChildAndEnter(childId) {
             state.activeChildId = childId;
+            currentChecklistDate = new Date(); // [버그 수정] 대원 전환 시 날짜를 오늘로 초기화
             const modal = document.getElementById('child-selection-modal');
             const box = document.getElementById('child-selection-box');
             modal.classList.add('pointer-events-none', 'opacity-0');
@@ -2652,6 +2665,7 @@
 
         function selectChildFromDropdown(childId) {
             state.activeChildId = childId;
+            currentChecklistDate = new Date(); // [버그 수정] 대원 전환 시 날짜를 오늘로 초기화
             const menu = document.getElementById('dropdown-menu-items');
             if (menu) menu.classList.add('hidden');
             syncDOM();
@@ -3626,6 +3640,17 @@
             
             const targetChild = state.children[state.activeChildId];
             const mission = targetChild.todayMissions.find(m => String(m.id) === String(missionId));
+
+            // ✅ [버그 수정] 이미 완료된 미션의 중복 제출 방지
+            if (!mission || mission.completed) return;
+
+            // 제출 버튼 비활성화 (중복 클릭 방지)
+            const submitBtn = document.getElementById(`submit-btn-${missionId}`);
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
             if(mission) {
                 mission.completed = true;
                 mission.timeSpent = mins;
@@ -3634,18 +3659,23 @@
                 const todayStr = getLocalIsoString();
                 const targetDateStr = mission.date || todayStr;
                 if (!targetChild.studyLogs) targetChild.studyLogs = [];
-                targetChild.studyLogs.push({
-                    missionId: mission.id,
-                    date: targetDateStr,
-                    subject: mission.subject,
-                    content: mission.content || "",
-                    range: mission.range || "",
-                    timeSpent: mins,
-                    completed: true,
-                    stars: mission.stars,
-                    defaultMissionId: mission.defaultMissionId,
-                    isCustom: mission.isCustom
-                });
+
+                // ✅ [버그 수정] missionId 기준 중복 studyLog 방지
+                const alreadyLogged = targetChild.studyLogs.some(l => String(l.missionId) === String(missionId));
+                if (!alreadyLogged) {
+                    targetChild.studyLogs.push({
+                        missionId: mission.id,
+                        date: targetDateStr,
+                        subject: mission.subject,
+                        content: mission.content || "",
+                        range: mission.range || "",
+                        timeSpent: mins,
+                        completed: true,
+                        stars: mission.stars,
+                        defaultMissionId: mission.defaultMissionId,
+                        isCustom: mission.isCustom
+                    });
+                }
                 
                 if (mission.isCustom) {
                     if (!targetChild.missionRequests) targetChild.missionRequests = [];
@@ -3684,15 +3714,18 @@
                             zIndex: 9999,
                             colors: ['#f43f5e', '#ec4899', '#fbbf24', '#f59e0b', '#10b981']
                         });
-                    }, 500); // coin flying animation ends around 500ms
+                    }, 500);
                 }
 
+                // ✅ [버그 수정] renderWeeklyStickerBoard 결과를 받아 단일 saveStateToFirestore 처리
+                // (내부 중복 save 제거 → Race Condition 방지)
                 renderWeeklyStickerBoard();
                 updateChildHeaderDashboard(targetChild);
                 renderChildDashboardStats();
                 
                 await saveStateToFirestore();
-                syncDOM();
+                // syncDOM은 Firestore onSnapshot 리스너가 반응하므로 직접 호출 제거
+                // (syncDOM → renderWeeklyStickerBoard 재호출로 인한 confetti 중복 방지)
             }
         }
 
@@ -3711,14 +3744,28 @@
             let isPerfectWeekBroken = false;
             let bonusCoinsToReclaim = 0;
 
-            if (targetChild.perfectWeeksClaimed && targetChild.perfectWeeksClaimed.includes(weekStartStr)) {
-                isPerfectWeekBroken = true;
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekEnd.getDate() + 6);
-                const weekEndStr = getLocalIsoString(weekEnd);
-                
-                const logsBeforeCancel = getValidStudyLogs(targetChild).filter(l => l.date >= weekStartStr && l.date <= weekEndStr && l.completed);
-                bonusCoinsToReclaim = logsBeforeCancel.reduce((sum, l) => sum + (l.stars || 0), 0);
+            if (targetChild.perfectWeeksClaimed) {
+                // 하위 호환: 문자열(구버전) 또는 { weekStartStr, bonusCoins } 객체(신버전) 모두 처리
+                const claimedEntry = targetChild.perfectWeeksClaimed.find(entry =>
+                    typeof entry === 'string' ? entry === weekStartStr : entry.weekStartStr === weekStartStr
+                );
+                if (claimedEntry) {
+                    isPerfectWeekBroken = true;
+                    if (typeof claimedEntry === 'object' && claimedEntry.bonusCoins != null) {
+                        // 신버전: 달성 당시 지급된 정확한 보너스 금액 사용
+                        bonusCoinsToReclaim = claimedEntry.bonusCoins;
+                    } else {
+                        // 구버전(문자열): 현재 로그에서 추정 (취소 미션 코인은 제외)
+                        const weekEnd = new Date(weekStart);
+                        weekEnd.setDate(weekEnd.getDate() + 6);
+                        const weekEndStr = getLocalIsoString(weekEnd);
+                        const logsExcludingCancelled = getValidStudyLogs(targetChild).filter(l =>
+                            l.date >= weekStartStr && l.date <= weekEndStr && l.completed &&
+                            String(l.missionId) !== String(missionId)
+                        );
+                        bonusCoinsToReclaim = logsExcludingCancelled.reduce((sum, l) => sum + (l.stars || 0), 0);
+                    }
+                }
             }
 
             let confirmMsg = `정말 완료한 [${mission.subject}] 미션을 취소할까요?\n미션 완료 취소 시 지급되었던 드림 코인 ${mission.stars}개가 회수됩니다.`;
@@ -3737,7 +3784,10 @@
                 }
 
                 if (isPerfectWeekBroken) {
-                    targetChild.perfectWeeksClaimed = targetChild.perfectWeeksClaimed.filter(w => w !== weekStartStr);
+                    // 해당 주 perfectWeeksClaimed 항목 제거 (문자열 또는 객체 모두 처리)
+                    targetChild.perfectWeeksClaimed = targetChild.perfectWeeksClaimed.filter(entry =>
+                        typeof entry === 'string' ? entry !== weekStartStr : entry.weekStartStr !== weekStartStr
+                    );
                     totalDeduct += bonusCoinsToReclaim;
                 }
 
@@ -4471,23 +4521,30 @@
             
             const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr && log.completed);
            
-            if (activeChild.perfectWeeksClaimed && activeChild.perfectWeeksClaimed.includes(weekStartStr)) {
-                const endObj = new Date(weekStart);
-                endObj.setDate(endObj.getDate() + 6);
-                const weekEndStr = getLocalIsoString(endObj);
+            if (activeChild.perfectWeeksClaimed) {
+                const claimedEntry = activeChild.perfectWeeksClaimed.find(entry =>
+                    typeof entry === 'string' ? entry === weekStartStr : entry.weekStartStr === weekStartStr
+                );
+                if (claimedEntry) {
+                    const endObj = new Date(weekStart);
+                    endObj.setDate(endObj.getDate() + 6);
+                    const weekEndStr = getLocalIsoString(endObj);
 
-                const weeklyEarned = logs.reduce((sum, log) => sum + (log.stars || 0), 0);
-                const bonusCoins = weeklyEarned * 1;
+                    // 신버전: 저장된 bonusCoins 사용 / 구버전: 로그 재합산
+                    const bonusCoins = (typeof claimedEntry === 'object' && claimedEntry.bonusCoins != null)
+                        ? claimedEntry.bonusCoins
+                        : logs.reduce((sum, log) => sum + (log.stars || 0), 0);
 
-                if (bonusCoins > 0) {
-                    logs.push({
-                        date: weekEndStr,
-                        subject: "퍼펙트 위크 보너스",
-                        content: "일주일 목표 올클리어 보너스 코인 획득!",
-                        stars: bonusCoins,
-                        completed: true,
-                        isPerfectBonus: true
-                    });
+                    if (bonusCoins > 0) {
+                        logs.push({
+                            date: weekEndStr,
+                            subject: "퍼펙트 위크 보너스",
+                            content: "일주일 목표 올클리어 보너스 코인 획득!",
+                            stars: bonusCoins,
+                            completed: true,
+                            isPerfectBonus: true
+                        });
+                    }
                 }
             }
             logs.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -4520,15 +4577,22 @@
             const logs = getValidStudyLogs(activeChild).filter(l => l.completed);
             
             if (activeChild.perfectWeeksClaimed && activeChild.perfectWeeksClaimed.length > 0) {
-                activeChild.perfectWeeksClaimed.forEach(weekStartStr => {
-                    const startObj = new Date(weekStartStr);
+                activeChild.perfectWeeksClaimed.forEach(entry => {
+                    // 하위 호환: 문자열(구버전) 또는 { weekStartStr, bonusCoins } 객체(신버전)
+                    const wStartStr = typeof entry === 'string' ? entry : entry.weekStartStr;
+                    const startObj = new Date(wStartStr);
                     const endObj = new Date(startObj);
                     endObj.setDate(endObj.getDate() + 6);
                     const weekEndStr = getLocalIsoString(endObj);
 
-                    const weekLogs = logs.filter(l => !l.isPerfectBonus && l.date >= weekStartStr && l.date <= weekEndStr);
-                    const weeklyEarned = weekLogs.reduce((sum, l) => sum + (l.stars || 0), 0);
-                    const bonusCoins = weeklyEarned * 1;
+                    // 신버전: 저장된 bonusCoins 사용 / 구버전: 로그 재합산
+                    let bonusCoins;
+                    if (typeof entry === 'object' && entry.bonusCoins != null) {
+                        bonusCoins = entry.bonusCoins;
+                    } else {
+                        const weekLogs = logs.filter(l => !l.isPerfectBonus && l.date >= wStartStr && l.date <= weekEndStr);
+                        bonusCoins = weekLogs.reduce((sum, l) => sum + (l.stars || 0), 0);
+                    }
 
                     if (bonusCoins > 0) {
                         logs.push({
@@ -5124,9 +5188,12 @@
                         const weekStartStr = getLocalIsoString(weekStart);
                         if (!activeChild.perfectWeeksClaimed) activeChild.perfectWeeksClaimed = [];
                         
-                         if (!activeChild.perfectWeeksClaimed.includes(weekStartStr) && weekStartStr <= realTodayStr) {
-                            activeChild.perfectWeeksClaimed.push(weekStartStr);
-                            
+                        // perfectWeeksClaimed 항목은 { weekStartStr, bonusCoins } 객체 또는 하위 호환 문자열 형태
+                        const alreadyClaimed = activeChild.perfectWeeksClaimed.some(entry =>
+                            typeof entry === 'string' ? entry === weekStartStr : entry.weekStartStr === weekStartStr
+                        );
+                        
+                         if (!alreadyClaimed && weekStartStr <= realTodayStr) {
                             const weekEnd = new Date(weekStart);
                             weekEnd.setDate(weekEnd.getDate() + 6);
                             const weekEndStr = getLocalIsoString(weekEnd);
@@ -5135,9 +5202,13 @@
                             const weeklyEarned = logs.reduce((sum, l) => sum + (l.stars || 0), 0);
                             const bonusCoins = weeklyEarned * 1;
                             
+                            // bonusCoins를 함께 저장하여 취소 시 정확한 금액을 회수할 수 있도록 함
+                            activeChild.perfectWeeksClaimed.push({ weekStartStr, bonusCoins });
+                            
                             if (bonusCoins > 0) {
                                 activeChild.stars += bonusCoins;
-                                saveStateToFirestore();
+                                // ✅ [버그 수정] saveStateToFirestore는 호출자(submitMissionProgress 등)가 처리
+                                // 여기서 직접 save하면 Race Condition 발생 → 제거
                                 
                                 setTimeout(() => {
                                     showToast(`🏆 퍼펙트 위크 달성! 일주일 획득 코인만큼(${bonusCoins}개) 보너스로 추가 지급되어 총 2배가 되었습니다!`, "success")
@@ -5152,9 +5223,9 @@
                                     
                                     renderChildAchievementStats();
                                 }, 2500);
-                            } else {
-                                saveStateToFirestore();
                             }
+                            // ✅ [버그 수정] bonusCoins=0인 경우의 불필요한 save도 제거
+                            // → 항상 호출자의 saveStateToFirestore에서 처리됨
                         }
                     }
                 } else {
@@ -7287,7 +7358,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                                         <label class="block text-[11px] text-slate-500 font-bold mb-1">오늘 한 일 내용</label>
                                         <div class="flex flex-col sm:flex-row gap-2">
                                             <input type="text" id="range-${m.id}" placeholder="예: 3장 다 풀고 오답정리 완료" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" ${disableControls ? 'disabled' : ''}>
-                                <button onclick="submitMissionProgress('${m.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl transition shrink-0 shadow-md text-sm whitespace-nowrap ${disableControls ? 'opacity-50 cursor-not-allowed' : ''}" ${disableControls ? 'disabled' : ''}>
+                                <button id="submit-btn-${m.id}" onclick="submitMissionProgress('${m.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl transition shrink-0 shadow-md text-sm whitespace-nowrap ${disableControls ? 'opacity-50 cursor-not-allowed' : ''}" ${disableControls ? 'disabled' : ''}>
                                                 ${m.isCustom ? '부모님께 확인 요청' : '오늘의 할일 끝냈어요.'}
                                             </button>
                                         </div>
@@ -7459,6 +7530,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
+                                    <button onclick="grantBonusCoinToChild('${c.id}')" class="text-xs bg-white text-amber-600 hover:bg-amber-50 hover:text-amber-700 border border-amber-300 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-coins"></i> 코인 지급</button>
                                     <button onclick="openChildManageModal('EDIT', '${c.id}')" class="text-xs bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-pen-to-square"></i> 수정</button>
                                     <button onclick="deleteChild('${c.id}')" class="text-xs bg-white text-rose-500 hover:bg-rose-50 border border-rose-200 font-bold px-2.5 py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-user-minus"></i> 삭제</button>
                                 </div>
@@ -7479,6 +7551,52 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             }
 
             renderParentDefaultMissionsTable();
+        }
+
+         // 부모 모드에서 자녀에게 코인을 직접 지급하는 함수
+        async function grantBonusCoinToChild(childId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const input = prompt(`[${child.name}] 에게 지급할 드림코인 개수를 입력하세요.\n현재 보유: ${child.stars}개\n(마이너스 입력 시 차감됩니다)`);
+            if (input === null) return; // 취소
+
+            const amount = parseInt(input, 10);
+            if (isNaN(amount) || amount === 0) {
+                alert('올바른 숫자를 입력해주세요.');
+                return;
+            }
+
+            const prevStars = child.stars || 0;
+            const newStars = Math.max(0, prevStars + amount);
+            child.stars = newStars;
+
+            // [추가 구현] 코인 상세 내역(studyLogs)에도 수동 지급/차감 로그 추가하여 리스트 정합성 일치화
+            if (!child.studyLogs) child.studyLogs = [];
+            child.studyLogs.push({
+                missionId: `parent-adjust-${Date.now()}`,
+                date: getLocalIsoString(),
+                subject: "부모님 특별 지급/보정",
+                content: amount > 0 ? `부모님이 드림코인 ${amount}개를 특별 보너스로 선물하셨습니다.` : `부모님이 드림코인 ${Math.abs(amount)}개를 직접 보정(차감)하셨습니다.`,
+                range: "",
+                timeSpent: 0,
+                completed: true,
+                stars: amount,
+                isCustom: false
+            });
+
+            const actionText = amount > 0 ? `+${amount}개 지급` : `${amount}개 차감`;
+            showToast(`✅ [${child.name}] 드림코인 ${actionText} → 현재 ${newStars}개`, 'success');
+
+            // UI 즉시 반영
+            renderParentView();
+            if (state.activeChildId === childId) {
+                const globalStarCount = document.getElementById('global-star-count');
+                if (globalStarCount) globalStarCount.innerText = newStars;
+                renderChildAchievementStats();
+            }
+
+            await saveStateToFirestore();
         }
 
         function renderApprovalRequests() {
