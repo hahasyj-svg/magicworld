@@ -162,6 +162,55 @@
         .msg-bubble-animate {
             animation: messageBubbleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
+
+        /* 원더위크 축하 모달 애니메이션 */
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            45% { transform: scale(1.05); opacity: 0.9; }
+            70% { transform: scale(0.95); opacity: 0.95; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes animalJump {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-25px) scale(1.1); }
+        }
+
+        @keyframes bubbleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes radialGlow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.15); }
+        }
+
+        .animate-pop-in {
+            animation: popIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .animate-animal-jump-1 { animation: animalJump 1.6s ease-in-out infinite; }
+        .animate-animal-jump-2 { animation: animalJump 1.6s ease-in-out infinite 0.3s; }
+        .animate-animal-jump-3 { animation: animalJump 1.6s ease-in-out infinite 0.6s; }
+        .animate-animal-jump-4 { animation: animalJump 1.6s ease-in-out infinite 0.15s; }
+        .animate-animal-jump-5 { animation: animalJump 1.6s ease-in-out infinite 0.45s; }
+
+        .animate-bubble-float {
+            animation: bubbleFloat 3s ease-in-out infinite;
+        }
+
+        .animate-radial-glow {
+            animation: radialGlow 4s ease-in-out infinite;
+        }
+
+        /* 개별 아바타 클릭 시 360도 회전 피드백 */
+        .avatar-click-spin {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .avatar-click-spin.spin {
+            transform: scale(1.3) rotate(360deg) !important;
+        }
     </style>
     <script>
         if (localStorage.getItem('magic_logged_in_user')) {
@@ -5186,6 +5235,15 @@
 
             const targetDate = currentChecklistDate || new Date();
             const weekStart = getWeekStart(targetDate);
+            const weekStartStr = getLocalIsoString(weekStart);
+            
+            // [신규기능] 퍼펙트 위크 재진입 시 대합창 축하 모달 발동 조건 감지
+            let isWeekChanged = false;
+            if (window.lastActiveWeekStartStr !== weekStartStr) {
+                window.lastActiveWeekStartStr = weekStartStr;
+                isWeekChanged = true;
+            }
+
             const realTodayStr = getLocalIsoString(new Date());
             const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
 
@@ -5263,13 +5321,35 @@
                 if (perfectDaysCount === 7) {
                     widgetEl.classList.remove('from-pink-50', 'to-rose-50', 'border-pink-100');
                     widgetEl.classList.add('from-amber-100', 'to-yellow-50', 'border-yellow-300', 'shadow-[0_0_15px_rgba(250,204,21,0.4)]');
+
+                    if (!activeChild.perfectWeeksClaimed) activeChild.perfectWeeksClaimed = [];
+                    const alreadyClaimed = activeChild.perfectWeeksClaimed.some(entry =>
+                        typeof entry === 'string' ? entry === weekStartStr : entry.weekStartStr === weekStartStr
+                    );
+
+                    // [신규기능] 퍼펙트 주간 이동 시 대합창 축하 모달 자동 발동 처리
+                    if (isWeekChanged && alreadyClaimed) {
+                        setTimeout(() => {
+                            if (!document.getElementById('perfect-week-grand-celebration') && typeof showGrandPerfectWeekCelebration === 'function') {
+                                showGrandPerfectWeekCelebration();
+                            }
+                        }, 800);
+                    }
+
                     if (!document.getElementById('perfect-week-badge')) {
                         const badgeContainer = document.createElement('div');
                         badgeContainer.id = 'perfect-week-badge';
                         badgeContainer.className = 'absolute top-3 right-3 sm:right-6 flex items-center gap-1 sm:gap-2 z-20';
                         
+                        // 퍼펙트 달성 배지를 클릭하면 다시 축하 파티를 볼 수 있도록 연계
                         const perfectBadge = document.createElement('div');
-                        perfectBadge.className = 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black px-3 py-1 rounded-xl text-[10px] sm:text-xs shadow-lg animate-bounce border-2 border-white';
+                        perfectBadge.className = 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black px-3 py-1 rounded-xl text-[10px] sm:text-xs shadow-lg animate-bounce border-2 border-white cursor-pointer hover:scale-105 transition';
+                        perfectBadge.title = '클릭해서 축하 파티 다시 보기! ✨';
+                        perfectBadge.onclick = () => {
+                            if (typeof showGrandPerfectWeekCelebration === 'function') {
+                                showGrandPerfectWeekCelebration();
+                            }
+                        };
                         perfectBadge.innerHTML = '<i class="fa-solid fa-crown"></i> 퍼펙트 달성!';
                         
                         const coinBadge = document.createElement('div');
@@ -5286,14 +5366,6 @@
                             }
                         }, 300);
 
-                        const weekStartStr = getLocalIsoString(weekStart);
-                        if (!activeChild.perfectWeeksClaimed) activeChild.perfectWeeksClaimed = [];
-                        
-                        // perfectWeeksClaimed 항목은 { weekStartStr, bonusCoins } 객체 또는 하위 호환 문자열 형태
-                        const alreadyClaimed = activeChild.perfectWeeksClaimed.some(entry =>
-                            typeof entry === 'string' ? entry === weekStartStr : entry.weekStartStr === weekStartStr
-                        );
-                        
                          if (!alreadyClaimed && weekStartStr <= realTodayStr) {
                             const weekEnd = new Date(weekStart);
                             weekEnd.setDate(weekEnd.getDate() + 6);
@@ -5323,6 +5395,13 @@
                                     if (childStoreStarCount) childStoreStarCount.innerText = activeChild.stars;
                                     
                                     renderChildAchievementStats();
+
+                                    // 5마리 동물들의 화려한 퍼펙트 위크 축하 모달 연출 발동! (코인 획득 연출 후 자연스럽게 오버랩)
+                                    setTimeout(() => {
+                                        if (typeof showGrandPerfectWeekCelebration === 'function') {
+                                            showGrandPerfectWeekCelebration();
+                                        }
+                                    }, 1500);
                                 }, 2500);
                             }
                             // ✅ [버그 수정] bonusCoins=0인 경우의 불필요한 save도 제거
@@ -9328,7 +9407,186 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             alert(`🎉 '${status.nickname}'이(가) 명예의 전당에 졸업 등록되었습니다! 새로운 알을 부화시켜 다른 동물도 키워보세요!`);
         }
 
+        // ==================== [신규기능] 원더위크 대합창 축하 연출 ====================
+        function showGrandPerfectWeekCelebration() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+            
+            const status = getAvatarStatus(activeChild);
+            
+            // 5마리 동물의 구성:
+            // 1, 2, 4, 5번은 다른 마법 동물들, 3번(가운데)은 주인공(현재 키우는 아바타)
+            const allTypes = [
+                { type: 'CAT', name: '아기냥이', emoji: '🐱', msg: '야옹~ 퍼펙트 달성을 진심으로 축하해! 🐾' },
+                { type: 'DOG', name: '강아지', emoji: '🐶', msg: '멍멍! 매일매일 포기하지 않은 네가 최고야! 🐕' },
+                { type: 'BUNNY', name: '마법토끼', emoji: '🐰', msg: '깡총깡총! 일주일 완주라니 정말 대단해! 🐰' },
+                { type: 'PANDA', name: '판다곰', emoji: '🐼', msg: '뒹굴뒹굴~ 보너스 코인 2배 획득 축하해! 🐼' },
+                { type: 'DRAGON', name: '꼬마용', emoji: '🦖', msg: '쿠오오~! 전설의 골드 드래곤 기운을 줄게! 🔥' },
+                { type: 'BIRD', name: '마법새', emoji: '🐣', msg: '삐약삐약! 하늘 높이 날아오를 네 꿈을 응원해! 🐣' },
+                { type: 'SEA', name: '돌고래', emoji: '🐬', msg: '푸하~! 넓은 바다처럼 시원하게 달성 완료! 🐬' }
+            ];
+            
+            // 주인공 동물 정보
+            const heroType = status.type;
+            const heroEmoji = status.emoji;
+            const heroName = activeChild.avatarNickname || status.nickname || status.title;
+            const heroMsg = `우리의 대원 ${heroName}! 7일 미션을 모두 클리어했어! 정말 감격스러워! 👑✨`;
+            
+            // 주인공을 제외한 동물들 중 4마리 추출
+            const filteredOthers = allTypes.filter(t => t.type !== heroType);
+            // 4개 무작위로 선택
+            const selectedOthers = filteredOthers.sort(() => 0.5 - Math.random()).slice(0, 4);
+            
+            // 5마리 배치 (가운데에 주인공 배치)
+            const finalAnimals = [
+                selectedOthers[0],
+                selectedOthers[1],
+                { type: heroType, name: heroName, emoji: heroEmoji, msg: heroMsg, isHero: true },
+                selectedOthers[2],
+                selectedOthers[3]
+            ];
+            
+            // 기존 축하 모달 제거
+            const existing = document.getElementById('perfect-week-grand-celebration');
+            if (existing) existing.remove();
+            
+            // 모달 컨테이너 생성
+            const modal = document.createElement('div');
+            modal.id = 'perfect-week-grand-celebration';
+            modal.className = 'fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/80 backdrop-blur-md opacity-0 transition-opacity duration-500 pointer-events-none';
+            
+            // 뒷배경 글로우 및 모달 내부 구성
+            let animalsHtml = '';
+            finalAnimals.forEach((ani, idx) => {
+                const isHero = ani.isHero;
+                const jumpClass = `animate-animal-jump-${idx + 1}`;
+                const sizeClass = isHero ? 'text-6xl sm:text-7xl' : 'text-5xl sm:text-6xl';
+                const labelColor = isHero 
+                    ? 'text-yellow-300 bg-yellow-950/60 border-yellow-500/50 shadow-md font-black' 
+                    : 'text-slate-200 bg-slate-900/50 border-slate-700/30';
+                
+                // HTML 이스케이프 방지 및 안전한 문자열 전달
+                const escapedMsg = ani.msg.replace(/'/g, "\\'");
+                
+                animalsHtml += `
+                    <div class="flex flex-col items-center group cursor-pointer" onclick="spinGrandAvatar(this, '${escapedMsg}')">
+                        <span class="${sizeClass} filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin">${ani.emoji}</span>
+                        <span class="mt-2 text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full border ${labelColor} truncate max-w-[70px] sm:max-w-[80px]">
+                            ${ani.name}
+                        </span>
+                    </div>
+                `;
+            });
+            
+            modal.innerHTML = `
+                <div class="absolute w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-yellow-500/20 via-pink-500/20 to-purple-500/20 blur-3xl pointer-events-none animate-radial-glow"></div>
+                <div class="bg-gradient-to-br from-indigo-950 via-purple-900 to-pink-950 border-2 border-white/20 p-6 sm:p-10 rounded-[3rem] shadow-[0_0_80px_rgba(234,179,8,0.5)] text-center max-w-xl w-[92%] relative overflow-hidden flex flex-col items-center transform scale-90 transition-transform duration-500">
+                    
+                    <div class="text-5xl sm:text-6xl mb-2 filter drop-shadow-lg">👑</div>
+                    
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-widest leading-tight mb-4">
+                        <span class="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-500 bg-clip-text text-transparent filter drop-shadow-md">
+                            원더위크 퍼펙트 달성!
+                        </span>
+                    </h2>
+                    
+                    <div class="bg-white/95 border-2 border-yellow-300 rounded-3xl p-4 sm:p-5 shadow-2xl relative mb-10 max-w-md w-full animate-bubble-float z-10">
+                        <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-5 h-5 bg-white border-b-2 border-r-2 border-yellow-300 rotate-45"></div>
+                        <h4 class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">💖 마법 동물들의 대합창 응원 💖</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-700 leading-relaxed" id="grand-celebration-message">
+                            우와! 7일 연속 미션을 완벽히 완료했어! 우리 다섯 동물 친구들이 힘을 모아 축하해줄게! 다 함께 짝짝짝! 👏👏
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-end justify-center gap-2 sm:gap-4 mb-8 w-full select-none">
+                        ${animalsHtml}
+                    </div>
+                    
+                    <button onclick="closeGrandCelebration()" class="bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-purple-950 font-black px-8 py-3 rounded-2xl shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 text-sm sm:text-base border-2 border-white">
+                        고마워! ❤️
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 페이드인 효과 발동
+            setTimeout(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+                const card = modal.querySelector('.bg-gradient-to-br');
+                if (card) card.classList.remove('scale-90');
+            }, 10);
+            
+            // 화려한 confetti 폭풍
+            if (typeof confetti === 'function') {
+                const duration = 3 * 1000;
+                const end = Date.now() + duration;
+                
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 }
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 }
+                    });
+                    
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        }
+        
+        function spinGrandAvatar(el, msg) {
+            const spinEl = el.querySelector('.avatar-click-spin');
+            const msgEl = document.getElementById('grand-celebration-message');
+            if (spinEl) {
+                spinEl.classList.add('spin');
+                setTimeout(() => {
+                    spinEl.classList.remove('spin');
+                }, 600);
+            }
+            if (msgEl) {
+                msgEl.innerText = msg;
+            }
+            
+            if (typeof confetti === 'function') {
+                const rect = el.getBoundingClientRect();
+                const x = (rect.left + rect.right) / 2 / window.innerWidth;
+                const y = (rect.top + rect.bottom) / 2 / window.innerHeight;
+                confetti({
+                    particleCount: 20,
+                    spread: 40,
+                    origin: { x, y }
+                });
+            }
+        }
+        
+        function closeGrandCelebration() {
+            const modal = document.getElementById('perfect-week-grand-celebration');
+            if (modal) {
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                const card = modal.querySelector('.bg-gradient-to-br');
+                if (card) card.classList.add('scale-90');
+                
+                setTimeout(() => {
+                    modal.remove();
+                }, 500);
+            }
+        }
+
         // 전역 함수로 마운트
+        window.showGrandPerfectWeekCelebration = showGrandPerfectWeekCelebration;
+        window.spinGrandAvatar = spinGrandAvatar;
+        window.closeGrandCelebration = closeGrandCelebration;
         window.saveAvatarNickname = saveAvatarNickname;
         window.selectAvatarType = selectAvatarType;
         window.interactWithAvatar = interactWithAvatar;
