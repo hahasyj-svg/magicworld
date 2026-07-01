@@ -1205,7 +1205,7 @@
                             <div class="col-span-1 sm:col-span-2 md:col-span-1 xl:col-span-2 order-2 md:order-3">
                                 <label class="block text-slate-500 font-bold mb-1 text-center sm:text-left">필요 코인</label>
                                 <div class="flex gap-2">
-                                    <input type="number" id="reward-form-cost" placeholder="예: 5" required min="1" max="999" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,3);" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs font-bold text-amber-600 text-center sm:text-left">
+                                    <input type="number" id="reward-form-cost" placeholder="예: 5" required min="1" max="99999" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,5);" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-2 text-xs font-bold text-amber-600 text-center sm:text-left">
                                     <button type="submit" id="reward-form-submit-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 rounded-xl transition text-xs shrink-0 flex items-center justify-center gap-1">
                                         <i class="fa-solid fa-plus"></i> 등록
                                     </button>
@@ -1987,8 +1987,47 @@
             }
         }
 
-        // 🔄 데이터 세이브 함수
-        async function saveStateToFirestore() {
+        let isSavingFirestore = false;
+        let hasPendingSaveRequest = false;
+        let saveFirestoreTimer = null;
+
+        // 🔄 데이터 세이브 함수 (경쟁 상태 방지를 위한 디바운스 및 락 큐 적용)
+        async function saveStateToFirestore(immediate = false) {
+            if (!loggedInUser) return;
+
+            if (!immediate) {
+                return new Promise((resolve) => {
+                    if (saveFirestoreTimer) clearTimeout(saveFirestoreTimer);
+                    saveFirestoreTimer = setTimeout(async () => {
+                        await triggerSave();
+                        resolve();
+                    }, 200);
+                });
+            } else {
+                if (saveFirestoreTimer) clearTimeout(saveFirestoreTimer);
+                await triggerSave();
+            }
+
+            async function triggerSave() {
+                if (isSavingFirestore) {
+                    hasPendingSaveRequest = true;
+                    return;
+                }
+                isSavingFirestore = true;
+                try {
+                    await _executeSaveStateToFirestore();
+                } finally {
+                    isSavingFirestore = false;
+                    if (hasPendingSaveRequest) {
+                        hasPendingSaveRequest = false;
+                        setTimeout(() => saveStateToFirestore(true), 100);
+                    }
+                }
+            }
+        }
+
+        // 실제 Firestore 쓰기 로직 실행부
+        async function _executeSaveStateToFirestore() {
             if (!loggedInUser) return;
             const uid = loggedInUser.id;
 
@@ -7707,10 +7746,10 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                 ${pendingMissions.length === 0 ? `<div class="text-slate-500">제출한 도전 미션이 없습니다.</div>` : pendingMissions.map(r => `
                     <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-3 mb-2 text-slate-700">
                         <div class="flex items-center justify-between gap-2">
-                            <div class="text-sm font-bold">[${r.subject}] ${r.range}</div>
-                            <span class="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full">대기중</span>
+                            <div class="text-sm font-bold">[${r.subject}] ${r.content || '내용 없음'} / ${r.range}</div>
+                            <span class="text-[10px] text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full shrink-0">대기중</span>
                         </div>
-                        <div class="text-[11px] text-slate-500 mt-1">학습 내용: ${r.content || '-'} | 코드 코인: ${r.stars}개</div>
+                        <div class="text-[11px] text-slate-500 mt-1">결과: <b>${r.actualRange || '-'}</b> (${r.timeSpent || 0}분 수행) | 드림 코인: ${r.stars}개</div>
                     </div>
                 `).join('')}
             `;
@@ -8091,11 +8130,11 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                         hasMissionReq = true;
                         const avatar = c.photo ? `<img src="${c.photo}" class="w-6 h-6 rounded-full object-cover">` : `<i class="fa-solid fa-face-smile"></i>`;
                         missionHtml += `
-                            <div id="parent-mission-req-${r.id}" class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-2 text-xs">
+                            <div id="parent-mission-req-${r.id}" class="p-3 bg-emerald-50/50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-2 text-xs mb-2">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-200 flex items-center justify-center">${avatar}</div>
+                                    <div class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-200 flex items-center justify-center bg-white">${avatar}</div>
                                     <div>
-                                        <h4 class="font-bold text-slate-800">[${r.subject}] ${r.range}</h4>
+                                        <h4 class="font-bold text-slate-800">[${r.subject}] ${r.content || '내용 없음'} / ${r.range}</h4>
                                         <p class="text-slate-500 text-[10px] mt-0.5">결과: <b class="text-slate-800">${r.actualRange}</b> (${r.timeSpent}분 수행)</p>
                                         <p class="text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-coins"></i> 지급 대기 코인: ${r.stars}개</p>
                                     </div>
@@ -8827,6 +8866,28 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 5, minCoins: 1000, emoji: "🐋", title: "대양의 거대 고래", desc: "바다를 지배하며 신비로운 노래를 부르는 거대한 혹등고래입니다!" },
                     { level: 6, minCoins: 1500, emoji: "🦈", title: "전설의 무적 상어왕", desc: "누적 1500코인을 넘긴 대가! 바다의 모든 생물을 지키는 최강의 수호 상어왕입니다! 👑" }
                 ]
+            },
+            TIGER: {
+                name: "호랑이",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐯", title: "아기 호랑이", desc: "줄무늬가 매력적인 솜털 가득한 아기 호랑이입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🐅", title: "용맹한 꼬마 범", desc: "밀림을 뛰어놀며 사냥 연습을 시작한 씩씩한 꼬마 호랑이입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🐆", title: "날쌘 표범 범", desc: "눈 깜짝할 사이에 숲속을 가로지르는 대담하고 날씬한 호랑이입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🦁", title: "밀림의 백수왕", desc: "금빛 갈기를 뽐내며 숲을 호령하는 위엄 넘치는 왕입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🐯", title: "전설의 백호신", desc: "누적 1500코인을 넘긴 대가! 신비로운 하얀 기운으로 윤자매를 지키는 백호신입니다! 👑" }
+                ]
+            },
+            MONKEY: {
+                name: "원숭이",
+                stages: [
+                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 2, minCoins: 100, emoji: "🐵", title: "아기 원숭이", desc: "바나나를 무척 좋아하는 호기심 많은 아기 원숭이입니다!" },
+                    { level: 3, minCoins: 300, emoji: "🦍", title: "유인원 고릴라", desc: "생각을 하며 도구를 사용하기 시작한 늠름한 유인원입니다!" },
+                    { level: 4, minCoins: 600, emoji: "🚶", title: "직립 원시인", desc: "두 발로 꼿꼿이 서서 걷게 된 직립보행 원시 인류입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "🧒", title: "생각하는 인간", desc: "지혜로운 머리로 글을 읽고 문명을 발달시킨 인간 어린이입니다!" },
+                    { level: 6, minCoins: 1500, emoji: "🧙", title: "지혜의 대마법사", desc: "누적 1500코인을 넘긴 대가! 인간을 초월하여 우주 만물의 진리를 깨달은 대마법사입니다! 👑" }
+                ]
             }
         };
 
@@ -9423,7 +9484,9 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                 { type: 'PANDA', name: '판다곰', emoji: '🐼', msg: '뒹굴뒹굴~ 보너스 코인 2배 획득 축하해! 🐼' },
                 { type: 'DRAGON', name: '꼬마용', emoji: '🦖', msg: '쿠오오~! 전설의 골드 드래곤 기운을 줄게! 🔥' },
                 { type: 'BIRD', name: '마법새', emoji: '🐣', msg: '삐약삐약! 하늘 높이 날아오를 네 꿈을 응원해! 🐣' },
-                { type: 'SEA', name: '돌고래', emoji: '🐬', msg: '푸하~! 넓은 바다처럼 시원하게 달성 완료! 🐬' }
+                { type: 'SEA', name: '돌고래', emoji: '🐬', msg: '푸하~! 넓은 바다처럼 시원하게 달성 완료! 🐬' },
+                { type: 'TIGER', name: '호랑이', emoji: '🐯', msg: '어흥! 윤자매의 용맹함으로 공부 대성공! 🐯' },
+                { type: 'MONKEY', name: '원숭이', emoji: '🐵', msg: '우끼끼! 지혜롭게 사람으로 진화한 걸 축하해! 🐵' }
             ];
             
             // 주인공 동물 정보
