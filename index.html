@@ -9538,15 +9538,15 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             // 5마리 동물의 구성:
             // 1, 2, 4, 5번은 다른 마법 동물들, 3번(가운데)은 주인공(현재 키우는 아바타)
             const allTypes = [
-                { type: 'CAT', name: '아기냥이', emoji: '🐱', msg: '야옹~ 퍼펙트 달성을 진심으로 축하해! 🐾' },
-                { type: 'DOG', name: '강아지', emoji: '🐶', msg: '멍멍! 매일매일 포기하지 않은 네가 최고야! 🐕' },
-                { type: 'BUNNY', name: '마법토끼', emoji: '🐰', msg: '깡총깡총! 일주일 완주라니 정말 대단해! 🐰' },
-                { type: 'PANDA', name: '판다곰', emoji: '🐼', msg: '뒹굴뒹굴~ 보너스 코인 2배 획득 축하해! 🐼' },
-                { type: 'DRAGON', name: '꼬마용', emoji: '🦖', msg: '쿠오오~! 전설의 골드 드래곤 기운을 줄게! 🔥' },
-                { type: 'BIRD', name: '마법새', emoji: '🐣', msg: '삐약삐약! 하늘 높이 날아오를 네 꿈을 응원해! 🐣' },
-                { type: 'SEA', name: '돌고래', emoji: '🐬', msg: '푸하~! 넓은 바다처럼 시원하게 달성 완료! 🐬' },
-                { type: 'TIGER', name: '호랑이', emoji: '🐯', msg: '어흥! 윤자매의 용맹함으로 공부 대성공! 🐯' },
-                { type: 'MONKEY', name: '원숭이', emoji: '🐵', msg: '우끼끼! 지혜롭게 사람으로 진화한 걸 축하해! 🐵' }
+                { type: 'CAT',    name: '아기냥이', emoji: 'assets/cute_baby_cat.png',    msg: '야옹~ 퍼펙트 달성을 진심으로 축하해! 🐾' },
+                { type: 'DOG',    name: '강아지',   emoji: 'assets/cute_baby_dog.png',    msg: '멍멍! 매일매일 포기하지 않은 네가 최고야! 🐕' },
+                { type: 'BUNNY',  name: '마법토끼', emoji: 'assets/cute_baby_bunny.png',  msg: '깡총깡총! 일주일 완주라니 정말 대단해! 🐰' },
+                { type: 'PANDA',  name: '판다곰',   emoji: 'assets/cute_baby_panda.png',  msg: '뒹굴뒹굴~ 보너스 코인 2배 획득 축하해! 🐼' },
+                { type: 'DRAGON', name: '꼬마용',   emoji: 'assets/cute_baby_dragon.png', msg: '쿠오오~! 전설의 골드 드래곤 기운을 줄게! 🔥' },
+                { type: 'BIRD',   name: '마법새',   emoji: 'assets/cute_baby_bird.png',   msg: '삐약삐약! 하늘 높이 날아오를 네 꿈을 응원해! 🐣' },
+                { type: 'SEA',    name: '돌고래',   emoji: 'assets/cute_baby_sea.png',    msg: '푸하~! 넓은 바다처럼 시원하게 달성 완료! 🐬' },
+                { type: 'TIGER',  name: '호랑이',   emoji: 'assets/cute_baby_tiger.png',  msg: '어흥! 윤자매의 용맹함으로 공부 대성공! 🐯' },
+                { type: 'MONKEY', name: '원숭이',   emoji: 'assets/cute_baby_monkey.png', msg: '우끼끼! 지혜롭게 사람으로 진화한 걸 축하해! 🐵' }
             ];
             
             // 주인공 동물 정보
@@ -9583,6 +9583,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             finalAnimals.forEach((ani, idx) => {
                 const isHero = ani.isHero;
                 const jumpClass = `animate-animal-jump-${idx + 1}`;
+                const imgSize = isHero ? 'w-16 h-16 sm:w-20 sm:h-20' : 'w-12 h-12 sm:w-16 sm:h-16';
                 const sizeClass = isHero ? 'text-6xl sm:text-7xl' : 'text-5xl sm:text-6xl';
                 const labelColor = isHero 
                     ? 'text-yellow-300 bg-yellow-950/60 border-yellow-500/50 shadow-md font-black' 
@@ -9590,10 +9591,16 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                 
                 // HTML 이스케이프 방지 및 안전한 문자열 전달
                 const escapedMsg = ani.msg.replace(/'/g, "\\'");
+                const escapedName = ani.name.replace(/'/g, "\\'");
+
+                // 이미지 경로이면 img 태그(클릭 시 줌)로, 이모지이면 텍스트로 렌더링
+                const emojiHtml = isImageUrl(ani.emoji)
+                    ? `<img src="${ani.emoji}" class="${imgSize} object-cover rounded-full filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin cursor-zoom-in" alt="${ani.name}" onclick="event.stopPropagation(); spinGrandAvatar(this.closest('[data-msg]'), '${escapedMsg}'); zoomGrandAnimal('${ani.emoji}', '${escapedName}')">`
+                    : `<span class="${sizeClass} filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin">${ani.emoji}</span>`;
                 
                 animalsHtml += `
-                    <div class="flex flex-col items-center group cursor-pointer" onclick="spinGrandAvatar(this, '${escapedMsg}')">
-                        <span class="${sizeClass} filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin">${ani.emoji}</span>
+                    <div class="flex flex-col items-center group cursor-pointer" data-msg="${escapedMsg}" onclick="spinGrandAvatar(this, '${escapedMsg}')">
+                        ${emojiHtml}
                         <span class="mt-2 text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full border ${labelColor} truncate max-w-[70px] sm:max-w-[80px]">
                             ${ani.name}
                         </span>
@@ -9692,6 +9699,34 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             }
         }
         
+        // 동물 이미지 3배 확대 줌 오버레이
+        function zoomGrandAnimal(src, name) {
+            const existing = document.getElementById('grand-animal-zoom');
+            if (existing) { existing.remove(); return; }
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'grand-animal-zoom';
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:100001;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);cursor:pointer;animation:grandZoomFadeIn 0.25s ease-out;';
+            overlay.onclick = () => overlay.remove();
+            overlay.innerHTML = `
+                <style>
+                    @keyframes grandZoomFadeIn { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+                    @keyframes grandZoomPop { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+                    #grand-animal-zoom img { animation: grandZoomPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+                </style>
+                <img src="${src}" alt="${name}"
+                    style="width:clamp(180px,48vw,260px);height:clamp(180px,48vw,260px);object-fit:cover;border-radius:2rem;box-shadow:0 0 60px rgba(255,215,0,0.5),0 20px 60px rgba(0,0,0,0.6);border:4px solid rgba(255,255,255,0.5);">
+                <span style="color:#fff;font-weight:900;font-size:1rem;background:rgba(255,255,255,0.15);padding:6px 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(4px);">${name}</span>
+                <span style="color:rgba(255,255,255,0.5);font-size:0.7rem;">탭하면 닫혀요 ✕</span>
+            `;
+            document.body.appendChild(overlay);
+        }
+        
+        function closeGrandZoom() {
+            const el = document.getElementById('grand-animal-zoom');
+            if (el) el.remove();
+        }
+        
         function closeGrandCelebration() {
             const modal = document.getElementById('perfect-week-grand-celebration');
             if (modal) {
@@ -9709,6 +9744,8 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
         // 전역 함수로 마운트
         window.showGrandPerfectWeekCelebration = showGrandPerfectWeekCelebration;
         window.spinGrandAvatar = spinGrandAvatar;
+        window.zoomGrandAnimal = zoomGrandAnimal;
+        window.closeGrandZoom = closeGrandZoom;
         window.closeGrandCelebration = closeGrandCelebration;
         window.saveAvatarNickname = saveAvatarNickname;
         window.selectAvatarType = selectAvatarType;
