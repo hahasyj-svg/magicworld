@@ -1691,13 +1691,31 @@
     <!-- 토스트 메시지 팝업창 -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-[300] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- 동물 캐릭터 칭찬 팝업창 -->
-    <div id="character-cheer-container" class="fixed bottom-0 right-5 sm:right-10 z-[350] transition-transform duration-500 transform translate-y-full flex items-end pointer-events-none pb-4">
-        <div class="bg-white border-2 border-orange-300 rounded-t-3xl rounded-bl-3xl p-3 sm:p-4 shadow-xl flex items-center gap-3 relative mr-2 mb-4">
-            <div class="absolute -bottom-2 right-4 w-4 h-4 bg-white border-b-2 border-r-2 border-orange-300 transform rotate-45"></div>
-            <p class="text-xs sm:text-sm font-black text-slate-700 whitespace-nowrap" id="character-cheer-message">참 잘했어요!</p>
+    <!-- 동물 캐릭터 칭찬 팝업창 (화면 중앙 모달) -->
+    <div id="character-cheer-container" onclick="closeCharacterCheer()" class="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div onclick="event.stopPropagation()" class="bg-white border-4 border-amber-300 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-4 relative max-w-sm w-[90%] transform scale-90 transition-transform duration-300">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeCharacterCheer()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- 동물 캐릭터 아바타 영역 -->
+            <div class="w-28 h-28 sm:w-32 sm:h-32 text-7xl sm:text-8xl flex items-center justify-center drop-shadow-lg animate-bounce origin-bottom transition-transform duration-300 hover:scale-110 cursor-pointer" id="character-cheer-emoji">
+                🐶
+            </div>
+
+            <!-- 말풍선/칭찬 메시지 -->
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 shadow-inner text-center w-full relative">
+                <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-amber-50 border-t-2 border-l-2 border-amber-200 rotate-45"></div>
+                <h4 class="text-xs font-bold text-amber-600 mb-1">🎉 칭찬 메시지 🎉</h4>
+                <p class="text-sm sm:text-base font-black text-slate-700 leading-relaxed" id="character-cheer-message">참 잘했어요!</p>
+            </div>
+            
+            <!-- 확인 버튼 -->
+            <button onclick="closeCharacterCheer()" class="w-full mt-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-black py-2.5 rounded-xl shadow-lg transition-transform duration-200 transform hover:scale-105 active:scale-95 text-sm border-2 border-white">
+                고마워! ❤️
+            </button>
         </div>
-        <div class="text-6xl sm:text-7xl drop-shadow-md animate-bounce origin-bottom transition-transform duration-300 hover:scale-125 cursor-pointer" id="character-cheer-emoji">🐶</div>
     </div>
 
     <!-- ==================== Firebase 클라우드 DB 연동 & 앱 구동 엔진 ==================== -->
@@ -1793,6 +1811,7 @@
         window.handleChildCreateMission = handleChildCreateMission;
         window.deleteChildCustomMission = deleteChildCustomMission;
         window.showCharacterCheer = showCharacterCheer;
+        window.closeCharacterCheer = closeCharacterCheer;
         window.openChildManageModal = openChildManageModal;
         window.closeChildManageModal = closeChildManageModal;
         window.saveChildData = saveChildData;
@@ -6998,27 +7017,48 @@
             }
         }
 
+        function closeCharacterCheer() {
+            const container = document.getElementById('character-cheer-container');
+            if (!container) return;
+            container.classList.add('opacity-0', 'pointer-events-none');
+            container.classList.remove('pointer-events-auto', 'opacity-100');
+            const card = container.querySelector('.bg-white');
+            if (card) {
+                card.classList.remove('scale-100');
+                card.classList.add('scale-90');
+            }
+            if (container.dataset.timerId) {
+                clearTimeout(parseInt(container.dataset.timerId));
+                container.dataset.timerId = "";
+            }
+        }
+
         function showCharacterCheer(stars) {
             const container = document.getElementById('character-cheer-container');
             const msgEl = document.getElementById('character-cheer-message');
             const emojiEl = document.getElementById('character-cheer-emoji');
             if (!container || !msgEl || !emojiEl) return;
 
-            // 현재 활성화된 자녀 대원의 실제 아바타 이모지를 사용 (없거나 알 단계인 경우 귀여운 전신 동물 중에서 랜덤 선택)
-            const activeChild = state.children[state.activeChildId];
-            let activeEmoji = "";
-            if (activeChild) {
-                try {
-                    const status = getAvatarStatus(activeChild);
-                    if (status && status.emoji) {
-                        activeEmoji = status.emoji;
-                    }
-                } catch(e) {}
-            }
-            if (!activeEmoji || activeEmoji === '🥚') {
-                const cuteAnimals = ['🐩', '🐈', '🐈‍⬛', '🐇', '🐿️', '🐣', '🐥', '🐠', '🐬', '🦭', '🐅', '🐆', '🐒', '🦖', '🦄'];
-                activeEmoji = cuteAnimals[Math.floor(Math.random() * cuteAnimals.length)];
-            }
+            // 귀여운 동물 캐릭터 일러스트 PNG 파일들 중 무작위(랜덤)로 한 마리를 선택합니다.
+            const pngAnimals = [
+                'assets/cute_baby_bird.png',
+                'assets/cute_baby_bunny.png',
+                'assets/cute_baby_cat.png',
+                'assets/cute_baby_dog.png',
+                'assets/cute_baby_dragon.png',
+                'assets/cute_baby_monkey.png',
+                'assets/cute_baby_panda.png',
+                'assets/cute_baby_sea.png',
+                'assets/cute_baby_tiger.png',
+                'assets/cute_kid_bird.png',
+                'assets/cute_kid_bunny.png',
+                'assets/cute_kid_cat.png',
+                'assets/cute_kid_dog.png',
+                'assets/cute_kid_dragon.png',
+                'assets/cute_kid_panda.png',
+                'assets/cute_kid_sea.png'
+            ];
+            const activeEmoji = pngAnimals[Math.floor(Math.random() * pngAnimals.length)];
 
             let messages = [];
             
@@ -7043,15 +7083,19 @@
             renderEmojiOrImage(emojiEl, activeEmoji);
             msgEl.innerText = messages[Math.floor(Math.random() * messages.length)];
 
-            container.classList.remove('translate-y-full', 'pointer-events-none');
-            container.classList.add('pointer-events-auto');
+            container.classList.remove('opacity-0', 'pointer-events-none');
+            container.classList.add('pointer-events-auto', 'opacity-100');
+            const card = container.querySelector('.bg-white');
+            if (card) {
+                card.classList.remove('scale-90');
+                card.classList.add('scale-100');
+            }
             
             if (container.dataset.timerId) {
                 clearTimeout(parseInt(container.dataset.timerId));
             }
             const timerId = setTimeout(() => {
-                container.classList.add('translate-y-full', 'pointer-events-none');
-                container.classList.remove('pointer-events-auto');
+                closeCharacterCheer();
             }, 6000);
             container.dataset.timerId = timerId;
 
@@ -7063,11 +7107,10 @@
                 }
             };
             container.onmouseleave = () => {
-                if (!container.classList.contains('translate-y-full')) {
+                if (!container.classList.contains('opacity-0')) {
                     const newTimerId = setTimeout(() => {
-                        container.classList.add('translate-y-full', 'pointer-events-none');
-                        container.classList.remove('pointer-events-auto');
-                    }, 4000); // 마우스가 벗어난 후 4초 대기 후 슬라이드 다운
+                        closeCharacterCheer();
+                    }, 4000); // 마우스가 벗어난 후 4초 대기 후 닫힘
                     container.dataset.timerId = newTimerId;
                 }
             };
