@@ -1700,7 +1700,7 @@
             </button>
             
             <!-- 동물 캐릭터 아바타 영역 -->
-            <div class="w-28 h-28 sm:w-32 sm:h-32 text-7xl sm:text-8xl flex items-center justify-center drop-shadow-lg animate-bounce origin-bottom transition-transform duration-300 hover:scale-110 cursor-pointer" id="character-cheer-emoji">
+            <div class="w-28 h-28 sm:w-32 sm:h-32 text-7xl sm:text-8xl flex items-center justify-center drop-shadow-lg animate-bounce origin-bottom transition-transform duration-300 hover:scale-110 cursor-zoom-in" id="character-cheer-emoji" onclick="event.stopPropagation(); if(this.dataset.activeEmoji) { zoomGrandAnimal(this.dataset.activeEmoji, '칭찬하는 동물 친구'); }">
                 🐶
             </div>
 
@@ -7056,7 +7056,27 @@
                 'assets/cute_kid_dog.png',
                 'assets/cute_kid_dragon.png',
                 'assets/cute_kid_panda.png',
-                'assets/cute_kid_sea.png'
+                'assets/cute_kid_sea.png',
+                'assets/cute_kid_tiger.png',
+                'assets/cute_kid_monkey.png',
+                'assets/cute_junior_bird.png',
+                'assets/cute_junior_bunny.png',
+                'assets/cute_junior_cat.png',
+                'assets/cute_junior_dog.png',
+                'assets/cute_junior_dragon.png',
+                'assets/cute_junior_monkey.png',
+                'assets/cute_junior_panda.png',
+                'assets/cute_junior_sea.png',
+                'assets/cute_junior_tiger.png',
+                'assets/cute_hero_bird.png',
+                'assets/cute_hero_bunny.png',
+                'assets/cute_hero_cat.png',
+                'assets/cute_hero_dog.png',
+                'assets/cute_hero_dragon.png',
+                'assets/cute_hero_monkey.png',
+                'assets/cute_hero_panda.png',
+                'assets/cute_hero_sea.png',
+                'assets/cute_hero_tiger.png'
             ];
             const activeEmoji = pngAnimals[Math.floor(Math.random() * pngAnimals.length)];
 
@@ -7080,6 +7100,7 @@
                 ];
             }
 
+            emojiEl.dataset.activeEmoji = activeEmoji;
             renderEmojiOrImage(emojiEl, activeEmoji);
             msgEl.innerText = messages[Math.floor(Math.random() * messages.length)];
 
@@ -8885,99 +8906,99 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             DOG: {
                 name: "강아지",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_dog.png", title: "아기 푸들", desc: "꼬슬꼬슬 예쁜 털을 뽐내며 꼬리를 흔드는 귀여운 아기 푸들입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_dog.png", title: "유치원생 시바견", desc: "노란 유치원 배낭을 멘 장난꾸러기 시바견입니다. 마당을 총총 달리는 걸 좋아해요!" },
-                    { level: 4, minCoins: 600, emoji: "🦮", title: "훈련생 리트리버", desc: "사람들을 도울 준비를 하는 듬직하고 똑똑한 리트리버 대원입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🐕‍🦺", title: "멋진 조력견", desc: "훈련을 무사히 마치고 가방을 멘 든든한 수호 견공 대원입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_dog.png", title: "어린이 강아지", desc: "사람들을 도울 준비를 하는 듬직하고 똑똑한 리트리버 대원입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_dog.png", title: "도약하는 강아지", desc: "도약하는 강아지가 되었습니다! 붉은 망토를 두르고 멋지게 점프해봐요!" },
                     { level: 6, minCoins: 1500, emoji: "🦁", title: "영웅 전설견", desc: "누적 1500코인을 넘긴 대가! 사자처럼 용맹하고 영광스러운 모습의 최종 영웅견입니다! 👑" }
                 ]
             },
             CAT: {
                 name: "아기냥이",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_cat.png", title: "아기 치즈냥", desc: "야옹 소리를 내며 귀엽게 걸어 다니는 솜털 가득한 아기 치즈 고양이입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_cat.png", title: "유치원생 검은냥", desc: "노란 유치원 배낭을 메고 신나게 탐험하는 귀여운 검은 고양이입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🐆", title: "꼬마 표범냥", desc: "날렵한 무늬를 뽐내며 사냥 놀이에 푹 빠진 수호 꼬마 표범 고양이입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🐅", title: "황금 타이거냥", desc: "도도한 자태를 풍기며 늠름하게 서 있는 황금 줄무늬의 귀족 호랑이 고양이입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_cat.png", title: "어린이 고양이", desc: "날렵한 무늬를 뽐내며 사냥 놀이에 푹 빠진 수호 꼬마 표범 고양이입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_cat.png", title: "도약하는 고양이", desc: "도약하는 고양이가 되었습니다! 날렵한 몸짓과 푸른 망토로 하늘을 날아오를 듯해요!" },
                     { level: 6, minCoins: 1500, emoji: "🦄", title: "우주 대스타 냥신", desc: "누적 1500코인을 넘긴 대가! 유니콘처럼 신비한 힘을 품고 날아다니는 은하계 냥신입니다! 👑" }
                 ]
             },
             PANDA: {
                 name: "판다",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_panda.png", title: "아기 판다", desc: "둥글둥글 귀여운 얼굴로 모두에게 행복을 주는 매력 만점 아기 판다입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_panda.png", title: "유치원생 판다", desc: "노란 유치원 배낭을 매고 뒤뚱뒤뚱 걸어가는 사랑스러운 아기 판다입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🦥", title: "나무타기 아기곰", desc: "대나무 먹방 후 느긋하게 나무에 매달려 충전하는 숲속의 아기곰입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🦘", title: "늠름한 캥거루판다", desc: "주머니에 보물을 담고 껑충껑충 달리는 늠름하고 든든한 캥거루 판다곰입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_panda.png", title: "어린이 판다", desc: "대나무 먹방 후 느긋하게 나무에 매달려 충전하는 숲속의 아기곰입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_panda.png", title: "도약하는 판다", desc: "도약하는 판다가 되었습니다! 숲의 힘을 담아 껑충 기운찬 발차기를 날려요!" },
                     { level: 6, minCoins: 1500, emoji: "Rex", emoji: "🦖", title: "전설의 수호룡 판다", desc: "누적 1500코인을 넘긴 대가! 공룡처럼 강력한 힘으로 악당을 물리치는 평화의 수호자입니다! 👑" }
                 ]
             },
             DRAGON: {
                 name: "용(드래곤)",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_dragon.png", title: "아기 도마뱀용", desc: "작고 소중한 날개를 파닥거리며 기어 다니는 귀여운 해츨링 아기용입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_dragon.png", title: "유치원생 악어용", desc: "노란 유치원 배낭을 매고 꼬리를 흔들며 날개짓을 하는 귀여운 아기용입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🦕", title: "숲의 파수꾼 목이긴용", desc: "목을 길게 빼고 하늘을 향해 평화를 노래하는 든든한 파수꾼 공룡입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🦖", title: "하늘의 지배자 폭룡", desc: "늠름하게 서서 드넓은 하늘을 올려다보는 불을 내뿜는 최강의 공룡용입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_dragon.png", title: "어린이 용", desc: "목을 길게 빼고 하늘을 향해 평화를 노래하는 든든한 파수꾼 공룡입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_dragon.png", title: "도약하는 용", desc: "도약하는 용이 되었습니다! 날개를 활짝 펴고 위엄차게 날아올라 평화를 외쳐요!" },
                     { level: 6, minCoins: 1500, emoji: "🐉", title: "신화 속 골드 드래곤", desc: "누적 1500코인을 넘긴 대가! 황금빛 신성한 기운을 휘두르며 승천하는 전설의 신룡입니다! 👑" }
                 ]
             },
             BUNNY: {
                 name: "마법 토끼",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_bunny.png", title: "아기 토끼", desc: "폴짝폴짝 뛰며 하얀 털을 뽐내는 솜사탕처럼 사랑스러운 전신 아기 토끼입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_bunny.png", title: "유치원생 토끼", desc: "노란 유치원 배낭을 메고 깡충깡충 뛰어다니는 귀여운 하얀 아기 토끼입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🦝", title: "꼬마 너구리", desc: "줄무늬 꼬리를 흔들며 숲 속 곳곳의 보물을 찾아 모험하는 너구리입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🦦", title: "마법 수달", desc: "조개를 품에 꼭 껴안고 수영을 즐기는 신비롭고 영리한 마법 수달입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_bunny.png", title: "어린이 토끼", desc: "배낭을 메고 모험을 떠나는 귀여운 어린이 토끼 대원입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_bunny.png", title: "도약하는 토끼", desc: "도약하는 토끼가 되었습니다! 핑크색 망토를 휘날리며 숲을 구하기 위해 점프해요!" },
                     { level: 6, minCoins: 1500, emoji: "🐺", title: "전설의 달빛 늑대", desc: "누적 1500코인을 넘긴 대가! 달빛 아래 늠름한 자태로 우뚝 선 전설의 수호 늑대왕입니다! 👑" }
                 ]
             },
             BIRD: {
                 name: "마법 새",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_bird.png", title: "깨어나는 아기새", desc: "노란 알껍질을 머리에 쓰고 아장아장 걷는 소중한 아기새 대원입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_bird.png", title: "유치원생 아기새", desc: "노란 유치원 배낭을 메고 아장아장 신나게 걸어다니는 아기새입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🦆", title: "호수의 오리", desc: "물 위를 둥둥 떠다니며 넓은 세상을 비행하는 멋쟁이 물오리 대원입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🦅", title: "하늘의 독수리", desc: "강인한 깃털을 날리며 창공을 가르고 날아오르는 용맹한 수호 독수리입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_bird.png", title: "어린이 새", desc: "하늘을 자유롭게 날아오르는 용기 있고 귀여운 어린이 새 대원입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_bird.png", title: "도약하는 새", desc: "도약하는 새가 되었습니다! 강력한 날개짓으로 창공을 활공하는 붉은 망토의 대원입니다!" },
                     { level: 6, minCoins: 1500, emoji: "🦚", title: "전설의 무지개 공작", desc: "누적 1500코인을 넘긴 대가! 화려하게 날개를 펼쳐 아름다운 무지개빛으로 세상을 비추는 공작새입니다! 👑" }
                 ]
             },
             SEA: {
                 name: "바다 생물",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_sea.png", title: "아기 열대어", desc: "알록달록 산호초 사이를 꼬리치며 헤엄쳐 다니는 깜찍한 아기 열대어입니다!" },
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_sea.png", title: "유치원생 돌고래", desc: "노란 유치원 배낭을 메고 파도를 가르며 신나게 헤엄치는 아기 돌고래입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🦭", title: "바다의 아기물개", desc: "둥근 몸통을 요리조리 굴리며 귀여운 재롱을 부리는 바다의 파수꾼 물개입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🐋", title: "푸른 바다 고래", desc: "바다 한가운데서 물줄기를 뿜어 올리는 신비롭고 거대한 수호 고래대원입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_sea.png", title: "어린이 바다생물", desc: "바닷속을 자유롭게 누비며 파도를 타는 귀여운 어린이 바다생물 대원입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_sea.png", title: "도약하는 바다생물", desc: "도약하는 바다생물이 되었습니다! 멋진 푸른 망토를 휘날리며 힘차게 헤엄치는 바다의 수호자입니다!" },
                     { level: 6, minCoins: 1500, emoji: "🦈", title: "전설의 무적 상어왕", desc: "누적 1500코인을 넘긴 대가! 멋진 지느러미를 뽐내며 바다의 모든 생물을 지키는 상어왕입니다! 👑" }
                 ]
             },
             TIGER: {
                 name: "호랑이",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_tiger.png", title: "아기 호랑이", desc: "작고 늠름한 줄무늬를 가지고 앞발을 꼬물대는 사랑스러운 아기 호랑이입니다!" },
-                    { level: 3, minCoins: 300, emoji: "🐆", title: "꼬마 흑표범", desc: "매끈한 가죽을 뽐내며 숲속 풀숲을 사뿐사뿐 달리는 재빠른 꼬마 표범입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🐈‍⬛", title: "검은 재규어냥", desc: "어둠 속에서도 반짝이는 눈빛으로 숲의 평화를 감시하는 수호 재규어입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🦁", title: "위엄 있는 사자왕", desc: "금빛 갈기를 자랑스럽게 날리며 든든하게 서서 숲을 호령하는 사자 대원입니다!" },
+                    { level: 3, minCoins: 300, emoji: "assets/cute_kid_tiger.png", title: "유치원생 호랑이", desc: "노란 유치원 배낭을 메고 숲속을 총총 뛰어다니는 귀여운 유치원생 아기 호랑이입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_tiger.png", title: "어린이 호랑이", desc: "늠름한 줄무늬를 뽐내며 활기차게 뛰어노는 귀여운 어린이 호랑이 대원입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_tiger.png", title: "도약하는 호랑이", desc: "도약하는 호랑이가 되었습니다! 늠름하고 당당하게 서서 백두대간의 수호신이 될 준비를 합니다!" },
                     { level: 6, minCoins: 1500, emoji: "🐯", title: "전설의 백호신", desc: "누적 1500코인을 넘긴 대가! 신비롭고 눈부신 하얀 줄무늬로 기운을 불어넣는 수호 백호신입니다! 👑" }
                 ]
             },
             MONKEY: {
                 name: "원숭이",
                 stages: [
-                    { level: 1, minCoins: 0, emoji: "🥚", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
+                    { level: 1, minCoins: 0, emoji: "assets/cute_egg.png", title: "마법의 알", desc: "따뜻한 사랑을 기다리는 신비한 알입니다. 누적 100코인을 모으면 깨어나요!" },
                     { level: 2, minCoins: 100, emoji: "assets/cute_baby_monkey.png", title: "아기 원숭이", desc: "긴 꼬리를 대롱대롱 흔들며 바나나를 먹는 호기심 대장 아기 원숭이입니다!" },
-                    { level: 3, minCoins: 300, emoji: "🦍", title: "늠름한 고릴라", desc: "가슴을 치며 씩씩하게 걸어 다니는 든든하고 다정한 힘센 고릴라 대원입니다!" },
-                    { level: 4, minCoins: 600, emoji: "🦧", title: "꼬마 오랑우탄", desc: "나뭇가지를 딛고 직립 보행을 시도하며 지혜를 모으는 아기 오랑우탄입니다!" },
-                    { level: 5, minCoins: 1000, emoji: "🚶", title: "모험하는 인간", desc: "두 발로 씩씩하게 드넓은 세상을 개척해 나가는 용감한 탐험 인류입니다!" },
+                    { level: 3, minCoins: 300, emoji: "assets/cute_kid_monkey.png", title: "유치원생 원숭이", desc: "노란 유치원 배낭을 메고 나뭇가지를 껑충껑충 건너다니는 장난꾸러기 유치원생 아기 원숭이입니다!" },
+                    { level: 4, minCoins: 600, emoji: "assets/cute_junior_monkey.png", title: "어린이 원숭이", desc: "맛있는 바나나를 먹으며 신나게 숲속을 뛰노는 귀여운 어린이 원숭이 대원입니다!" },
+                    { level: 5, minCoins: 1000, emoji: "assets/cute_hero_monkey.png", title: "도약하는 원숭이", desc: "도약하는 원숭이가 되었습니다! 보랏빛 망토와 지혜의 눈빛으로 모험을 떠나는 지휘관입니다!" },
                     { level: 6, minCoins: 1500, emoji: "🧙", title: "지혜의 대마법사", desc: "누적 1500코인을 넘긴 대가! 지혜의 지팡이를 들고 마법 성장을 돕는 우주 대마법사입니다! 👑" }
                 ]
             }
@@ -9084,10 +9105,11 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     ? `<img src="${displayEmoji}" class="w-full h-full object-cover rounded-xl">`
                     : displayEmoji;
 
+                const escapedEvoName = evoData.name.replace(/'/g, "\\'");
                 html += `
                     <button onclick="selectAvatarType('${key}')" class="w-full text-left p-2.5 sm:p-3.5 border-2 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-2 transition-all duration-200 ${animClass}">
                         <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-2xl sm:text-3xl shadow-sm shrink-0 overflow-hidden">
+                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-2xl sm:text-3xl shadow-sm shrink-0 overflow-hidden cursor-zoom-in" onclick="event.stopPropagation(); zoomGrandAnimal('${displayEmoji}', '${escapedEvoName}')">
                                 ${displayEmojiHtml}
                             </span>
                             <div class="text-center sm:text-left">
@@ -9169,9 +9191,11 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                         const maxStageEmojiHtml = isImageUrl(maxStage.emoji)
                             ? `<img src="${maxStage.emoji}" class="w-full h-full object-cover rounded-full">`
                             : maxStage.emoji;
+                        const escapedEvoName = evo.name.replace(/'/g, "\\'");
+                        const escapedMaxTitle = maxStage.title.replace(/'/g, "\\'");
                         slotsHtml += `
-                            <div class="flex flex-col items-center gap-0.5">
-                                <div class="w-10 h-10 rounded-full bg-white border-2 border-amber-400 flex items-center justify-center text-xl shadow-sm cursor-help overflow-hidden" title="${evo.name} 졸업 등극! (${maxStage.title})">
+                            <div class="flex flex-col items-center gap-0.5 cursor-zoom-in" onclick="zoomGrandAnimal('${maxStage.emoji}', '${escapedEvoName} 졸업 대원 - ${escapedMaxTitle}')">
+                                <div class="w-10 h-10 rounded-full bg-white border-2 border-amber-400 flex items-center justify-center text-xl shadow-sm overflow-hidden" title="${evo.name} 졸업 등극! (${maxStage.title})">
                                     ${maxStageEmojiHtml}
                                 </div>
                                 <span class="text-[9px] font-black text-amber-700 shrink-0">${evo.name}</span>
@@ -9203,7 +9227,11 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             
             // 현재 단계 메인 정보 카드
             const currentEmojiEl = document.getElementById("avatar-tab-current-emoji");
-            if (currentEmojiEl) renderEmojiOrImage(currentEmojiEl, status.emoji);
+            if (currentEmojiEl) {
+                renderEmojiOrImage(currentEmojiEl, status.emoji);
+                currentEmojiEl.dataset.activeEmoji = status.emoji;
+                currentEmojiEl.dataset.activeName = status.nickname || status.title;
+            }
             
             const levelBadgeEl = document.getElementById("avatar-tab-current-level-badge");
             if (levelBadgeEl) levelBadgeEl.innerText = `Lv.${status.level} 단계`;
@@ -9247,8 +9275,9 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                         ? `<img src="${stage.emoji}" class="w-10 h-10 object-cover rounded-xl filter ${isAchieved ? '' : 'blur-[1.5px] grayscale'}">`
                         : `<span class="filter ${isAchieved ? '' : 'blur-[1.5px] grayscale'}">${stage.emoji}</span>`;
 
+                    const escapedTitle = stage.title.replace(/'/g, "\\'");
                     html += `
-                        <div class="p-2.5 sm:p-3 border rounded-xl flex flex-col items-center justify-center text-center overflow-hidden ${cardClass}">
+                        <div class="p-2.5 sm:p-3 border rounded-xl flex flex-col items-center justify-center text-center overflow-hidden cursor-zoom-in ${cardClass}" onclick="zoomGrandAnimal('${stage.emoji}', '${escapedTitle}')">
                             <div class="text-2xl sm:text-3xl flex items-center justify-center w-10 h-10">${stageEmojiHtml}</div>
                             <h5 class="text-[10px] sm:text-[11px] font-black text-slate-700 mt-1.5">${stage.title}</h5>
                             <span class="text-[9px] font-bold mt-1 ${isAchieved ? 'text-indigo-600 bg-indigo-100' : 'text-slate-400 bg-slate-100'} px-1.5 py-0.5 rounded-full">
@@ -9639,7 +9668,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                 // 이미지 경로이면 img 태그(클릭 시 줌)로, 이모지이면 텍스트로 렌더링
                 const emojiHtml = isImageUrl(ani.emoji)
                     ? `<img src="${ani.emoji}" class="${imgSize} object-cover rounded-full filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin cursor-zoom-in" alt="${ani.name}" onclick="event.stopPropagation(); spinGrandAvatar(this.closest('[data-msg]'), '${escapedMsg}'); zoomGrandAnimal('${ani.emoji}', '${escapedName}')">`
-                    : `<span class="${sizeClass} filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin">${ani.emoji}</span>`;
+                    : `<span class="${sizeClass} filter drop-shadow-lg ${jumpClass} transition duration-300 hover:scale-125 block avatar-click-spin cursor-zoom-in" onclick="event.stopPropagation(); spinGrandAvatar(this.closest('[data-msg]'), '${escapedMsg}'); zoomGrandAnimal('${ani.emoji}', '${escapedName}')">${ani.emoji}</span>`;
                 
                 animalsHtml += `
                     <div class="flex flex-col items-center group cursor-pointer" data-msg="${escapedMsg}" onclick="spinGrandAvatar(this, '${escapedMsg}')">
@@ -9749,18 +9778,23 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
             
             const overlay = document.createElement('div');
             overlay.id = 'grand-animal-zoom';
-            overlay.style.cssText = 'position:fixed;inset:0;z-index:100001;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);cursor:pointer;animation:grandZoomFadeIn 0.25s ease-out;';
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:100001;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;animation:grandZoomFadeIn 0.25s ease-out;';
             overlay.onclick = () => overlay.remove();
+            
+            // 이미지인지 이모지인지 판단
+            const isImg = isImageUrl(src);
+            const mediaHtml = isImg
+                ? `<img src="${src}" alt="${name}" style="width:clamp(220px,55vmin,350px);height:clamp(220px,55vmin,350px);max-width:90%;max-height:65vh;object-fit:cover;border-radius:2.5rem;box-shadow:0 0 60px rgba(255,215,0,0.5),0 20px 60px rgba(0,0,0,0.6);border:4px solid rgba(255,255,255,0.5); animation: grandZoomPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;">`
+                : `<span style="font-size: clamp(100px, 25vmin, 160px); filter: drop-shadow(0 0 40px rgba(255,215,0,0.6)); display: inline-block; max-height: 60vh; animation: grandZoomPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;">${src}</span>`;
+            
             overlay.innerHTML = `
                 <style>
-                    @keyframes grandZoomFadeIn { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+                    @keyframes grandZoomFadeIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
                     @keyframes grandZoomPop { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
-                    #grand-animal-zoom img { animation: grandZoomPop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
                 </style>
-                <img src="${src}" alt="${name}"
-                    style="width:clamp(180px,48vw,260px);height:clamp(180px,48vw,260px);object-fit:cover;border-radius:2rem;box-shadow:0 0 60px rgba(255,215,0,0.5),0 20px 60px rgba(0,0,0,0.6);border:4px solid rgba(255,255,255,0.5);">
-                <span style="color:#fff;font-weight:900;font-size:1rem;background:rgba(255,255,255,0.15);padding:6px 20px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(4px);">${name}</span>
-                <span style="color:rgba(255,255,255,0.5);font-size:0.7rem;">탭하면 닫혀요 ✕</span>
+                ${mediaHtml}
+                <span style="color:#fff;font-weight:900;font-size:1.1rem;background:rgba(0,0,0,0.4);padding:8px 24px;border-radius:999px;border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(4px);box-shadow:0 4px 12px rgba(0,0,0,0.2);">${name}</span>
+                <span style="color:rgba(255,255,255,0.6);font-size:0.8rem;background:rgba(0,0,0,0.2);padding:4px 12px;border-radius:999px;">탭하면 닫혀요 ✕</span>
             `;
             document.body.appendChild(overlay);
         }
