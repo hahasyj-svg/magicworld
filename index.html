@@ -383,11 +383,21 @@
 
             <div class="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto mt-2 sm:mt-0">
                     <!-- 드림코인 카운터 지표 -->
-                <div id="global-star-container" class="bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 sm:gap-2 shadow-sm transition-all duration-300">
-                        <span class="text-amber-500 text-lg animate-bounce"><i class="fa-solid fa-coins"></i></span>
-                        <span class="text-xs font-bold text-slate-600">내 드림 코인:</span>
-                        <span class="text-lg font-black text-amber-600 child-font" id="global-star-count">0</span>
-                        <span class="text-xs font-bold text-slate-600">개</span>
+                <div id="global-star-container" class="bg-amber-50 border border-amber-200 rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1 sm:gap-2 shadow-sm transition-all duration-300 shrink-0">
+                        <span class="text-amber-500 text-base sm:text-lg animate-bounce"><i class="fa-solid fa-coins"></i></span>
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-600 hidden sm:inline">내 드림 코인:</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-600 sm:hidden">코인:</span>
+                        <span class="text-base sm:text-lg font-black text-amber-600 child-font" id="global-star-count">0</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-600">개</span>
+                    </div>
+
+                    <!-- 장난꾸러기 풍선(누적 경고) 지표 -->
+                    <div id="global-warning-container" onclick="showWarningsDetail()" class="bg-rose-50 border border-rose-200 rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1 sm:gap-2 shadow-sm transition-all duration-300 cursor-pointer hover:scale-105 hover:bg-rose-100/60 active:scale-95 select-none shrink-0" title="클릭해서 장난꾸러기 풍선 내역 보기">
+                        <span class="text-base sm:text-lg animate-bounce">🎈</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-600 hidden sm:inline">장난꾸러기 풍선:</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-600 sm:hidden">풍선:</span>
+                        <span class="text-base sm:text-lg font-black text-rose-600 child-font" id="global-warning-count">0</span>
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-600">개</span>
                     </div>
 
                     <!-- 자녀 대원 선택 드롭다운 셀렉터 -->
@@ -404,7 +414,7 @@
                     <!-- 부모 모드 전환 단추 -->
                 <button id="role-toggle-btn" onclick="requestParentMode()" class="bg-slate-800 text-white hover:bg-slate-900 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0">
                         <i class="fa-solid fa-lock"></i>
-                        <span>부모 모드로 전환</span>
+                        <span>부모 모드</span>
                     </button>
 
                     <!-- 로그아웃 단추 -->
@@ -2705,7 +2715,7 @@
             document.getElementById('parent-view').classList.add('hidden');
             const btn = document.getElementById('role-toggle-btn');
             if (btn) {
-                btn.innerHTML = `<i class="fa-solid fa-lock"></i> <span>부모 모드로 전환</span>`;
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> <span>부모 모드</span>`;
                 btn.className = "bg-slate-800 text-white hover:bg-slate-900 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0";
             }
 
@@ -3012,7 +3022,7 @@
                 
                 const btn = document.getElementById('role-toggle-btn');
                 if (btn) {
-                    btn.innerHTML = `<i class="fa-solid fa-unlock"></i> <span>자녀 모드로 전환</span>`;
+                    btn.innerHTML = `<i class="fa-solid fa-unlock"></i> <span>자녀 모드</span>`;
                     btn.className = "bg-amber-500 text-white hover:bg-amber-600 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0";
                 }
                 
@@ -3039,7 +3049,7 @@
             
             const btn = document.getElementById('role-toggle-btn');
             if (btn) {
-                btn.innerHTML = `<i class="fa-solid fa-lock"></i> <span>부모 모드로 전환</span>`;
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> <span>부모 모드</span>`;
                 btn.className = "bg-slate-800 text-white hover:bg-slate-900 font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-xl shadow-md transition duration-200 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm shrink-0";
             }
             
@@ -3897,88 +3907,104 @@
             // ✅ [버그 수정] 이미 완료된 미션의 중복 제출 방지
             if (!mission || mission.completed) return;
 
-            // 제출 버튼 비활성화 (중복 클릭 방지)
-            const submitBtn = document.getElementById(`submit-btn-${missionId}`);
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-
-            if(mission) {
-                mission.completed = true;
-                mission.timeSpent = mins;
-                mission.actualRange = txt;
-                
-                const todayStr = getLocalIsoString();
-                const targetDateStr = mission.date || todayStr;
-                if (!targetChild.studyLogs) targetChild.studyLogs = [];
-
-                // ✅ [버그 수정] missionId 기준 중복 studyLog 방지
-                const alreadyLogged = targetChild.studyLogs.some(l => String(l.missionId) === String(missionId));
-                if (!alreadyLogged) {
-                    targetChild.studyLogs.push({
-                        missionId: mission.id,
-                        date: targetDateStr,
-                        subject: mission.subject,
-                        content: mission.content || "",
-                        range: mission.range || "",
-                        timeSpent: mins,
-                        completed: true,
-                        stars: mission.stars,
-                        defaultMissionId: mission.defaultMissionId,
-                        isCustom: mission.isCustom
-                    });
+            const proceedSubmit = async () => {
+                // 제출 버튼 비활성화 (중복 클릭 방지)
+                const submitBtn = document.getElementById(`submit-btn-${missionId}`);
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
                 }
-                
-                if (mission.isCustom) {
-                    if (!targetChild.missionRequests) targetChild.missionRequests = [];
-                    targetChild.missionRequests.push({
-                        id: Date.now(),
-                        missionId: mission.id,
-                        subject: mission.subject,
-                        content: mission.content || "",
-                        range: mission.range,
-                        actualRange: txt,
-                        timeSpent: mins,
-                        stars: mission.stars,
-                        timestamp: new Date().toLocaleTimeString()
-                    });
+
+                if (mission) {
+                    mission.completed = true;
+                    mission.timeSpent = mins;
+                    mission.actualRange = txt;
                     
-                    showAlert("제출 완료! 📩", `미션을 완수하고 부모님께 드림코인 심사를 요청했습니다!\n부모님이 수락하시는 즉시 '드림코인 ${mission.stars}개'를 적립하게 됩니다.`);
-                } else {
-                    targetChild.stars += mission.stars;
-                    animateFlyingStars(`mission-card-${missionId}`);
-                    showCharacterCheer(mission.stars);
-                }
-                
-                // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
-                document.getElementById('global-star-count').innerText = targetChild.stars;
-                renderTodayMissionsList();
+                    const todayStr = getLocalIsoString();
+                    const targetDateStr = mission.date || todayStr;
+                    if (!targetChild.studyLogs) targetChild.studyLogs = [];
 
-                // 오늘 미션이 모두 완료되었는지 확인하여 첫 달성 시 confetti 효과 추가
-                const todayMissions = (targetChild.todayMissions || []).filter(m => m.date === targetDateStr || (!m.date && targetDateStr === todayStr));
-                const isNowPerfect = todayMissions.length > 0 && todayMissions.every(m => m.completed);
-                if (isNowPerfect && typeof confetti === 'function') {
-                    setTimeout(() => {
-                        confetti({
-                            particleCount: 120,
-                            spread: 80,
-                            origin: { y: 0.5 },
-                            zIndex: 9999,
-                            colors: ['#f43f5e', '#ec4899', '#fbbf24', '#f59e0b', '#10b981']
+                    // ✅ [버그 수정] missionId 기준 중복 studyLog 방지
+                    const alreadyLogged = targetChild.studyLogs.some(l => String(l.missionId) === String(missionId));
+                    if (!alreadyLogged) {
+                        targetChild.studyLogs.push({
+                            missionId: mission.id,
+                            date: targetDateStr,
+                            subject: mission.subject,
+                            content: mission.content || "",
+                            range: mission.range || "",
+                            timeSpent: mins,
+                            completed: true,
+                            stars: mission.stars,
+                            defaultMissionId: mission.defaultMissionId,
+                            isCustom: mission.isCustom
                         });
-                    }, 500);
-                }
+                    }
+                    
+                    if (mission.isCustom) {
+                        if (!targetChild.missionRequests) targetChild.missionRequests = [];
+                        targetChild.missionRequests.push({
+                            id: Date.now(),
+                            missionId: mission.id,
+                            subject: mission.subject,
+                            content: mission.content || "",
+                            range: mission.range,
+                            actualRange: txt,
+                            timeSpent: mins,
+                            stars: mission.stars,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                        
+                        showAlert("제출 완료! 📩", `미션을 완수하고 부모님께 드림코인 심사를 요청했습니다!\n부모님이 수락하시는 즉시 '드림코인 ${mission.stars}개'를 적립하게 됩니다.`);
+                    } else {
+                        targetChild.stars += mission.stars;
+                        initChildCoins(targetChild);
+                        targetChild.totalEarnedCoins = (targetChild.totalEarnedCoins || 0) + mission.stars;
+                        animateFlyingStars(`mission-card-${missionId}`);
+                        showCharacterCheer(mission.stars);
+                    }
+                    
+                    // 네트워크 지연 없이 즉각적인 UI 반영 (Optimistic Update)
+                    document.getElementById('global-star-count').innerText = targetChild.stars;
+                    const warningCountEl = document.getElementById('global-warning-count');
+                    if (warningCountEl) warningCountEl.innerText = targetChild.falseCompletionWarnings || 0;
+                    renderTodayMissionsList();
 
-                // ✅ [버그 수정] renderWeeklyStickerBoard 결과를 받아 단일 saveStateToFirestore 처리
-                // (내부 중복 save 제거 → Race Condition 방지)
-                renderWeeklyStickerBoard();
-                updateChildHeaderDashboard(targetChild);
-                renderChildDashboardStats();
-                
-                await saveStateToFirestore();
-                // syncDOM은 Firestore onSnapshot 리스너가 반응하므로 직접 호출 제거
-                // (syncDOM → renderWeeklyStickerBoard 재호출로 인한 confetti 중복 방지)
+                    // 오늘 미션이 모두 완료되었는지 확인하여 첫 달성 시 confetti 효과 추가
+                    const todayMissions = (targetChild.todayMissions || []).filter(m => m.date === targetDateStr || (!m.date && targetDateStr === todayStr));
+                    const isNowPerfect = todayMissions.length > 0 && todayMissions.every(m => m.completed);
+                    if (isNowPerfect && typeof confetti === 'function') {
+                        setTimeout(() => {
+                            confetti({
+                                particleCount: 120,
+                                spread: 80,
+                                origin: { y: 0.5 },
+                                zIndex: 9999,
+                                colors: ['#f43f5e', '#ec4899', '#fbbf24', '#f59e0b', '#10b981']
+                            });
+                        }, 500);
+                    }
+
+                    // ✅ [버그 수정] renderWeeklyStickerBoard 결과를 받아 단일 saveStateToFirestore 처리
+                    renderWeeklyStickerBoard();
+                    updateChildHeaderDashboard(targetChild);
+                    renderChildDashboardStats();
+                    
+                    await saveStateToFirestore();
+                }
+            };
+
+            // 만약 장난꾸러기 풍선(경고)이 1개 이상이면 커스텀 완료 경고 모달 노출
+            if (targetChild && (targetChild.falseCompletionWarnings || 0) > 0) {
+                if (typeof showFalseCompletionWarningModal === 'function') {
+                    showFalseCompletionWarningModal(targetChild.falseCompletionWarnings, proceedSubmit);
+                } else {
+                    // Fallback if modal is not loaded
+                    const isConfirmed = confirm(`거짓완료 ${targetChild.falseCompletionWarnings}회 경고(장난꾸러기 풍선 ${targetChild.falseCompletionWarnings}개)가 있습니다.\n누적 3회 시 마법랜드 보수비용으로 20코인이 회수됩니다.\n\n오늘의 할일을 정말 완료했나요?`);
+                    if (isConfirmed) await proceedSubmit();
+                }
+            } else {
+                await proceedSubmit();
             }
         }
 
@@ -4254,6 +4280,8 @@
             }
 
             targetChild.stars += req.stars;
+            initChildCoins(targetChild);
+            targetChild.totalEarnedCoins = (targetChild.totalEarnedCoins || 0) + req.stars;
 
             const todayStr = getLocalIsoString();
             if (!targetChild.approvalHistory) targetChild.approvalHistory = [];
@@ -4360,6 +4388,414 @@
                 else if (chartType === 'subject') renderSubjectChart(activeChild);
                 else if (chartType === 'coin') renderCoinChartByPeriod(activeChild);
             }
+        }
+
+        function initChildCoins(child) {
+            if (!child) return;
+            const totalUsedCoins = (child.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const totalPenalties = (child.penaltyLogs || []).reduce((sum, p) => sum + (p.cost || 20), 0);
+            if (child.totalEarnedCoins === undefined) {
+                child.totalEarnedCoins = (child.stars || 0) + totalUsedCoins + totalPenalties;
+            }
+        }
+
+        // 🚨 장난꾸러기 풍선(경고) 7일 누적 리셋 기능
+        function checkAndResetWarnings(child) {
+            if (!child) return false;
+            if (child.falseCompletionWarnings > 0 && child.firstWarningDate) {
+                const firstDate = new Date(child.firstWarningDate);
+                const today = new Date();
+                const diffTime = today - firstDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays >= 7) { // 8일째 되는 날 초기화
+                    child.falseCompletionWarnings = 0;
+                    child.firstWarningDate = null;
+                    child.warningLogs = []; // 누적 경고 로그도 함께 비우기
+                    saveStateToFirestore(); // 백그라운드 저장
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 🚨 부모 모드: 거짓 완료 벌점/경고 부과 로직
+        async function applyFalseCompletionPenalty(childId, missionDate, subject, content) {
+            const targetChild = state.children[childId];
+            if (!targetChild) return;
+
+            // 경고 7일 자동 리셋 먼저 체크
+            checkAndResetWarnings(targetChild);
+
+            let currentWarnings = targetChild.falseCompletionWarnings || 0;
+            currentWarnings++; // 누적 경고 카운트 증가
+
+            const isThirdWarning = currentWarnings >= 3;
+            const penaltyCoins = 20;
+
+            let confirmMsg = `정말 [${subject}] 학습 건을 거짓 완료로 판정하고 장난꾸러기 풍선(경고)을 부과할까요?\n`;
+            if (isThirdWarning) {
+                confirmMsg += `\n⚠️ 이번 경고는 누적 3회째이므로 장난꾸러기 풍선이 팡 터지며 마법성 보수 비용 ${penaltyCoins}코인이 추가 차감됩니다!`;
+            } else {
+                confirmMsg += `\n(현재 누적 장난 풍선: ${currentWarnings - 1}개 → 변경 후: ${currentWarnings}개)\n※ 누적 3개 획득 시 20코인이 회수됩니다.`;
+            }
+
+            showConfirm("거짓 완료 판정 및 장난 풍선 부과", confirmMsg, async () => {
+                let totalDeduct = 0;
+
+                // 1. 해당 학습 완료건 찾아서 미완료로 복구
+                let missionFound = false;
+                let missionStars = 0;
+                let missionId = null;
+
+                // studyLog에서 해당하는 항목을 먼저 확인하여 stars를 가져옴
+                const studyLogIndex = (targetChild.studyLogs || []).findIndex(l => 
+                    l.date === missionDate && 
+                    l.subject === subject && 
+                    (content === "" || l.content === content)
+                );
+
+                if (studyLogIndex >= 0) {
+                    const log = targetChild.studyLogs[studyLogIndex];
+                    missionStars = log.stars || 0;
+                    missionId = log.missionId;
+                    
+                    // studyLogs에서 제거
+                    targetChild.studyLogs.splice(studyLogIndex, 1);
+                }
+
+                // todayMissions에서 completed = false로 복구
+                if (targetChild.todayMissions) {
+                    let mission = null;
+                    if (missionId) {
+                        mission = targetChild.todayMissions.find(m => String(m.id) === String(missionId));
+                    } else {
+                        mission = targetChild.todayMissions.find(m => m.date === missionDate && m.subject === subject);
+                    }
+                    if (mission) {
+                        mission.completed = false;
+                        mission.timeSpent = 0;
+                        mission.actualRange = "";
+                        mission.isApproved = false;
+                        missionFound = true;
+                        if (missionStars === 0) missionStars = mission.stars;
+                    }
+                }
+
+                totalDeduct += missionStars; // 기본 미션 완료 획득 코인 회수
+
+                // 2. 퍼펙트 주간 보상 여부 체크 및 취소
+                let isPerfectWeekBroken = false;
+                let bonusCoinsToReclaim = 0;
+                const parts = missionDate.split('-');
+                const missionDateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+                const weekStart = getWeekStart(missionDateObj);
+                const weekStartStr = getLocalIsoString(weekStart);
+
+                if (targetChild.perfectWeeksClaimed) {
+                    const claimedEntryIndex = targetChild.perfectWeeksClaimed.findIndex(entry =>
+                        typeof entry === 'string' ? entry === weekStartStr : entry.weekStartStr === weekStartStr
+                    );
+                    if (claimedEntryIndex >= 0) {
+                        isPerfectWeekBroken = true;
+                        const claimedEntry = targetChild.perfectWeeksClaimed[claimedEntryIndex];
+                        if (typeof claimedEntry === 'object' && claimedEntry.bonusCoins != null) {
+                            bonusCoinsToReclaim = claimedEntry.bonusCoins;
+                        } else {
+                            // 구버전 로그에서 추정
+                            const weekEnd = new Date(weekStart);
+                            weekEnd.setDate(weekEnd.getDate() + 6);
+                            const weekEndStr = getLocalIsoString(weekEnd);
+                            const logsExcludingThis = getValidStudyLogs(targetChild).filter(l =>
+                                l.date >= weekStartStr && l.date <= weekEndStr && l.completed &&
+                                !(l.missionId && String(l.missionId).startsWith('parent-adjust-'))
+                            );
+                            bonusCoinsToReclaim = logsExcludingThis.reduce((sum, l) => sum + (l.stars || 0), 0);
+                        }
+                        // 기록 파기
+                        targetChild.perfectWeeksClaimed.splice(claimedEntryIndex, 1);
+                        totalDeduct += bonusCoinsToReclaim; // 퍼펙트 보너스 2배분 회수
+                    }
+                }
+
+                // 3. 경고 횟수 및 7일 리셋 관련 속성 업데이트
+                if (!targetChild.warningLogs) targetChild.warningLogs = [];
+                
+                // 경고 로그에 추가
+                targetChild.warningLogs.push({
+                    id: `warn-${Date.now()}`,
+                    date: missionDate,
+                    subject: subject,
+                    content: content,
+                    timestamp: getLocalIsoString()
+                });
+
+                if ((targetChild.falseCompletionWarnings || 0) === 0 || !targetChild.firstWarningDate) {
+                    targetChild.firstWarningDate = getLocalIsoString(); // 첫 번째 경고 날짜 기록
+                }
+
+                initChildCoins(targetChild);
+                // 거짓으로 얻었던 코인 및 퍼펙트 보너스를 누적 획득 코인에서 차감 (실제 획득한 적이 없으므로)
+                targetChild.totalEarnedCoins = Math.max(0, (targetChild.totalEarnedCoins || 0) - missionStars - bonusCoinsToReclaim);
+
+                if (isThirdWarning) {
+                    // 3회 경고 달성 시 벌점 부과 및 경고 초기화
+                    targetChild.falseCompletionWarnings = 0;
+                    targetChild.firstWarningDate = null;
+                    targetChild.warningLogs = []; // 초기화
+                    
+                    if (!targetChild.penaltyLogs) targetChild.penaltyLogs = [];
+                    targetChild.penaltyLogs.push({
+                        id: `penalty-${Date.now()}`,
+                        date: missionDate,
+                        subject: subject,
+                        content: `장난꾸러기 풍선 3회 누적 벌점 부과 (마법성 보수 비용)`,
+                        cost: 20,
+                        timestamp: getLocalIsoString()
+                    });
+                } else {
+                    targetChild.falseCompletionWarnings = currentWarnings;
+                }
+
+                // 신규 코인 상태 계산 동기화 (누적코인 - 벌점 - 사용코인)
+                const totalUsed = (targetChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+                const totalPen = (targetChild.penaltyLogs || []).reduce((sum, p) => sum + (p.cost || 20), 0);
+                const cumCoins = Math.max(0, (targetChild.totalEarnedCoins || 0) - totalPen);
+                targetChild.stars = Math.max(0, cumCoins - totalUsed);
+
+                // 4. 결재 내역(approvalHistory)에서 지우기
+                if (targetChild.approvalHistory) {
+                    targetChild.approvalHistory = targetChild.approvalHistory.filter(h => {
+                        if (h.type === 'MISSION') {
+                            if (missionId && h.missionId && String(h.missionId) === String(missionId)) return false;
+                            if (h.date === missionDate && h.subject === subject) return false;
+                        }
+                        return true;
+                    });
+                }
+
+                // 5. 알림 채팅 메시지 전송
+                if (!targetChild.messages) targetChild.messages = [];
+                const now = new Date();
+                const timestamp = `${getLocalIsoString(now)} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+                let chatContent = "";
+                if (isThirdWarning) {
+                    chatContent = `🚨 [마법성 긴급 경보] ${missionDate}의 [${subject}] 학습 완료가 거짓으로 확인되었습니다. 누적 장난 풍선이 3개가 되어 마법성 성벽 보수 비용으로 20코인이 회수되었습니다! ${isPerfectWeekBroken ? '퍼펙트 위크 2배 마법도 취소되어 보너스 코인도 환수되었습니다.' : ''} 앞으로는 정직하게 약속을 지키기로 해요! 🏰💔`;
+                } else {
+                    const balloonCount = targetChild.falseCompletionWarnings;
+                    chatContent = `⚠️ [장난꾸러기 안개 발생] ${missionDate}의 [${subject}] 학습 완료가 거짓으로 확인되어, 장난꾸러기 풍선 1개(누적 경고 ${balloonCount}회)가 불어났습니다. 풍선이 3개가 되면 마법성 보수비용으로 20코인이 회수됩니다. ${isPerfectWeekBroken ? '퍼펙트 위크 보너스 2배 마법도 깨져 회수되었습니다.' : ''} 정직한 마음으로 마법성을 지켜주세요! 🏰🎈`;
+                }
+
+                targetChild.messages.push({
+                    id: `msg-${Date.now()}-${Math.random()}`,
+                    sender: 'PARENT',
+                    content: chatContent,
+                    timestamp: timestamp,
+                    read: false
+                });
+
+                // UI 갱신
+                const warningCountEl = document.getElementById('global-warning-count');
+                if (warningCountEl) warningCountEl.innerText = targetChild.falseCompletionWarnings;
+                document.getElementById('global-star-count').innerText = targetChild.stars;
+                
+                showToast(isThirdWarning 
+                    ? `🚨 3차 경고 누적으로 보수 비용 20코인 및 획득 코인이 차감되었습니다.` 
+                    : `⚠️ 장난꾸러기 풍선 ${targetChild.falseCompletionWarnings}차 경고가 부여되었습니다.`, 
+                    isThirdWarning ? 'error' : 'warning');
+
+                updateParentDashboard();
+                showCompletionDetail();
+
+                await saveStateToFirestore();
+            });
+        }
+
+        // 🚨 자녀 완료 시도 시 경각심을 주는 커스텀 완료 경고 모달
+        function showFalseCompletionWarningModal(balloonCount, onConfirm) {
+            const existing = document.getElementById('false-completion-warning-modal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'false-completion-warning-modal';
+            modal.className = 'fixed inset-0 z-[100000] flex items-center justify-center bg-slate-950/80 backdrop-blur-md opacity-0 transition-opacity duration-300 pointer-events-none';
+            
+            modal.innerHTML = `
+                <div class="bg-white border-4 border-rose-300 p-6 sm:p-8 rounded-[2.5rem] shadow-[0_0_50px_rgba(244,63,94,0.3)] text-center max-w-md w-[92%] transform scale-90 transition-transform duration-300 relative overflow-hidden flex flex-col items-center">
+                    <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-rose-400 via-pink-500 to-rose-400"></div>
+                    
+                    <div class="text-6xl mb-4 animate-bounce relative select-none">
+                        🎈
+                        <span class="absolute -top-1 -right-1 text-xs bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold border border-white">${balloonCount}</span>
+                    </div>
+                    
+                    <h3 class="text-lg sm:text-xl font-black text-rose-600 mb-3 flex items-center gap-1.5 justify-center tracking-tight">
+                        🚨 장난꾸러기 풍선 경보 발령! 🚨
+                    </h3>
+                    
+                    <div class="bg-rose-50/50 border border-rose-100 rounded-2xl p-4 mb-6 w-full text-left">
+                        <p class="text-xs sm:text-sm font-bold text-slate-700 leading-relaxed">
+                            현재 윤자매 대원님은 <span class="text-rose-600 font-extrabold">장난꾸러기 풍선 ${balloonCount}개</span>가 불려 있는 상태예요!
+                        </p>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            풍선이 3개가 되는 순간, 장난꾸러기 풍선이 팡! 하고 터지면서 <b>마법성 보수비용 20코인</b>이 회수됩니다. 또한, 일주일 퍼펙트 2배 보너스 혜택도 함께 취소될 수 있어요.
+                        </p>
+                    </div>
+                    
+                    <p class="text-sm font-extrabold text-slate-800 mb-6 leading-relaxed bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 w-full">
+                        ❓ 오늘의 학습 내용을 정말 정직하게 완료했나요?
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-2 w-full">
+                        <button id="btn-warn-confirm" class="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-black py-3 px-4 rounded-xl shadow-md transition-all duration-200 transform hover:scale-105 active:scale-95 text-xs sm:text-sm border-b-4 border-rose-700">
+                            네! 정직하게 완료했어요 🌟
+                        </button>
+                        <button id="btn-warn-cancel" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black py-3 px-4 rounded-xl transition text-xs sm:text-sm border-b-4 border-slate-300">
+                            앗, 다시 확인할래요! ✍️
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+                const card = modal.querySelector('.bg-white');
+                if (card) card.classList.remove('scale-90');
+            }, 10);
+            
+            const close = () => {
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                const card = modal.querySelector('.bg-white');
+                if (card) card.classList.add('scale-90');
+                setTimeout(() => modal.remove(), 300);
+            };
+            
+            modal.querySelector('#btn-warn-confirm').onclick = () => {
+                close();
+                if (typeof onConfirm === 'function') onConfirm();
+            };
+            
+            modal.querySelector('#btn-warn-cancel').onclick = () => {
+                close();
+            };
+            
+            modal.onclick = (e) => {
+                if (e.target === modal) close();
+            };
+        }
+
+        // 🚨 장난꾸러기 풍선 누적 내역 조회 팝업
+        function showWarningsDetail() {
+            const activeChild = state.children[state.activeChildId];
+            if (!activeChild) return;
+
+            // 경고 7일 자동 리셋 확인 및 갱신
+            const resetHappened = checkAndResetWarnings(activeChild);
+            if (resetHappened) {
+                const warningCountEl = document.getElementById('global-warning-count');
+                if (warningCountEl) warningCountEl.innerText = activeChild.falseCompletionWarnings || 0;
+            }
+
+            const existing = document.getElementById('warnings-detail-modal');
+            if (existing) existing.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'warnings-detail-modal';
+            modal.className = 'fixed inset-0 z-[100000] flex items-center justify-center bg-slate-950/80 backdrop-blur-md opacity-0 transition-opacity duration-300 pointer-events-none';
+            
+            const balloonCount = activeChild.falseCompletionWarnings || 0;
+            const warningLogs = activeChild.warningLogs || [];
+            
+            let listHtml = '';
+            if (warningLogs.length === 0) {
+                listHtml = `
+                    <div class="rounded-3xl p-6 bg-slate-50 border border-slate-100 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">🏰✨</span>
+                        <h4 class="font-bold text-slate-800 text-sm">현재 불어난 장난꾸러기 풍선이 0개입니다!</h4>
+                        <p class="text-slate-400 text-[10px] mt-1">윤자매 대원님은 마법 약속을 아주 성실히 잘 지키고 있어요. 참 잘했습니다!</p>
+                    </div>
+                `;
+            } else {
+                listHtml = '<div class="space-y-3 max-h-[250px] overflow-y-auto pr-1">';
+                warningLogs.forEach(w => {
+                    listHtml += `
+                        <div class="p-3.5 bg-rose-50/50 border border-rose-100 rounded-2xl flex items-start gap-3">
+                            <span class="text-2xl shrink-0">🎈</span>
+                            <div class="flex-1 text-left min-w-0">
+                                <h4 class="font-bold text-rose-700 text-xs sm:text-sm">[${w.subject}] ${w.content || '학습내용'}</h4>
+                                <p class="text-[10px] text-slate-500 mt-1 font-bold flex items-center gap-1"><i class="fa-regular fa-clock text-slate-400"></i> ${w.date} 완료 판정 취소</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                listHtml += '</div>';
+            }
+
+            let countdownHtml = '';
+            if (balloonCount > 0 && activeChild.firstWarningDate) {
+                const firstDate = new Date(activeChild.firstWarningDate);
+                const resetDate = new Date(firstDate);
+                resetDate.setDate(resetDate.getDate() + 7);
+                const resetDateStr = getLocalIsoString(resetDate);
+                countdownHtml = `
+                    <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-2xl text-[10px] sm:text-xs text-amber-800 text-left font-medium leading-relaxed">
+                        ⚠️ <b>장난꾸러기 풍선 유지 기간 안내:</b><br>
+                        - 첫 번째 풍선이 날아온 날: <b>${activeChild.firstWarningDate}</b><br>
+                        - 풍선이 자동으로 날아가는 날(초기화): <b>${resetDateStr} (8일째 아침)</b>
+                    </div>
+                `;
+            }
+
+            modal.innerHTML = `
+                <div class="bg-white border-2 border-slate-200/60 p-6 rounded-[2.5rem] shadow-2xl text-center max-w-md w-[92%] transform scale-90 transition-transform duration-300 relative overflow-hidden flex flex-col">
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-rose-500"></div>
+                    
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                        <h3 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-1.5">
+                            🎈 장난꾸러기 풍선 내역 (${balloonCount}개)
+                        </h3>
+                        <button id="btn-close-warn-detail" class="text-slate-400 hover:text-slate-600 transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    
+                    <p class="text-[11px] sm:text-xs text-slate-500 text-left mb-4 leading-relaxed">
+                        부모님이 완료하지 않은 할 일을 완료했다고 판단하시면 장난꾸러기 풍선이 1개씩 배달됩니다. 풍선이 3개가 모이면 터지면서 성벽 보수비 20코인이 회수됩니다.
+                    </p>
+                    
+                    ${listHtml}
+                    ${countdownHtml}
+                    
+                    <button id="btn-close-warn-detail-bottom" class="mt-6 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl transition text-xs sm:text-sm shadow-sm">
+                        확인 완료!
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100', 'pointer-events-auto');
+                const card = modal.querySelector('.bg-white');
+                if (card) card.classList.remove('scale-90');
+            }, 10);
+            
+            const close = () => {
+                modal.classList.remove('opacity-100');
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                const card = modal.querySelector('.bg-white');
+                if (card) card.classList.add('scale-90');
+                setTimeout(() => modal.remove(), 300);
+            };
+            
+            modal.querySelector('#btn-close-warn-detail').onclick = close;
+            modal.querySelector('#btn-close-warn-detail-bottom').onclick = close;
+            modal.onclick = (e) => {
+                if (e.target === modal) close();
+            };
         }
 
         function getValidStudyLogs(activeChild) {
@@ -5065,7 +5501,17 @@
                 let statusTxt = '교환신청';
                 if (r.status === 'SHIPPING') statusTxt = '배송중';
                 if (r.status === 'DELIVERED') statusTxt = '배송완료';
-                usedItems.push({ date: r.requestedOn || '대기중', title: r.title, cost: r.cost, status: statusTxt });
+                usedItems.push({ date: r.requestedOn || '대기중', title: r.title, cost: r.cost, status: statusTxt, isPenalty: false });
+            });
+
+            (activeChild.penaltyLogs || []).forEach(p => {
+                usedItems.push({
+                    date: p.timestamp || p.date || '날짜 없음',
+                    title: p.content || `🚨 장난꾸러기 풍선 3회 적발 벌점 회수`,
+                    cost: p.cost || 20,
+                    status: '회수완료',
+                    isPenalty: true
+                });
             });
             
             usedItems.sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -5080,19 +5526,19 @@
                     </div>
                 `;
                 html += usedItems.map(item => `
-                    <div class="rounded-3xl border border-rose-200 bg-rose-50 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
+                    <div class="rounded-3xl border ${item.isPenalty ? 'border-rose-300 bg-rose-50/40' : 'border-rose-200 bg-rose-50'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3">
                         <div class="flex flex-col gap-3">
                             <div class="flex items-start justify-between gap-3">
                                 <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                    <span class="text-rose-600">[포상]</span> ${item.title}
+                                    <span class="text-rose-600">${item.isPenalty ? '[벌점]' : '[포상]'}</span> ${item.title}
                                     <span class="text-[11px] font-bold text-slate-400 block sm:inline sm:ml-2 mt-1 sm:mt-0">${item.date}</span>
                                 </h4>
-                                <span class="text-xs font-bold shrink-0 ${item.status === '배송완료' ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full">${item.status}</span>
+                                <span class="text-xs font-bold shrink-0 ${item.status === '배송완료' || item.status === '회수완료' ? 'text-emerald-600 bg-emerald-100' : 'text-orange-600 bg-orange-100'} px-2.5 py-1 rounded-full">${item.status}</span>
                             </div>
                             <div class="flex justify-end">
                                 <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-rose-600 bg-white border border-rose-300 px-3 py-1.5 rounded-2xl shadow-sm">
                                     <i class="fa-solid fa-coins text-rose-500"></i> 
-                                    - ${item.cost}개 사용
+                                    - ${item.cost}개 ${item.isPenalty ? '회수' : '사용'}
                                 </span>
                             </div>
                         </div>
@@ -5165,13 +5611,31 @@
             if (!modal || !activeChild) return;
 
             let items = [];
-            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= startDate && log.date <= endDate);
-            items = logs.map(m => ({ date: m.date, subject: m.subject, content: m.content, range: m.range, actualRange: m.actualRange, completed: m.completed }));
+            const logs = getValidStudyLogs(activeChild).filter(log => log && log.date && typeof log.date === 'string' && log.date >= startDate && log.date <= endDate);
+            items = logs.map(m => ({ 
+                missionId: m.missionId || '', 
+                date: m.date, 
+                subject: m.subject || '', 
+                content: m.content || '', 
+                range: m.range || '', 
+                actualRange: m.actualRange || '', 
+                completed: m.completed || false, 
+                stars: m.stars || 0 
+            }));
             
             const todayStr = getLocalIsoString(now);
             if (todayStr >= startDate && todayStr <= endDate) {
-                const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === todayStr || !m.date) && !m.completed);
-                tMissions.forEach(m => items.push({ date: todayStr, subject: m.subject, content: m.content, range: m.range, actualRange: m.actualRange, completed: false }));
+                const tMissions = (activeChild.todayMissions || []).filter(m => m && (m.date === todayStr || !m.date) && !m.completed);
+                tMissions.forEach(m => items.push({ 
+                    missionId: m.id || '', 
+                    date: todayStr, 
+                    subject: m.subject || '', 
+                    content: m.content || '', 
+                    range: m.range || '', 
+                    actualRange: m.actualRange || '', 
+                    completed: false, 
+                    stars: m.stars || 0 
+                }));
             }
 
             if (mode === 'COMPLETED') {
@@ -5184,13 +5648,26 @@
                 items = items.filter(item => item.subject === subjectFilter);
             }
 
+            // 날짜가 올바른 YYYY-MM-DD 형식인 것만 필터링하여 split/sort 오류 방지
+            items = items.filter(item => item && item.date && typeof item.date === 'string' && item.date.includes('-'));
             items.sort((a,b) => new Date(b.date) - new Date(a.date));
 
             const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
             items.forEach(item => {
-                const [y, m, d] = item.date.split('-');
-                const dObj = new Date(y, m - 1, d);
-                item.dateStr = `${item.date} (${weekdays[dObj.getDay()]}요일)`;
+                const parts = item.date.split('-');
+                if (parts.length === 3) {
+                    const y = parseInt(parts[0]);
+                    const m = parseInt(parts[1]);
+                    const d = parseInt(parts[2]);
+                    const dObj = new Date(y, m - 1, d);
+                    if (!isNaN(dObj.getTime())) {
+                        item.dateStr = `${item.date} (${weekdays[dObj.getDay()]}요일)`;
+                    } else {
+                        item.dateStr = item.date;
+                    }
+                } else {
+                    item.dateStr = item.date;
+                }
             });
 
             currentCompletionItems = items;
@@ -5221,6 +5698,10 @@
                 return;
             }
 
+            const childId = state.isParentMode 
+                ? (document.getElementById('db-filter-child')?.value || state.activeChildId)
+                : state.activeChildId;
+
             const displayedItems = currentCompletionItems.slice(0, currentCompletionLimit);
             
             let html = '';
@@ -5240,7 +5721,7 @@
 
             let currentDateStr = "";
 
-            displayedItems.forEach(item => {
+            displayedItems.forEach((item, index) => {
                 if (currentDateStr !== item.dateStr) {
                     currentDateStr = item.dateStr;
                     html += `
@@ -5255,6 +5736,18 @@
                 const rangeText = item.actualRange || item.range || '';
                 const rangeHtml = rangeText ? `<span class="text-slate-500 font-normal"> / ${rangeText}</span>` : '';
 
+                let actionBtnHtml = '';
+                if (state.isParentMode && item.completed) {
+                    actionBtnHtml = `
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 pt-2 border-t border-indigo-100/60 gap-2">
+                            <span class="text-[10px] text-slate-400 font-bold"><i class="fa-solid fa-circle-question"></i> 실제 완료하지 않고 거짓으로 완료 처리했나요?</span>
+                            <button onclick="triggerFalseCompletionPenalty(${index})" class="text-[10px] font-black text-rose-500 hover:text-white bg-white hover:bg-rose-500 border border-rose-200 rounded-xl px-2.5 py-1.5 transition flex items-center gap-1 shadow-sm shrink-0">
+                                🎈 거짓 완료 판정 (장난 풍선 부과)
+                            </button>
+                        </div>
+                    `;
+                }
+
                 html += `
                     <div class="rounded-3xl border ${item.completed ? 'border-indigo-200 bg-indigo-50 border-l-4 border-l-indigo-500' : 'border-slate-200 bg-slate-50 border-l-4 border-l-slate-400'} p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
                         <div class="flex flex-col gap-3">
@@ -5265,6 +5758,7 @@
                                 </h4>
                                 <span class="text-xs font-bold shrink-0 ${item.completed ? 'text-indigo-600 bg-indigo-100' : 'text-slate-500 bg-slate-200'} px-2.5 py-1 rounded-full whitespace-nowrap">${item.completed ? '✓ 완료' : '미완료'}</span>
                             </div>
+                            ${actionBtnHtml}
                         </div>
                     </div>
                 `;
@@ -5285,6 +5779,15 @@
             currentCompletionLimit += 10;
             renderCompletionDetailList();
         }
+
+        window.triggerFalseCompletionPenalty = function(index) {
+            const item = currentCompletionItems[index];
+            if (!item) return;
+            const childId = state.isParentMode 
+                ? (document.getElementById('db-filter-child')?.value || state.activeChildId)
+                : state.activeChildId;
+            applyFalseCompletionPenalty(childId, item.date, item.subject, item.content || '');
+        };
 
         function closeCompletionDetail() {
             const modal = document.getElementById('completion-detail-modal');
@@ -5489,6 +5992,8 @@
                             
                             if (bonusCoins > 0) {
                                 activeChild.stars += bonusCoins;
+                                initChildCoins(activeChild);
+                                activeChild.totalEarnedCoins = (activeChild.totalEarnedCoins || 0) + bonusCoins;
                                 // ✅ [버그 수정] saveStateToFirestore는 호출자(submitMissionProgress 등)가 처리
                                 // 여기서 직접 save하면 Race Condition 발생 → 제거
                                 
@@ -6284,6 +6789,7 @@
             const activeChild = state.children[state.activeChildId];
             if (!activeChild) return;
             
+            initChildCoins(activeChild);
             const now = new Date();
             const weekStart = getWeekStart(now);
             
@@ -6294,15 +6800,18 @@
             document.getElementById('stat-weekly-earned-coins').innerText = String(weeklyEarned);
             
             const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const totalPenalties = (activeChild.penaltyLogs || []).reduce((sum, p) => sum + (p.cost || 20), 0);
             
             // 사용 코인
-            document.getElementById('stat-used-coins').innerText = String(totalUsedCoins);
+            document.getElementById('stat-used-coins').innerText = String(totalUsedCoins + totalPenalties);
             
             // 누적 획득 코인
-            document.getElementById('stat-total-earned-coins').innerText = String(activeChild.stars + totalUsedCoins);
+            const cumulativeCoins = Math.max(0, (activeChild.totalEarnedCoins || 0) - totalPenalties);
+            document.getElementById('stat-total-earned-coins').innerText = String(cumulativeCoins);
 
             // 잔여 코인
-            document.getElementById('stat-remaining-coins').innerText = String(activeChild.stars);
+            const remainingCoins = Math.max(0, cumulativeCoins - totalUsedCoins);
+            document.getElementById('stat-remaining-coins').innerText = String(remainingCoins);
         }
 
         function renderChildAchievementCharts() {
@@ -6339,23 +6848,86 @@
 
             let message = "";
             if (todayTotal > 0 && todayCompleted === todayTotal) {
-                message = `오늘의 모든 미션을 완벽하게 해냈어요! 정말 대단해요! 🎉`;
+                const allDoneMsgs = [
+                    `오늘의 모든 미션을 완벽하게 해냈어요! 정말 멋지고 기특해요! 🎉`,
+                    `오늘 할 일을 100% 전부 완수했군요! 🎡 마법 나라의 챔피언 대원이에요! 🏆`,
+                    `퍼펙트 완료! 약속을 완벽하게 지킨 우리 대원님께 큰 박수를 보냅니다! 👏👏`,
+                    `와! 오늘의 미션 올클리어! 매일 이렇게 멋지게 해내다니 대단해요! 🌟`,
+                    `오늘의 퀘스트를 모두 해내며 마법의 힘이 한층 더 강력해졌어요! 🧙✨`
+                ];
+                message = allDoneMsgs[Math.floor(Math.random() * allDoneMsgs.length)];
             } else if (todayTotal > 0 && todayCompleted === Math.ceil(todayTotal / 2) && todayTotal > 1) {
-                message = `벌써 절반이나 해냈어요! 조금만 더 힘내면 오늘의 목표 달성! 💪`;
+                const halfDoneMsgs = [
+                    `벌써 절반이나 해냈어요! 조금만 더 힘내면 오늘의 목표 달성! 💪`,
+                    `오늘 할 일의 절반 고지를 넘었네요! ⛰️ 남은 절반도 가뿐하게 해볼까요? 🔥`,
+                    `50% 돌파! 집중력이 아주 대단해요. 이 기세로 마지막까지 파이팅! 🚀`,
+                    `벌써 절반을 정복했군요! 지치지 않는 열정이 정말 멋져요! ✨`,
+                    `절반 완료! 조금씩 성장하는 모습에 마법성도 두근두근 신나요! 🏰`
+                ];
+                message = halfDoneMsgs[Math.floor(Math.random() * halfDoneMsgs.length)];
             } else if (todayTotal > 0 && todayCompleted === 1) {
-                message = `오늘의 첫 미션을 멋지게 완료했군요! 시작이 반이에요! 🚀`;
+                const firstDoneMsgs = [
+                    `오늘의 첫 미션을 멋지게 완료했군요! 시작이 반이에요! 🚀`,
+                    `첫 단추를 완벽하게 채웠네요! 🌟 오늘도 힘차게 출발해 볼까요?`,
+                    `오늘의 첫 성공 기록! 🎯 이 기쁨을 이어 다음 미션도 도전해보아요!`,
+                    `첫 번째 과제를 해내며 멋진 하루가 시작되었어요! 다음엔 뭐가 있을까요? 📝`,
+                    `우와, 오늘 첫 미션 클리어! 기분 좋은 시작으로 오늘도 기분 좋은 하루를 만들어요! ✨`
+                ];
+                message = firstDoneMsgs[Math.floor(Math.random() * firstDoneMsgs.length)];
             } else if (todayTotal > 0 && todayCompleted > 1) {
-                message = `잘하고 있어요! 오늘의 목표를 향해 한 걸음 더 전진! ✨`;
+                const partialDoneMsgs = [
+                    `잘하고 있어요! 오늘의 목표를 향해 한 걸음 더 전진! ✨`,
+                    `하나하나 쌓여가는 미션 성공 도장! 💮 우리 대원의 꾸준함이 무척 멋져요!`,
+                    `공부가 점점 더 재미있어지지 않나요? 📚 이 멋진 흐름을 계속 이어가봐요!`,
+                    `오늘 목표에 아주 가까워지고 있어요. 하나씩 해낼 때마다 마법이 자라나요! 🧙`,
+                    `도전은 멈추지 않는다! 잘하고 있으니 마음 조급해하지 말고 하나씩 정복해봐요! 🛡️`
+                ];
+                message = partialDoneMsgs[Math.floor(Math.random() * partialDoneMsgs.length)];
             } else if (rate >= 0.8 && total > 0) {
-                message = `우와! 이번 주 학습 달성률이 엄청나요! 🚀 끝까지 파이팅!`;
+                const highWeeklyMsgs = [
+                    `우와! 이번 주 학습 달성률이 엄청나요! 🚀 끝까지 파이팅!`,
+                    `이번 주 학습 태도가 정말 성실하군요! 👑 마법 동물이 아주 감격했어요!`,
+                    `주간 완료율이 최고치에 다다르고 있어요! 🌟 윤자매의 집중력은 정말 월등해요!`,
+                    `꾸준함은 힘! 이번 주 보여준 성실함이 멋진 아바타 진화의 발판이 될 거예요! 🦖`,
+                    `대단한 주간 성적이에요! 성실 요정이 우리 대원님 곁에 머물고 있네요! 🧚✨`
+                ];
+                message = highWeeklyMsgs[Math.floor(Math.random() * highWeeklyMsgs.length)];
             } else if (earnedCoins >= 15) {
-                message = `코인이 쑥쑥 쌓이고 있어요! 🪙✨ 상점에서 멋진 선물을 골라볼까요?`;
+                const highCoinsMsgs = [
+                    `코인이 쑥쑥 쌓이고 있어요! 🪙✨ 상점에서 멋진 선물을 골라볼까요?`,
+                    `드림코인 주머니가 가득 차고 있네요! 💰 열심히 노력한 대가라 더욱 빛나요!`,
+                    `반짝이는 골드가 한가득! 🎡 다음 갖고 싶은 보상을 향해 조금만 더 뛰어볼까요?`,
+                    `노력이 코인으로 결실을 맺었어요! 👑 자녀모드 스토어로 쿠폰 신청하러 고고!`,
+                    `드림코인 보물 상자가 반짝반짝 빛나고 있어요! 🎁 멋진 결실 축하해요!`
+                ];
+                message = highCoinsMsgs[Math.floor(Math.random() * highCoinsMsgs.length)];
             } else if (total > 0 && rate >= 0.5) {
-                message = `차근차근 꾸준히 잘하고 있어요! 📚 조금만 더 힘내볼까요?`;
+                const medWeeklyMsgs = [
+                    `차근차근 꾸준히 잘하고 있어요! 📚 조금만 더 힘내볼까요?`,
+                    `반환점을 지났어요! 🏃 스스로 약속을 지키려는 열정이 아름다워요.`,
+                    `스스로 계획하고 실천하는 너는 이미 멋진 자기주도 대원! 🌟`,
+                    `매일 조금씩 공부하는 습관이 모여 미래의 커다란 마법이 될 거예요! 🧙`,
+                    `잘해왔고, 지금도 잘하고 있고, 앞으로도 잘해낼 거예요! 늘 응원해요! 💖`
+                ];
+                message = medWeeklyMsgs[Math.floor(Math.random() * medWeeklyMsgs.length)];
             } else if (total > 0 && rate < 0.5) {
-                message = `어려운 점이 있나요? 괜찮아요! 천천히 하나씩 해나가면 다 할 수 있어요. 💪`;
+                const lowWeeklyMsgs = [
+                    `어려운 점이 있나요? 괜찮아요! 천천히 하나씩 해나가면 다 할 수 있어요. 💪`,
+                    `포기하지 않는 마음이 가장 강한 마법이에요! 🪄 한 번에 하나씩 다시 해볼까요?`,
+                    `넘어져도 다시 일어나면 돼! 언제나 윤자매를 힘차게 응원하고 있어요. ✨`,
+                    `조금 늦어도 전혀 괜찮아요. 공부의 목적은 속도가 아니라 즐거운 배움이니까요! 🧸`,
+                    `오늘 할 수 있는 아주 작은 일부터 시작해볼까요? AI 선생님이 곁에서 도울게요! 🤝`
+                ];
+                message = lowWeeklyMsgs[Math.floor(Math.random() * lowWeeklyMsgs.length)];
             } else {
-                message = `매일매일 쑥쑥 성장하는 ${activeChild.name} 대원이 최고예요! 🎡 오늘도 파이팅!`;
+                const defaultMsgs = [
+                    `매일매일 쑥쑥 성장하는 ${activeChild.name} 대원이 최고예요! 🎡 오늘도 파이팅!`,
+                    `꿈을 향해 한 걸음씩 나아가는 모습이 아름다워요. 오늘 하루도 긍정 파워로 시작! ☀️`,
+                    `놀라운 마법의 세계로 입장하신 윤자매 대원님! 오늘도 반짝반짝 빛날 준비 완료? 🪄`,
+                    `스스로 약속을 지켰을 때의 성취감은 최고죠! 오늘도 멋지게 해내리라 믿어요! 🎯`,
+                    `아침 햇살처럼 싱그러운 우리 대원님의 도전을 매일 응원해요! 💖`
+                ];
+                message = defaultMsgs[Math.floor(Math.random() * defaultMsgs.length)];
             }
 
             if (msgEl) msgEl.innerText = message;
@@ -7056,64 +7628,108 @@
             const emojiEl = document.getElementById('character-cheer-emoji');
             if (!container || !msgEl || !emojiEl) return;
 
-            // 귀여운 동물 캐릭터 일러스트 PNG 파일들 중 무작위(랜덤)로 한 마리를 선택합니다.
-            const pngAnimals = [
-                'assets/cute_baby_bird.png',
-                'assets/cute_baby_bunny.png',
-                'assets/cute_baby_cat.png',
-                'assets/cute_baby_dog.png',
-                'assets/cute_baby_dragon.png',
-                'assets/cute_baby_monkey.png',
-                'assets/cute_baby_panda.png',
-                'assets/cute_baby_sea.png',
-                'assets/cute_baby_tiger.png',
-                'assets/cute_kid_bird.png',
-                'assets/cute_kid_bunny.png',
-                'assets/cute_kid_cat.png',
-                'assets/cute_kid_dog.png',
-                'assets/cute_kid_dragon.png',
-                'assets/cute_kid_panda.png',
-                'assets/cute_kid_sea.png',
-                'assets/cute_kid_tiger.png',
-                'assets/cute_kid_monkey.png',
-                'assets/cute_junior_bird.png',
-                'assets/cute_junior_bunny.png',
-                'assets/cute_junior_cat.png',
-                'assets/cute_junior_dog.png',
-                'assets/cute_junior_dragon.png',
-                'assets/cute_junior_monkey.png',
-                'assets/cute_junior_panda.png',
-                'assets/cute_junior_sea.png',
-                'assets/cute_junior_tiger.png',
-                'assets/cute_hero_bird.png',
-                'assets/cute_hero_bunny.png',
-                'assets/cute_hero_cat.png',
-                'assets/cute_hero_dog.png',
-                'assets/cute_hero_dragon.png',
-                'assets/cute_hero_monkey.png',
-                'assets/cute_hero_panda.png',
-                'assets/cute_hero_sea.png',
-                'assets/cute_hero_tiger.png'
-            ];
+            // 현재 아이가 성취한 아바타 레벨 가져오기
+            const activeChild = state.children[state.activeChildId];
+            let childLevel = 1;
+            if (activeChild) {
+                const status = getAvatarStatus(activeChild);
+                childLevel = status.level || 1;
+            }
+
+            // 해당 레벨과 동일한 동물 리스트 매핑 (칭찬 요정)
+            let pngAnimals = [];
+            if (childLevel === 1) {
+                pngAnimals = ['assets/cute_egg.png'];
+            } else if (childLevel === 2) {
+                pngAnimals = [
+                    'assets/cute_baby_bird.png',
+                    'assets/cute_baby_bunny.png',
+                    'assets/cute_baby_cat.png',
+                    'assets/cute_baby_dog.png',
+                    'assets/cute_baby_dragon.png',
+                    'assets/cute_baby_monkey.png',
+                    'assets/cute_baby_panda.png',
+                    'assets/cute_baby_sea.png',
+                    'assets/cute_baby_tiger.png'
+                ];
+            } else if (childLevel === 3) {
+                pngAnimals = [
+                    'assets/cute_kid_bird.png',
+                    'assets/cute_kid_bunny.png',
+                    'assets/cute_kid_cat.png',
+                    'assets/cute_kid_dog.png',
+                    'assets/cute_kid_dragon.png',
+                    'assets/cute_kid_panda.png',
+                    'assets/cute_kid_sea.png',
+                    'assets/cute_kid_tiger.png',
+                    'assets/cute_kid_monkey.png'
+                ];
+            } else if (childLevel === 4) {
+                pngAnimals = [
+                    'assets/cute_junior_bird.png',
+                    'assets/cute_junior_bunny.png',
+                    'assets/cute_junior_cat.png',
+                    'assets/cute_junior_dog.png',
+                    'assets/cute_junior_dragon.png',
+                    'assets/cute_junior_monkey.png',
+                    'assets/cute_junior_panda.png',
+                    'assets/cute_junior_sea.png',
+                    'assets/cute_junior_tiger.png'
+                ];
+            } else if (childLevel === 5) {
+                pngAnimals = [
+                    'assets/cute_hero_bird.png',
+                    'assets/cute_hero_bunny.png',
+                    'assets/cute_hero_cat.png',
+                    'assets/cute_hero_dog.png',
+                    'assets/cute_hero_dragon.png',
+                    'assets/cute_hero_monkey.png',
+                    'assets/cute_hero_panda.png',
+                    'assets/cute_hero_sea.png',
+                    'assets/cute_hero_tiger.png'
+                ];
+            } else {
+                pngAnimals = [
+                    'assets/cute_legend_bird.png',
+                    'assets/cute_legend_bunny.png',
+                    'assets/cute_legend_cat.png',
+                    'assets/cute_legend_dog.png',
+                    'assets/cute_legend_dragon.png',
+                    'assets/cute_legend_monkey.png',
+                    'assets/cute_legend_panda.png',
+                    'assets/cute_legend_sea.png',
+                    'assets/cute_legend_tiger.png'
+                ];
+            }
             const activeEmoji = pngAnimals[Math.floor(Math.random() * pngAnimals.length)];
 
             let messages = [];
             
             if (stars) {
                 messages = [
-                    `우와! 정말 대단해! 코인 ${stars}개 획득!`,
-                    `최고야 최고! 코인 ${stars}개 획득!`,
-                    `너무 멋진걸? 코인 ${stars}개 획득!`,
-                    `참 잘했어요! 코인 ${stars}개 획득!`,
-                    `훌륭해! 코인 ${stars}개 획득!`
+                    `우와! 정말 대단해! 코인 ${stars}개 획득! 🪙✨`,
+                    `최고야 최고! 코인 ${stars}개 획득! 🌟🎉`,
+                    `너무 멋진걸? 코인 ${stars}개 획득! 🏆🌈`,
+                    `참 잘했어요! 코인 ${stars}개 획득! 🥳🎈`,
+                    `훌륭해! 코인 ${stars}개 획득! 👑⭐`,
+                    `공부 요정이 선물을 줬어! 코인 ${stars}개 획득! 🧚‍♀️💫`,
+                    `천재적인 집중력이야! 코인 ${stars}개 획득! 🧠💥`,
+                    `약속을 잘 지킨 네가 정말 멋져! 코인 ${stars}개 획득! 🤝💖`,
+                    `마법의 동전 주머니가 뚱뚱해졌어! 코인 ${stars}개 획득! 👝✨`,
+                    `오늘의 빛나는 성공 기록! 코인 ${stars}개 획득! 🚀🌌`
                 ];
             } else {
                 messages = [
-                    `우와! 정말 대단해!`,
-                    `최고야 최고! 멋져!`,
-                    `너무 멋진걸? 잘했어!`,
-                    `참 잘했어요! 짝짝짝!`,
-                    `훌륭해! 계속 파이팅!`
+                    `우와! 정말 대단해! 최고야! 👍🎉`,
+                    `최고야 최고! 멋져! 🌟✨`,
+                    `너무 멋진걸? 잘했어! 🏆💖`,
+                    `참 잘했어요! 짝짝짝! 👏👏🥳`,
+                    `훌륭해! 계속 파이팅! 🚀👑`,
+                    `스스로 미션을 해결한 네가 정말 빛나 보여! 🪄⭐`,
+                    `매일 자라나는 네 성실함에 깜짝 놀랐어! 📈🦕`,
+                    `포기하지 않고 끝까지 해낸 네가 자랑스러워! 🦁🛡️`,
+                    `정말 수고 많았어! 토닥토닥 응원할게! 🧸💕`,
+                    `마법 플래너에 또 하나의 멋진 발자국을 남겼네! 🐾💫`
                 ];
             }
 
@@ -7131,27 +7747,11 @@
             
             if (container.dataset.timerId) {
                 clearTimeout(parseInt(container.dataset.timerId));
+                container.dataset.timerId = "";
             }
-            const timerId = setTimeout(() => {
-                closeCharacterCheer();
-            }, 6000);
-            container.dataset.timerId = timerId;
-
-            // 마우스 호버 시 팝업 유지 처리
-            container.onmouseenter = () => {
-                if (container.dataset.timerId) {
-                    clearTimeout(parseInt(container.dataset.timerId));
-                    container.dataset.timerId = "";
-                }
-            };
-            container.onmouseleave = () => {
-                if (!container.classList.contains('opacity-0')) {
-                    const newTimerId = setTimeout(() => {
-                        closeCharacterCheer();
-                    }, 4000); // 마우스가 벗어난 후 4초 대기 후 닫힘
-                    container.dataset.timerId = newTimerId;
-                }
-            };
+            // 마우스 호버 리스너 제거
+            container.onmouseenter = null;
+            container.onmouseleave = null;
         }
 
         function renderSubjectManageList() {
@@ -7222,6 +7822,8 @@
                 if (activeContentEl) activeContentEl.classList.add('hidden');
                 
                 document.getElementById('global-star-count').innerText = "0";
+                const warningCountEl = document.getElementById('global-warning-count');
+                if (warningCountEl) warningCountEl.innerText = "0";
                 const dropdownSelectedName = document.getElementById('dropdown-selected-name');
                 if (dropdownSelectedName) dropdownSelectedName.innerText = "놀이공원 입장 등록 없음";
                 
@@ -7244,7 +7846,21 @@
             const activeChild = state.children[state.activeChildId];
             if (!activeChild) return;
             
+            // 경고 7일 자동 리셋 확인 및 갱신
+            checkAndResetWarnings(activeChild);
+
+            // 코인 값 수학적 보정 동기화 (누적코인 - 벌점 - 사용코인)
+            initChildCoins(activeChild);
+            const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const totalPenalties = (activeChild.penaltyLogs || []).reduce((sum, p) => sum + (p.cost || 20), 0);
+            const cumulativeCoins = Math.max(0, (activeChild.totalEarnedCoins || 0) - totalPenalties);
+            activeChild.stars = Math.max(0, cumulativeCoins - totalUsedCoins);
+
             document.getElementById('global-star-count').innerText = activeChild.stars;
+            const warningCountEl = document.getElementById('global-warning-count');
+            if (warningCountEl) {
+                warningCountEl.innerText = activeChild.falseCompletionWarnings || 0;
+            }
             document.getElementById('welcome-child-name').innerText = activeChild.name;
 
             const headerAvatarContainer = document.getElementById('header-child-avatar-container');
@@ -8173,8 +8789,25 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                 return;
             }
 
-            const prevStars = child.stars || 0;
-            const newStars = Math.max(0, prevStars + amount);
+            initChildCoins(child);
+            if (amount > 0) {
+                child.totalEarnedCoins = (child.totalEarnedCoins || 0) + amount;
+            } else {
+                if (!child.penaltyLogs) child.penaltyLogs = [];
+                child.penaltyLogs.push({
+                    id: `penalty-adjust-${Date.now()}`,
+                    date: getLocalIsoString(),
+                    subject: "부모님 직접 차감",
+                    content: `부모님이 직접 코인 ${Math.abs(amount)}개를 차감(보정)하셨습니다.`,
+                    cost: Math.abs(amount),
+                    timestamp: getLocalIsoString()
+                });
+            }
+
+            const totalUsed = (child.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const totalPen = (child.penaltyLogs || []).reduce((sum, p) => sum + (p.cost || 20), 0);
+            const cumCoins = Math.max(0, (child.totalEarnedCoins || 0) - totalPen);
+            const newStars = Math.max(0, cumCoins - totalUsed);
             child.stars = newStars;
 
             // [추가 구현] 코인 상세 내역(studyLogs)에도 수동 지급/차감 로그 추가하여 리스트 정합성 일치화
@@ -8928,7 +9561,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_dog.png", title: "유치원생 시바견", desc: "노란 유치원 배낭을 멘 장난꾸러기 시바견입니다. 마당을 총총 달리는 걸 좋아해요!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_dog.png", title: "어린이 강아지", desc: "사람들을 도울 준비를 하는 듬직하고 똑똑한 리트리버 대원입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_dog.png", title: "도약하는 강아지", desc: "도약하는 강아지가 되었습니다! 붉은 망토를 두르고 멋지게 점프해봐요!" },
-                    { level: 6, minCoins: 1500, emoji: "🦁", title: "영웅 전설견", desc: "누적 1500코인을 넘긴 대가! 사자처럼 용맹하고 영광스러운 모습의 최종 영웅견입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_dog.png", title: "전설의 강아지", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 강아지입니다! 👑" }
                 ]
             },
             CAT: {
@@ -8939,7 +9572,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_cat.png", title: "유치원생 검은냥", desc: "노란 유치원 배낭을 메고 신나게 탐험하는 귀여운 검은 고양이입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_cat.png", title: "어린이 고양이", desc: "날렵한 무늬를 뽐내며 사냥 놀이에 푹 빠진 수호 꼬마 표범 고양이입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_cat.png", title: "도약하는 고양이", desc: "도약하는 고양이가 되었습니다! 날렵한 몸짓과 푸른 망토로 하늘을 날아오를 듯해요!" },
-                    { level: 6, minCoins: 1500, emoji: "🦄", title: "우주 대스타 냥신", desc: "누적 1500코인을 넘긴 대가! 유니콘처럼 신비한 힘을 품고 날아다니는 은하계 냥신입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_cat.png", title: "전설의 고양이", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 고양이입니다! 👑" }
                 ]
             },
             PANDA: {
@@ -8950,7 +9583,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_panda.png", title: "유치원생 판다", desc: "노란 유치원 배낭을 매고 뒤뚱뒤뚱 걸어가는 사랑스러운 아기 판다입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_panda.png", title: "어린이 판다", desc: "대나무 먹방 후 느긋하게 나무에 매달려 충전하는 숲속의 아기곰입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_panda.png", title: "도약하는 판다", desc: "도약하는 판다가 되었습니다! 숲의 힘을 담아 껑충 기운찬 발차기를 날려요!" },
-                    { level: 6, minCoins: 1500, emoji: "Rex", emoji: "🦖", title: "전설의 수호룡 판다", desc: "누적 1500코인을 넘긴 대가! 공룡처럼 강력한 힘으로 악당을 물리치는 평화의 수호자입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_panda.png", title: "전설의 판다", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 판다입니다! 👑" }
                 ]
             },
             DRAGON: {
@@ -8961,7 +9594,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_dragon.png", title: "유치원생 악어용", desc: "노란 유치원 배낭을 매고 꼬리를 흔들며 날개짓을 하는 귀여운 아기용입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_dragon.png", title: "어린이 용", desc: "목을 길게 빼고 하늘을 향해 평화를 노래하는 든든한 파수꾼 공룡입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_dragon.png", title: "도약하는 용", desc: "도약하는 용이 되었습니다! 날개를 활짝 펴고 위엄차게 날아올라 평화를 외쳐요!" },
-                    { level: 6, minCoins: 1500, emoji: "🐉", title: "신화 속 골드 드래곤", desc: "누적 1500코인을 넘긴 대가! 황금빛 신성한 기운을 휘두르며 승천하는 전설의 신룡입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_dragon.png", title: "전설의 용", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 용입니다! 👑" }
                 ]
             },
             BUNNY: {
@@ -8972,7 +9605,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_bunny.png", title: "유치원생 토끼", desc: "노란 유치원 배낭을 메고 깡충깡충 뛰어다니는 귀여운 하얀 아기 토끼입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_bunny.png", title: "어린이 토끼", desc: "배낭을 메고 모험을 떠나는 귀여운 어린이 토끼 대원입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_bunny.png", title: "도약하는 토끼", desc: "도약하는 토끼가 되었습니다! 핑크색 망토를 휘날리며 숲을 구하기 위해 점프해요!" },
-                    { level: 6, minCoins: 1500, emoji: "🐺", title: "전설의 달빛 늑대", desc: "누적 1500코인을 넘긴 대가! 달빛 아래 늠름한 자태로 우뚝 선 전설의 수호 늑대왕입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_bunny.png", title: "전설의 토끼", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 토끼입니다! 👑" }
                 ]
             },
             BIRD: {
@@ -8983,7 +9616,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_bird.png", title: "유치원생 아기새", desc: "노란 유치원 배낭을 메고 아장아장 신나게 걸어다니는 아기새입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_bird.png", title: "어린이 새", desc: "하늘을 자유롭게 날아오르는 용기 있고 귀여운 어린이 새 대원입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_bird.png", title: "도약하는 새", desc: "도약하는 새가 되었습니다! 강력한 날개짓으로 창공을 활공하는 붉은 망토의 대원입니다!" },
-                    { level: 6, minCoins: 1500, emoji: "🦚", title: "전설의 무지개 공작", desc: "누적 1500코인을 넘긴 대가! 화려하게 날개를 펼쳐 아름다운 무지개빛으로 세상을 비추는 공작새입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_bird.png", title: "전설의 새", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 새입니다! 👑" }
                 ]
             },
             SEA: {
@@ -8994,7 +9627,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_sea.png", title: "유치원생 돌고래", desc: "노란 유치원 배낭을 메고 파도를 가르며 신나게 헤엄치는 아기 돌고래입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_sea.png", title: "어린이 바다생물", desc: "바닷속을 자유롭게 누비며 파도를 타는 귀여운 어린이 바다생물 대원입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_sea.png", title: "도약하는 바다생물", desc: "도약하는 바다생물이 되었습니다! 멋진 푸른 망토를 휘날리며 힘차게 헤엄치는 바다의 수호자입니다!" },
-                    { level: 6, minCoins: 1500, emoji: "🦈", title: "전설의 무적 상어왕", desc: "누적 1500코인을 넘긴 대가! 멋진 지느러미를 뽐내며 바다의 모든 생물을 지키는 상어왕입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_sea.png", title: "전설의 바다생물", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 바다생물입니다! 👑" }
                 ]
             },
             TIGER: {
@@ -9005,7 +9638,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_tiger.png", title: "유치원생 호랑이", desc: "노란 유치원 배낭을 메고 숲속을 총총 뛰어다니는 귀여운 유치원생 아기 호랑이입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_tiger.png", title: "어린이 호랑이", desc: "늠름한 줄무늬를 뽐내며 활기차게 뛰어노는 귀여운 어린이 호랑이 대원입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_tiger.png", title: "도약하는 호랑이", desc: "도약하는 호랑이가 되었습니다! 늠름하고 당당하게 서서 백두대간의 수호신이 될 준비를 합니다!" },
-                    { level: 6, minCoins: 1500, emoji: "🐯", title: "전설의 백호신", desc: "누적 1500코인을 넘긴 대가! 신비롭고 눈부신 하얀 줄무늬로 기운을 불어넣는 수호 백호신입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_tiger.png", title: "전설의 호랑이", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 호랑이입니다! 👑" }
                 ]
             },
             MONKEY: {
@@ -9016,7 +9649,7 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
                     { level: 3, minCoins: 300, emoji: "assets/cute_kid_monkey.png", title: "유치원생 원숭이", desc: "노란 유치원 배낭을 메고 나뭇가지를 껑충껑충 건너다니는 장난꾸러기 유치원생 아기 원숭이입니다!" },
                     { level: 4, minCoins: 600, emoji: "assets/cute_junior_monkey.png", title: "어린이 원숭이", desc: "맛있는 바나나를 먹으며 신나게 숲속을 뛰노는 귀여운 어린이 원숭이 대원입니다!" },
                     { level: 5, minCoins: 1000, emoji: "assets/cute_hero_monkey.png", title: "도약하는 원숭이", desc: "도약하는 원숭이가 되었습니다! 보랏빛 망토와 지혜의 눈빛으로 모험을 떠나는 지휘관입니다!" },
-                    { level: 6, minCoins: 1500, emoji: "🧙", title: "지혜의 대마법사", desc: "누적 1500코인을 넘긴 대가! 지혜의 지팡이를 들고 마법 성장을 돕는 우주 대마법사입니다! 👑" }
+                    { level: 6, minCoins: 1500, emoji: "assets/cute_legend_monkey.png", title: "전설의 원숭이", desc: "누적 1500코인을 넘긴 대가! 성인이 되어 왕관을 쓰고 많은 동물 친구들의 열렬한 환호를 받는 전설의 영웅 원숭이입니다! 👑" }
                 ]
             }
         };
@@ -9033,8 +9666,10 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
 
         // 현재 아바타 상태 정보 추출 유틸리티
         function getAvatarStatus(activeChild) {
+            initChildCoins(activeChild);
             const totalUsedCoins = (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
-            const cumulativeCoins = (activeChild.stars || 0) + totalUsedCoins;
+            const totalPenalties = (activeChild.penaltyLogs || []).reduce((sum, p) => sum + (p.cost || 20), 0);
+            const cumulativeCoins = Math.max(0, (activeChild.totalEarnedCoins || 0) - totalPenalties);
             
             // 학습완료 취소 등으로 누적 코인이 줄어든 경우 명예의 전당 등록 취소 및 오프셋 조정
             let offset = activeChild.avatarCoinsOffset || 0;
@@ -9846,6 +10481,9 @@ function syncTodayMissionsWithDefault(activeChild, currentDayName, targetDateObj
         window.interactWithAvatar = interactWithAvatar;
         window.triggerLevelUpFirework = triggerLevelUpFirework;
         window.graduateCurrentAvatar = graduateCurrentAvatar;
+        window.applyFalseCompletionPenalty = applyFalseCompletionPenalty;
+        window.showWarningsDetail = showWarningsDetail;
+        window.showFalseCompletionWarningModal = showFalseCompletionWarningModal;
 
         runFirebaseSetup();
     </script>
