@@ -802,8 +802,7 @@
                                             <!-- JS에서 img 태그 동적 삽입 -->
                                         </div>
                                         <div>
-                                            <h4 class="text-[11px] font-black text-indigo-500 mb-0.5 tracking-wide">AI
-                                                선생님의 응원</h4>
+                                            <h4 class="text-[11px] font-black text-indigo-500 mb-0.5 tracking-wide" id="plan-ai-cheer-title">AI 선생님의 응원</h4>
                                             <p class="text-sm font-bold text-slate-700" id="plan-ai-cheer-message">매일매일
                                                 조금씩 자라나는 모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
                                         </div>
@@ -1077,7 +1076,7 @@
                                 <!-- JS에서 img 태그 동적 삽입 -->
                             </div>
                             <div>
-                                <h4 class="text-[11px] font-black text-indigo-400 mb-0.5 tracking-wide">AI 선생님의 응원</h4>
+                                <h4 class="text-[11px] font-black text-indigo-400 mb-0.5 tracking-wide" id="child-ai-cheer-title">AI 선생님의 응원</h4>
                                 <p class="text-sm font-bold text-slate-700" id="child-ai-cheer-message">매일매일 조금씩 자라나는
                                     모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
                             </div>
@@ -2339,7 +2338,7 @@
                 <div
                     class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-indigo-50 border-t-2 border-l-2 border-indigo-200 rotate-45">
                 </div>
-                <h4 class="text-xs font-bold text-indigo-600 mb-1">👩‍🏫 AI 선생님의 칭찬 한마디 👨‍🏫</h4>
+                <h4 class="text-xs font-bold text-indigo-600 mb-1" id="ai-teacher-zoom-title">👩‍🏫 AI 선생님의 칭찬 한마디 👨‍🏫</h4>
                 <p class="text-sm font-black text-slate-700 leading-relaxed" id="ai-teacher-zoom-message">참 잘했어요!</p>
             </div>
             <button onclick="closeAiTeacherZoom()"
@@ -2405,9 +2404,15 @@
             const img = document.getElementById('ai-teacher-zoom-img');
             const msg = document.getElementById('ai-teacher-zoom-message');
             const box = document.getElementById('ai-teacher-zoom-box');
+            const title = document.getElementById('ai-teacher-zoom-title');
             if (modal && img && msg && box) {
                 img.src = imgSrc;
                 msg.innerText = message;
+                if (title) {
+                    const isFemale = imgSrc.includes('female');
+                    const name = isFemale ? '지혜 선생님' : '숙제선생님';
+                    title.innerText = `👩‍🏫 ${name}의 칭찬 한마디 👨‍🏫`;
+                }
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 box.classList.remove('scale-90');
                 box.classList.add('scale-100');
@@ -2519,6 +2524,7 @@
         let isOfflineMode = false;
         let unsubSnapshot = null;
         let lastSavedStateStr = "";
+        let lastSavedChildId = null; // 자녀 모드 partial save 시 어떤 자녀 ID를 저장했는지 추적
         let syncDOMTimer = null;
 
         // 차트 인스턴스 전역 보관함
@@ -2806,7 +2812,6 @@
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
             try {
                 const stateToSave = JSON.parse(JSON.stringify(state));
-                lastSavedStateStr = stringifyStable(stateToSave);
 
                 if (!state.isParentMode && state.activeChildId) {
                     // [버그 수정] 자녀 모드: 다른 기기의 자녀 데이터 덮어쓰기 방지를 위해 활성 자녀 데이터만 부분 업데이트
@@ -2816,8 +2821,15 @@
                     if (stateToSave.rewards) updateData["state.rewards"] = stateToSave.rewards;
 
                     await updateDoc(docRef, updateData);
+
+                    // [버그 수정] lastSavedStateStr을 실제 저장된 데이터(활성 자녀 데이터) 기준으로 설정.
+                    // onSnapshot 비교 시 저장된 자녀 데이터만 추출해서 비교하여 불필요한 syncDOM 방지.
+                    lastSavedChildId = state.activeChildId;
+                    lastSavedStateStr = stringifyStable(stateToSave.children[state.activeChildId]);
                 } else {
                     // 부모 모드 또는 전체 업데이트: 전체 state 저장
+                    lastSavedChildId = null;
+                    lastSavedStateStr = stringifyStable(stateToSave);
                     await setDoc(docRef, { state: stateToSave }, { merge: true });
                 }
             } catch (error) {
@@ -2852,8 +2864,19 @@
                     const remoteStateStr = stringifyStable(remoteState);
 
                     // 내 기기에서 저장한 상태에 대한 서버 응답인 경우 불필요한 UI 리렌더링(깜빡임) 방지
-                    if (lastSavedStateStr && remoteStateStr === lastSavedStateStr) {
-                        return;
+                    // [버그 수정] 자녀 모드 partial save 시에는 저장한 자녀 데이터만 추출하여 비교
+                    if (lastSavedStateStr) {
+                        let toCompare;
+                        if (lastSavedChildId && remoteState.children && remoteState.children[lastSavedChildId]) {
+                            // 자녀 모드: 해당 자녀 데이터만 비교
+                            toCompare = stringifyStable(remoteState.children[lastSavedChildId]);
+                        } else {
+                            // 부모 모드: 전체 state 비교
+                            toCompare = remoteStateStr;
+                        }
+                        if (toCompare === lastSavedStateStr) {
+                            return; // 내가 저장한 데이터 그대로 돌아온 경우 무시
+                        }
                     }
 
                     // 3. 로컬 상태도 최신 상태로 정규화하여 비교 시 불일치 방지
@@ -2866,10 +2889,23 @@
                     state = remoteState;
 
                     // 모바일 백그라운드 전환 후 복귀 시 파이어베이스 재연결로 인한 다중 스냅샷(깜빡임) 방지
+                    // [버그 수정] 사용자가 체크리스트 입력 중이면 syncDOM을 바로 실행하지 않고 포커스 해제 후 실행
                     if (syncDOMTimer) clearTimeout(syncDOMTimer);
-                    syncDOMTimer = setTimeout(() => {
-                        syncDOM();
-                    }, 100);
+                    const trySync = () => {
+                        const active = document.activeElement;
+                        const userIsTyping = active && (
+                            active.tagName === 'INPUT' ||
+                            active.tagName === 'SELECT' ||
+                            active.tagName === 'TEXTAREA'
+                        ) && active.closest('#today-missions-list');
+                        if (userIsTyping) {
+                            // 입력 중이면 500ms 후 재시도
+                            syncDOMTimer = setTimeout(trySync, 500);
+                        } else {
+                            syncDOM();
+                        }
+                    };
+                    syncDOMTimer = setTimeout(trySync, 100);
                 }
             });
         }
@@ -7525,6 +7561,17 @@
                 ];
                 message = pastNoMissionMsgs[Math.floor(Math.random() * pastNoMissionMsgs.length)];
                 imageType = "default";
+            } else if (isPast && todayTotal > 0 && todayCompleted === todayTotal) {
+                // [버그 수정] 과거 날짜에서 모든 미션을 완료한 경우 - "오늘" 대신 과거형 메시지 출력
+                const pastAllDoneMsgs = [
+                    `이날 모든 미션을 완벽하게 해냈군요! 정말 대단한 하루였어요! 🎉`,
+                    `그날의 모든 할 일을 100% 완수했네요! 🏆 ${activeChild.name}의 꾸준한 노력이 빛나요!`,
+                    `퍼펙트 완료! 그날의 약속을 완벽하게 지킨 ${activeChild.name}님께 큰 박수를 보냅니다! 👏👏`,
+                    `와! 그날의 미션 올클리어! 이런 멋진 날들이 쌓여 대단한 실력이 되어요! 🌟`,
+                    `그날의 퀘스트를 모두 해내며 마법의 힘이 한층 더 강력해졌었군요! 🧙✨`
+                ];
+                message = pastAllDoneMsgs[Math.floor(Math.random() * pastAllDoneMsgs.length)];
+                imageType = "all_done";
             } else if (isPast && todayCompleted < todayTotal) {
                 const pastUncompletedMsgs = [
                     `지나간 하루 동안 고생 많았어요! 다 끝내지 못했어도 우리 ${activeChild.name}의 노력은 아주 값져요. 🌱`,
@@ -7634,8 +7681,14 @@
             const gender = Math.random() < 0.5 ? 'female' : 'male';
             const imgPath = TEACHER_IMAGES[gender][imageType] || TEACHER_IMAGES[gender].default;
 
+            const teacherName = gender === 'female' ? '지혜 선생님' : '숙제선생님';
+            const titleEl = document.getElementById('child-ai-cheer-title');
+            const planTitleEl = document.getElementById('plan-ai-cheer-title');
+            if (titleEl) titleEl.innerText = `${teacherName}의 응원`;
+            if (planTitleEl) planTitleEl.innerText = `${teacherName}의 응원`;
+
             const safeMsg = message.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            const imgHtml = `<img src="${imgPath}" alt="AI 선생님" class="w-full h-full object-cover hover:scale-110 transition duration-300" onclick="zoomAiTeacher('${imgPath}', '${safeMsg}')">`;
+            const imgHtml = `<img src="${imgPath}" alt="${teacherName}" class="w-full h-full object-cover hover:scale-110 transition duration-300" onclick="zoomAiTeacher('${imgPath}', '${safeMsg}')">`;
 
             if (avatarEl) avatarEl.innerHTML = imgHtml;
             if (planAvatarEl) planAvatarEl.innerHTML = imgHtml;
@@ -8643,7 +8696,18 @@
             renderChildDashboardStats();
             switchChildTab(state.childActiveTab);
             renderSchedulesList();
-            renderTodayMissionsList();
+            // [버그 수정] Firestore onSnapshot에 의한 syncDOM 호출 시,
+            // 사용자가 체크리스트 입력 필드에 포커스 중이면 re-render를 건너뜀
+            // (과거 날짜 조회 중 텍스트 입력 시 미완료 항목이 사라지는 현상 방지)
+            const focusedEl = document.activeElement;
+            const isTypingInChecklist = focusedEl && (
+                focusedEl.tagName === 'INPUT' ||
+                focusedEl.tagName === 'SELECT' ||
+                focusedEl.tagName === 'TEXTAREA'
+            ) && focusedEl.closest('#today-missions-list');
+            if (!isTypingInChecklist) {
+                renderTodayMissionsList();
+            }
             renderStarRewardsStore();
             renderChildApprovalPanel();
             renderScheduleCalendarModal();
@@ -8729,13 +8793,23 @@
             const targetDateStr = `${targetY}-${targetM}-${targetD}`;
             const todayStr = getLocalIsoString();
 
-            // 1. 오래된(어제 이전) '미완료' 미션 정리 및 로그 백업
+            // 1. 오래된 '미완료' 미션 정리 및 로그 백업
+            // [버그 수정 v2] 근본 해결: syncDOM()이 오늘 날짜로 호출될 때도 어제 미완료가 삭제되던 문제 수정.
+            // renderTodayMissionsList()에서 m.date로 날짜 필터링하므로, 과거 미완료를 todayMissions에서
+            // 삭제하지 않아도 오늘 체크리스트에는 노출되지 않음.
+            // 7일(1주일) 이상 경과한 미완료 미션만 정리하여 데이터 비대화 방지.
+            const sevenDaysAgoStr = (() => {
+                const d = new Date();
+                d.setDate(d.getDate() - 7);
+                return getLocalIsoString(d);
+            })();
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                 let mDate = m.date || '';
                 if (!mDate && m.id) {
                     try { mDate = new Date(m.id).toISOString().split('T')[0]; } catch (e) { }
                 }
-                if (!m.completed && mDate && mDate < todayStr) {
+                // 7일 이상 지난 미완료 미션만 정리 (어제 포함 최근 6일 미완료는 보존)
+                if (!m.completed && mDate && mDate < sevenDaysAgoStr) {
                     if (!activeChild.studyLogs) activeChild.studyLogs = [];
                     const isAlreadyInLogs = activeChild.studyLogs.some(log =>
                         (log.missionId && String(log.missionId) === String(m.id)) ||
@@ -8800,15 +8874,21 @@
             });
 
             // 3. 부모님이 기본 플랜에서 삭제한 미션이 있다면 오늘 할 일에서도 실시간 제외 (미완료 건만)
+            // [버그 수정] 과거 날짜를 조회 중일 때는 Step 3를 실행하지 않음.
+            // 과거 날짜의 미완료 미션은 당시의 플랜 기준이므로, 현재 defaultMissions와 비교하여 삭제하면 안 됨.
+            // 예: 어제 등록된 미션의 defaultMissionId가 오늘 기준 플랜에서 수정/삭제된 경우, 어제 미션이 사라지는 문제 발생.
             const beforeFilterLen = activeChild.todayMissions.length;
-            activeChild.todayMissions = activeChild.todayMissions.filter(m => {
-                if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
-                    if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
-                        return false;
+            if (targetDateStr === todayStr) {
+                // 오늘 날짜에서만 현재 플랜과 동기화 (과거 이력은 보존)
+                activeChild.todayMissions = activeChild.todayMissions.filter(m => {
+                    if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
+                        if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
+                            return false;
+                        }
                     }
-                }
-                return true;
-            });
+                    return true;
+                });
+            }
             if (activeChild.todayMissions.length !== beforeFilterLen) {
                 isModified = true;
             }
@@ -8963,6 +9043,8 @@
             renderAiCheerMessage(activeChild);
             const allMissions = activeChild.todayMissions || [];
             const missions = allMissions.filter(m => m.date === targetDateStr);
+
+
 
             if (missions.length === 0) {
                 listEl.innerHTML = `<div class="text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 text-xs">설정된 기본 드림 미션이 없습니다. 우측 상단의 직접 만들기 버튼으로 학습을 설계해 보세요!</div>`;
