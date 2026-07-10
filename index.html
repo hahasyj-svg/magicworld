@@ -16,6 +16,16 @@
 
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎡</text></svg>">
+
+    <!-- PWA 설정 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="스터디플래너">
+    <link rel="apple-touch-icon" href="./assets/icon-192.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -5770,8 +5780,10 @@
                 weekExams.forEach(s => {
                     if (currentDateStr !== s.dateStr) {
                         currentDateStr = s.dateStr;
+                        const isToday = s.duedate === todayStr;
+                        const headerId = isToday ? 'id="week-exam-today-anchor"' : '';
                         html += `
-                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <div ${headerId} class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                                 <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                     <i class="fa-regular fa-calendar text-indigo-500"></i> ${s.dateStr}
                                 </h4>
@@ -5863,6 +5875,19 @@
                 });
 
                 listEl.innerHTML = html;
+
+                // 오늘 날짜 섹션으로 스크롤
+                requestAnimationFrame(() => {
+                    const todayAnchor = listEl.querySelector('#week-exam-today-anchor');
+                    if (todayAnchor) {
+                        todayAnchor.scrollIntoView({ block: 'start', behavior: 'instant' });
+                        // sticky 헤더 높이만큼 위로 보정
+                        listEl.scrollTop = Math.max(0, listEl.scrollTop - 8);
+                    } else {
+                        // 오늘 일정이 없으면 맨 위로
+                        listEl.scrollTop = 0;
+                    }
+                });
             }
 
             modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -11274,6 +11299,17 @@
         window.showFalseCompletionWarningModal = showFalseCompletionWarningModal;
 
         runFirebaseSetup();
+    </script>
+
+    <!-- PWA Service Worker 등록 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ Service Worker 등록 완료:', reg.scope))
+                    .catch(err => console.warn('⚠️ Service Worker 등록 실패:', err));
+            });
+        }
     </script>
 </body>
 
