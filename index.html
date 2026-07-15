@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>My study planner</title>
 
     <!-- 카카오톡 인앱 브라우저 아웃링크 (외부 브라우저 강제 실행) -->
@@ -400,7 +400,7 @@
     </script>
 </head>
 
-<body class="text-slate-800 min-h-[100dvh] flex flex-col transition-colors duration-300" id="app-body">
+<body class="text-slate-800 min-h-screen min-h-[100dvh] flex flex-col transition-colors duration-300" id="app-body">
 
     <!-- ==================== 1. 로그인 / 회원가입 게이트웨이 화면 ==================== -->
     <div id="auth-gateway" class="flex-grow flex items-center justify-center p-4">
@@ -6868,6 +6868,11 @@
             }
 
             const realTodayStr = getLocalIsoString(new Date());
+            const sevenDaysAgoStr = (() => {
+                const d = new Date();
+                d.setDate(d.getDate() - 7);
+                return getLocalIsoString(d);
+            })();
             const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
 
             const titleEl = boardEl.parentElement.querySelector('h3');
@@ -6897,9 +6902,9 @@
 
                 const tMissions = (activeChild.todayMissions || []).filter(m => (m.date === dStr || (!m.date && isToday)));
 
-                // 과거 날짜는 이미 미완료 미션이 정리되어 todayMissions에서 유실되었을 수 있으므로,
-                // 신뢰할 수 있는 getValidStudyLogs(완료 로그 + 미완료 로그 합산)를 통해 성취율을 계산합니다.
-                if (!isPast && tMissions.length > 0) {
+                // 과거 7일 이내는 미완료 미션이 아직 정리되지 않고 todayMissions에 보존되어 있으므로,
+                // todayMissions를 우선 신뢰하여 성취율을 계산합니다. (7일 이전 과거 날짜는 studyLogs 사용)
+                if (dStr >= sevenDaysAgoStr && tMissions.length > 0) {
                     total = tMissions.length;
                     completed = tMissions.filter(m => m.completed).length;
                 } else {
