@@ -3043,6 +3043,9 @@
                     if (child.studyLogs) {
                         child.studyLogs = child.studyLogs.filter(log => log.date && log.date >= str1Year);
                     }
+                    if (child.canceledDefaultMissions) {
+                        child.canceledDefaultMissions = child.canceledDefaultMissions.filter(c => c.date && c.date >= str14Days);
+                    }
                 });
             } catch (pruneErr) {
                 console.warn("과거 데이터 정리 중 에러 발생(무시):", pruneErr);
@@ -4726,7 +4729,19 @@
             }
 
             const doDelete = async () => {
-                // 오늘 할 일 목록에서 삭제
+                // 오늘 할 일 목록에서 삭제 시 기본 반복 계획 미션인 경우 오늘만 취소 이력 기록
+                if (!mission.isCustom && mission.defaultMissionId) {
+                    if (!child.canceledDefaultMissions) child.canceledDefaultMissions = [];
+                    const exists = child.canceledDefaultMissions.some(c => 
+                        String(c.defaultMissionId) === String(mission.defaultMissionId) && c.date === mission.date
+                    );
+                    if (!exists) {
+                        child.canceledDefaultMissions.push({
+                            defaultMissionId: mission.defaultMissionId,
+                            date: mission.date
+                        });
+                    }
+                }
                 child.todayMissions = child.todayMissions.filter(m => String(m.id) !== String(missionId));
 
                 showToast("오늘의 계획 목록에서 해당 미션을 취소했습니다.");
@@ -4808,6 +4823,20 @@
             }
 
             const doBulkDelete = async () => {
+                if (!child.canceledDefaultMissions) child.canceledDefaultMissions = [];
+                selectedMissions.forEach(m => {
+                    if (!m.isCustom && m.defaultMissionId) {
+                        const exists = child.canceledDefaultMissions.some(c => 
+                            String(c.defaultMissionId) === String(m.defaultMissionId) && c.date === m.date
+                        );
+                        if (!exists) {
+                            child.canceledDefaultMissions.push({
+                                defaultMissionId: m.defaultMissionId,
+                                date: m.date
+                            });
+                        }
+                    }
+                });
                 // 할 일 목록에서 일괄 제거
                 child.todayMissions = child.todayMissions.filter(m => {
                     const mIdStr = String(m.id).trim();
@@ -9836,12 +9865,15 @@
             // [버그 수정 v2] 근본 해결: syncDOM()이 오늘 날짜로 호출될 때도 어제 미완료가 삭제되던 문제 수정.
             // renderTodayMissionsList()에서 m.date로 날짜 필터링하므로, 과거 미완료를 todayMissions에서
             // 삭제하지 않아도 오늘 체크리스트에는 노출되지 않음.
-            // 7일(1주일) 이상 경과한 미완료 미션만 정리하여 데이터 비대화 방지.
+            // 7일(1주일) 이상 경과한 미완료 미션 및 오늘만 취소 이력 정리하여 데이터 비대화 방지.
             const sevenDaysAgoStr = (() => {
                 const d = new Date();
                 d.setDate(d.getDate() - 7);
                 return getLocalIsoString(d);
             })();
+            if (activeChild.canceledDefaultMissions) {
+                activeChild.canceledDefaultMissions = activeChild.canceledDefaultMissions.filter(c => c.date >= sevenDaysAgoStr);
+            }
             activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                 let mDate = m.date || '';
                 if (!mDate && m.id) {
@@ -9887,6 +9919,14 @@
                         return;
                     }
                     currentDefaultIds.push(d.id);
+
+                    // 오늘만 취소된 미션 이력이 있다면 재생성하지 않고 건너뜀
+                    const isCanceledForDate = (activeChild.canceledDefaultMissions || []).some(c => 
+                        String(c.defaultMissionId) === String(d.id) && c.date === targetDateStr
+                    );
+                    if (isCanceledForDate) {
+                        return;
+                    }
 
                     // [버그 수정]: 과목명/범위 중복 체크 방식을 제외하고, 오직 고유 defaultMissionId 기준으로만 중복 체크합니다.
                     // 단, 미션을 다른 날로 미룬 경우(예: 토요일에서 일요일) 당일 날짜에 없다는 이유로 재 생성되는 버그를 방지하기 위해
