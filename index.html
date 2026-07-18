@@ -103,6 +103,11 @@
             scrollbar-width: none;
         }
 
+        /* 모바일 터치 스크롤 가속 최적화 */
+        .overflow-y-auto, .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
+        }
+
         .flying-coin {
             position: fixed;
             z-index: 9999;
@@ -1760,7 +1765,68 @@
                             </div>
                         </form>
 
+                        <!-- 반복 기본 학습 계획 조회 필터 (자녀별/요일별 페이징/필터링) -->
+                        <div class="flex flex-wrap items-center gap-3 mb-4 text-xs font-semibold bg-orange-50/40 p-3 rounded-2xl border border-orange-100/50">
+                            <div class="flex items-center gap-2">
+                                <span class="text-slate-600 font-bold"><i class="fa-solid fa-filter text-indigo-500"></i> 조회 필터 선택:</span>
+                            </div>
+                            <div>
+                                <select id="p-table-filter-child" onchange="renderParentDefaultMissionsTable()"
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 font-bold text-slate-700"></select>
+                            </div>
+                            <div>
+                                <select id="p-table-filter-day" onchange="renderParentDefaultMissionsTable()"
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 font-bold text-slate-700">
+                                    <option value="ALL">🗓️ 전체 요일</option>
+                                    <option value="월">월요일</option>
+                                    <option value="화">화요일</option>
+                                    <option value="수">수요일</option>
+                                    <option value="목">목요일</option>
+                                    <option value="금">금요일</option>
+                                    <option value="토">토요일</option>
+                                    <option value="일">일요일</option>
+                                </select>
+                            </div>
+                            <div class="ml-auto">
+                                <button onclick="deleteSelectedDefaultMissions()"
+                                    class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm text-[11px]">
+                                    <i class="fa-solid fa-trash-can text-[10px]"></i> 선택 계획 삭제
+                                </button>
+                            </div>
+                        </div>
+
                         <div id="parent-default-missions-table" class="overflow-x-auto hide-scrollbar"></div>
+                    </div>
+
+                    <!-- 개별 미션 날짜 일시적 변경 (미루기 및 일정 조정) -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mt-6">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl"><i
+                                    class="fa-solid fa-calendar-day text-lg"></i></span>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800">📅 개별 미션 날짜 변경 및 미루기</h3>
+                                <p class="text-xs text-slate-400">매일 반복되는 기본 루틴(위의 목록)은 그대로 둔 채, 오늘 완료하지 못했거나 다른 날로 연기해야 하는 특정 학습을 다른 날로 손쉽게 이동시킵니다.</p>
+                            </div>
+                        </div>
+
+                        <!-- 필터 선택 영역 -->
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col sm:flex-row gap-3 mb-6 text-xs font-semibold">
+                            <div class="flex-1">
+                                <label class="block text-slate-500 font-bold mb-1">대상 자녀 대원</label>
+                                <select id="p-move-child-select" onchange="renderParentTodayMissionsManage()"
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-slate-700"></select>
+                            </div>
+                            <div class="w-full sm:w-48">
+                                <label class="block text-slate-500 font-bold mb-1">조회 일자</label>
+                                <input type="date" id="p-move-date-select" onchange="renderParentTodayMissionsManage()"
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-indigo-600">
+                            </div>
+                        </div>
+
+                        <!-- 특정일자 미션 목록 -->
+                        <div id="parent-today-missions-manage-list" class="space-y-3">
+                            <!-- JS 동적 렌더링 -->
+                        </div>
                     </div>
                 </div>
 
@@ -2571,6 +2637,7 @@
         window.cancelMissionProgress = cancelMissionProgress; // 신규: 완료 미션 취소 기능
         window.changeChecklistDate = changeChecklistDate;
         window.resetChecklistDate = resetChecklistDate;
+        window.selectChecklistDateStr = selectChecklistDateStr;
         window.renderChildStoreStatusList = renderChildStoreStatusList;
         window.setTargetReward = setTargetReward; // 신규: 목표 포상 설정
         window.purchaseReward = purchaseReward;
@@ -2678,6 +2745,16 @@
         window.editRewardStoreItem = editRewardStoreItem;
         window.renderParentRewardsStoreTable = renderParentRewardsStoreTable;
         window.renderParentDefaultMissionsTable = renderParentDefaultMissionsTable;
+        window.renderParentTodayMissionsManage = renderParentTodayMissionsManage;
+        window.postponeMissionToTomorrow = postponeMissionToTomorrow;
+        window.moveMissionToCustomDate = moveMissionToCustomDate;
+        window.deleteMissionForToday = deleteMissionForToday;
+        window.toggleAllTodayMissionsSelect = toggleAllTodayMissionsSelect;
+        window.deleteSelectedTodayMissions = deleteSelectedTodayMissions;
+        window.toggleAllDefaultMissionsSelect = toggleAllDefaultMissionsSelect;
+        window.deleteSelectedDefaultMissions = deleteSelectedDefaultMissions;
+        window.postponeSelectedTodayMissions = postponeSelectedTodayMissions;
+        window.moveSelectedTodayMissionsToCustomDate = moveSelectedTodayMissionsToCustomDate;
 
         window.handleUpdateParentPassword = handleUpdateParentPassword;
 
@@ -3961,9 +4038,26 @@
             parentSelectEl.innerHTML = selectOptionsHtml;
             dbChildSelectEl.innerHTML = dbOptionsHtml;
 
+            const moveChildSelectEl = document.getElementById('p-move-child-select');
+            if (moveChildSelectEl) {
+                moveChildSelectEl.innerHTML = selectOptionsHtml;
+            }
+
+            const tableFilterChildEl = document.getElementById('p-table-filter-child');
+            if (tableFilterChildEl) {
+                const prevVal = tableFilterChildEl.value;
+                tableFilterChildEl.innerHTML = `<option value="ALL">👥 전체 자녀 대원</option>` + selectOptionsHtml;
+                if (prevVal && Array.from(tableFilterChildEl.options).some(o => o.value === prevVal)) {
+                    tableFilterChildEl.value = prevVal;
+                } else {
+                    tableFilterChildEl.value = "ALL";
+                }
+            }
+
             if (state.activeChildId) {
                 parentSelectEl.value = state.activeChildId;
                 dbChildSelectEl.value = state.activeChildId;
+                if (moveChildSelectEl) moveChildSelectEl.value = state.activeChildId;
             }
         }
 
@@ -4077,7 +4171,23 @@
             } else if (tabName === 'ADMIN_MGMT') {
                 loadSystemUserList();
             } else if (tabName === 'PLAN') {
+                const filterChild = document.getElementById('p-table-filter-child');
+                if (filterChild && state.activeChildId) {
+                    filterChild.value = state.activeChildId;
+                }
+                const filterDay = document.getElementById('p-table-filter-day');
+                if (filterDay) {
+                    const days = ['일', '월', '화', '수', '목', '금', '토'];
+                    const todayDayName = days[new Date().getDay()];
+                    filterDay.value = todayDayName;
+                }
+
                 renderParentDefaultMissionsTable();
+                const dateInput = document.getElementById('p-move-date-select');
+                if (dateInput && !dateInput.value) {
+                    dateInput.value = getLocalIsoString();
+                }
+                renderParentTodayMissionsManage();
             } else if (tabName === 'TALK') {
                 renderParentTalkPanel();
             }
@@ -4134,9 +4244,14 @@
             let ownerChildId = null;
             let defaultMission = null;
 
+            const targetIdStr = String(missionId).trim();
+
             if (!deleted) {
                 for (const cid in state.children) {
-                    const dm = (state.children[cid].defaultMissions || []).find(m => String(m.id) === String(missionId));
+                    const dm = (state.children[cid].defaultMissions || []).find(m => {
+                        const mIdStr = String(m.id).trim();
+                        return mIdStr === targetIdStr || parseFloat(mIdStr) === parseFloat(targetIdStr);
+                    });
                     if (dm) {
                         ownerChildId = cid;
                         defaultMission = dm;
@@ -4152,7 +4267,10 @@
                 if (!child.todayMissions) continue;
 
                 child.todayMissions = child.todayMissions.filter(m => {
-                    if (!m.isCustom && String(m.defaultMissionId) === String(missionId)) {
+                    const dmIdStr = String(m.defaultMissionId || '').trim();
+                    const isMatch = dmIdStr && (dmIdStr === targetIdStr || parseFloat(dmIdStr) === parseFloat(targetIdStr));
+
+                    if (!m.isCustom && isMatch) {
                         if (m.completed) return true;
 
                         if (deleted || ownerChildId !== cid) {
@@ -4302,7 +4420,6 @@
             document.getElementById('p-form-enddate').value = "2099-12-31";
             document.getElementById('p-form-submit-btn').innerHTML = `<i class="fa-solid fa-plus"></i> 등록`;
 
-            renderParentDefaultMissionsTable();
             syncDOM();
         }
 
@@ -4334,10 +4451,521 @@
 
         async function deleteDefaultMission(childId, missionId) {
             showConfirm("기본 플랜 삭제", "해당 요일의 기본 반복 계획을 목록에서 삭제할까요?", async () => {
-                state.children[childId].defaultMissions = state.children[childId].defaultMissions.filter(m => String(m.id) !== String(missionId));
+                const targetIdStr = String(missionId).trim();
+                state.children[childId].defaultMissions = state.children[childId].defaultMissions.filter(m => {
+                    const mIdStr = String(m.id).trim();
+                    return mIdStr !== targetIdStr && parseFloat(mIdStr) !== parseFloat(targetIdStr);
+                });
                 updateOrCleanTodayMissionsForDefault(missionId, true);
                 showToast("성공적으로 계획이 삭제되었습니다.");
-                renderParentDefaultMissionsTable();
+                await saveStateToFirestore();
+                syncDOM();
+            });
+        }
+
+        // 특정 날짜의 그 주 일요일 날짜를 계산하는 유틸리티 함수
+        function getSundayOfWeek(dateStr) {
+            const parts = dateStr.split('-');
+            const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            const day = d.getDay(); // 0: 일요일, 1: 월요일, ...
+            const diff = (day === 0) ? 0 : (7 - day); // 일요일까지 남은 일수
+            const sunday = new Date(d);
+            sunday.setDate(d.getDate() + diff);
+            return sunday;
+        }
+
+        // 개별 학습 미션 날짜 연기 및 관리 화면 렌더링
+        function renderParentTodayMissionsManage() {
+            const childSelect = document.getElementById('p-move-child-select');
+            const dateSelect = document.getElementById('p-move-date-select');
+            const listEl = document.getElementById('parent-today-missions-manage-list');
+            if (!childSelect || !dateSelect || !listEl) return;
+
+            // 조회 일자가 비어있다면 오늘 날짜로 기본값 설정
+            if (!dateSelect.value) {
+                dateSelect.value = getLocalIsoString();
+            }
+
+            const childId = childSelect.value;
+            const targetDateStr = dateSelect.value;
+
+            if (!childId) {
+                listEl.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs font-medium">자녀 대원을 먼저 선택해 주세요.</div>`;
+                return;
+            }
+
+            const child = state.children[childId];
+            if (!child) return;
+
+            const allMissions = child.todayMissions || [];
+            const missions = allMissions.filter(m => m.date === targetDateStr);
+
+            if (missions.length === 0) {
+                listEl.innerHTML = `
+                    <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50 text-slate-400 text-xs">
+                        <i class="fa-solid fa-calendar-xmark text-lg mb-2 block text-slate-300"></i>
+                        선택한 날짜(${targetDateStr})에 계획된 개별 미션이 없습니다.
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            
+            // 일괄 제어 바 추가
+            html += `
+                <div class="bg-slate-100/80 p-3.5 rounded-2xl border border-slate-200/50 mb-3 text-xs flex flex-col gap-3">
+                    <!-- 상단: 전체선택 및 일괄 삭제 -->
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2 font-bold text-slate-700">
+                            <input type="checkbox" id="p-move-select-all" onchange="toggleAllTodayMissionsSelect(this)"
+                                class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                            <label for="p-move-select-all" class="cursor-pointer select-none">전체 선택</label>
+                        </div>
+                        <button onclick="deleteSelectedTodayMissions('${childId}')"
+                            class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm text-[11px]">
+                            <i class="fa-solid fa-trash-can text-[10px]"></i> 선택 삭제
+                        </button>
+                    </div>
+                    <!-- 하단: 일괄 미루기 & 이동 -->
+                    <div class="flex items-center gap-2 flex-wrap border-t border-slate-200/60 pt-2.5">
+                        <button onclick="postponeSelectedTodayMissions('${childId}')"
+                            class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm text-[11px]">
+                            <i class="fa-solid fa-arrow-right"></i> 선택 내일로 미루기
+                        </button>
+                        <div class="h-4 w-px bg-slate-300 mx-1 hidden sm:block"></div>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-slate-500 font-bold text-[11px]">일괄 이동 날짜:</span>
+                            <input type="date" id="p-bulk-move-date"
+                                class="bg-white border border-slate-200 rounded-xl px-2 py-1 text-[11px] font-bold text-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            <button onclick="moveSelectedTodayMissionsToCustomDate('${childId}')"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1.5 rounded-xl transition shadow-sm text-[11px]">
+                                일괄 이동
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            missions.forEach(m => {
+                const badgeClass = m.completed
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-orange-100 text-orange-800";
+                const badgeText = m.completed ? "✓ 완료" : "대기중";
+
+                // 해당 미션 날짜의 그 주 일요일(최대 연기 한계선) 구하기
+                const maxDate = getSundayOfWeek(m.date);
+                const maxDateStr = getLocalIsoString(maxDate);
+
+                html += `
+                    <div class="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+                        <div class="flex items-start gap-3 flex-1">
+                            <!-- 개별 선택 체크박스 -->
+                            <input type="checkbox" name="p-move-mission-check" value="${m.id}" data-completed="${m.completed}"
+                                class="w-4 h-4 mt-0.5 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 shrink-0 cursor-pointer">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                    <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${badgeClass}">${badgeText}</span>
+                                    ${m.isCustom ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-black text-[10px] shrink-0">자녀도전</span>' : '<span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-black text-[10px] shrink-0">기본플랜</span>'}
+                                    <span class="font-bold text-slate-800 text-sm">[${m.subject}] ${m.content || '-'}</span>
+                                </div>
+                                <div class="text-slate-500 font-medium">기본 범위: <span class="text-slate-700 font-bold">${m.range}</span> | 코인: ⭐ ${m.stars || 1}개</div>
+                                ${m.completed ? `<div class="text-emerald-600 font-semibold mt-1">💡 완료 결과: ${m.actualRange || '-'} (${m.timeSpent || 0}분 공부 완료)</div>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap items-center gap-2 shrink-0 bg-white p-2.5 rounded-xl border border-slate-100 ml-7 md:ml-0">
+                            <!-- 내일로 미루기 단축 버튼 (일요일까지만 활성화) -->
+                            <button onclick="postponeMissionToTomorrow('${childId}', '${m.id}')" 
+                                ${m.completed ? 'disabled' : ''}
+                                class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-bold px-2.5 py-1.5 rounded-lg transition flex items-center gap-1 ${m.completed ? 'opacity-40 cursor-not-allowed' : ''}">
+                                <i class="fa-solid fa-arrow-right"></i> 내일로 미루기
+                            </button>
+                            
+                            <!-- 날짜 직접 이동 (해당 주 일요일까지만 선택 가능하게 min/max 제약) -->
+                            <div class="flex items-center gap-1 border-l border-slate-200 pl-2">
+                                <input type="date" id="p-move-date-input-${m.id}" value="${m.date}" 
+                                    min="${m.date}" max="${maxDateStr}"
+                                    ${m.completed ? 'disabled' : ''}
+                                    class="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[11px] font-bold text-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${m.completed ? 'opacity-40 cursor-not-allowed' : ''}">
+                                <button onclick="moveMissionToCustomDate('${childId}', '${m.id}')" 
+                                    ${m.completed ? 'disabled' : ''}
+                                    class="bg-indigo-600 text-white font-bold px-2.5 py-1.5 rounded-lg hover:bg-indigo-700 transition ${m.completed ? 'opacity-40 cursor-not-allowed' : ''}">
+                                    이동
+                                </button>
+                            </div>
+                            
+                            <!-- 오늘만 미션 취소 버튼 -->
+                            <button onclick="deleteMissionForToday('${childId}', '${m.id}')" 
+                                ${m.completed ? 'disabled' : ''}
+                                class="bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-600 font-bold px-2.5 py-1.5 rounded-lg transition ml-2 flex items-center gap-1 ${m.completed ? 'opacity-40 cursor-not-allowed' : ''}">
+                                <i class="fa-solid fa-trash-can"></i> 오늘만 취소
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listEl.innerHTML = html;
+        }
+
+        // 미션 내일로 미루기 비즈니스 로직
+        async function postponeMissionToTomorrow(childId, missionId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const mission = child.todayMissions.find(m => String(m.id) === String(missionId));
+            if (!mission) return;
+
+            if (mission.completed) {
+                showAlert("연기 불가", "이미 완료된 미션은 다른 날짜로 연기할 수 없습니다.");
+                return;
+            }
+
+            // 내일 날짜 계산 (타임존 세이프)
+            const parts = mission.date.split('-');
+            const currentDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            currentDate.setDate(currentDate.getDate() + 1);
+            const targetDateStr = getLocalIsoString(currentDate);
+
+            // 이번 주 일요일(한계선) 구하기
+            const maxDate = getSundayOfWeek(mission.date);
+            const maxDateStr = getLocalIsoString(maxDate);
+
+            // 일요일 초과 차단 검증
+            if (targetDateStr > maxDateStr) {
+                showAlert("연기 불가", `해당 미션은 이번 주 일요일(${maxDateStr})까지만 연기할 수 있습니다. 이미 주말에 도달했거나 더 미룰 수 없는 상태입니다.`);
+                return;
+            }
+
+            // 요일 구하기 및 코멘트 추가
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            const originalParts = mission.date.split('-');
+            const originalDateObj = new Date(Number(originalParts[0]), Number(originalParts[1]) - 1, Number(originalParts[2]));
+            const originalDay = weekdays[originalDateObj.getDay()];
+
+            // 기존 미루기 코멘트가 붙어있으면 사전 제거 (중복 방지)
+            let cleanContent = (mission.content || "").replace(/\s*\([월화수목금토일]요일에 못한 일\)/g, "");
+            mission.content = cleanContent ? `${cleanContent} (${originalDay}요일에 못한 일)` : `(${originalDay}요일에 못한 일)`;
+
+            mission.date = targetDateStr;
+
+            showToast("미션을 내일로 연기했습니다.");
+
+            await saveStateToFirestore();
+            syncDOM();
+        }
+
+        // 미션 날짜 직접 지정 이동 비즈니스 로직
+        async function moveMissionToCustomDate(childId, missionId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const mission = child.todayMissions.find(m => String(m.id) === String(missionId));
+            if (!mission) return;
+
+            if (mission.completed) {
+                showAlert("이동 불가", "이미 완료된 미션은 다른 날짜로 이동할 수 없습니다.");
+                return;
+            }
+
+            const dateInput = document.getElementById(`p-move-date-input-${missionId}`);
+            if (!dateInput || !dateInput.value) {
+                showAlert("날짜 미지정", "이동할 목표 날짜를 정확히 선택해 주세요.");
+                return;
+            }
+
+            const targetDateStr = dateInput.value;
+
+            // 이번 주 일요일(한계선) 구하기
+            const maxDate = getSundayOfWeek(mission.date);
+            const maxDateStr = getLocalIsoString(maxDate);
+
+            // 일요일 초과 차단 검증
+            if (targetDateStr > maxDateStr) {
+                showAlert("연기 불가", `해당 미션은 이번 주 일요일(${maxDateStr})까지만 연기할 수 있습니다.\n선택하신 날짜: ${targetDateStr}`);
+                return;
+            }
+
+            // 오늘 날짜 및 원래 미션 날짜보다 과거로 이동 차단
+            if (targetDateStr < mission.date) {
+                showAlert("이동 불가", "원래 계획된 날짜보다 과거로 미션을 이동할 수 없습니다.");
+                return;
+            }
+
+            // 요일 구하기 및 코멘트 추가
+            const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+            const originalParts = mission.date.split('-');
+            const originalDateObj = new Date(Number(originalParts[0]), Number(originalParts[1]) - 1, Number(originalParts[2]));
+            const originalDay = weekdays[originalDateObj.getDay()];
+
+            let cleanContent = (mission.content || "").replace(/\s*\([월화수목금토일]요일에 못한 일\)/g, "");
+            mission.content = cleanContent ? `${cleanContent} (${originalDay}요일에 못한 일)` : `(${originalDay}요일에 못한 일)`;
+
+            mission.date = targetDateStr;
+
+            showToast(`미션 날짜를 ${targetDateStr}(으)로 변경했습니다.`);
+
+            await saveStateToFirestore();
+            syncDOM();
+        }
+
+        // 특정일 하루만 미션 취소 비즈니스 로직
+        async function deleteMissionForToday(childId, missionId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const mission = child.todayMissions.find(m => String(m.id) === String(missionId));
+            if (!mission) return;
+
+            if (mission.completed) {
+                showAlert("취소 불가", "이미 완료된 미션은 취소할 수 없습니다.");
+                return;
+            }
+
+            const doDelete = async () => {
+                // 오늘 할 일 목록에서 삭제
+                child.todayMissions = child.todayMissions.filter(m => String(m.id) !== String(missionId));
+
+                showToast("오늘의 계획 목록에서 해당 미션을 취소했습니다.");
+
+                await saveStateToFirestore();
+                syncDOM();
+            };
+
+            showConfirm("오늘만 삭제", "이 미션을 기본 반복 플랜에서 삭제하지 않고, 오늘 하루만 이 목록에서 제외할까요?", async () => {
+                await doDelete();
+            });
+        }
+
+        // 개별 학습 미션 일괄 선택용 전체선택 토글
+        function toggleAllTodayMissionsSelect(masterCb) {
+            const checkboxes = document.getElementsByName('p-move-mission-check');
+            Array.from(checkboxes).forEach(cb => {
+                cb.checked = masterCb.checked;
+            });
+        }
+
+        // 반복 기본 계획 일괄 선택용 전체선택 토글
+        function toggleAllDefaultMissionsSelect(masterCb) {
+            const checkboxes = document.getElementsByName('p-default-mission-check');
+            Array.from(checkboxes).forEach(cb => {
+                cb.checked = masterCb.checked;
+            });
+        }
+
+        // 선택된 반복 기본 계획 일괄 삭제 처리
+        async function deleteSelectedDefaultMissions() {
+            const checkboxes = Array.from(document.getElementsByName('p-default-mission-check'));
+            const checkedBoxes = checkboxes.filter(cb => cb.checked);
+
+            if (checkedBoxes.length === 0) {
+                showToast("선택된 계획이 없습니다.");
+                return;
+            }
+
+            showConfirm("선택 계획 일괄 삭제", `선택한 ${checkedBoxes.length}개의 기본 반복 계획을 삭제하시겠습니까?`, async () => {
+                checkedBoxes.forEach(cb => {
+                    const [childId, missionId] = cb.value.split(':');
+                    const child = state.children[childId];
+                    if (child && child.defaultMissions) {
+                        child.defaultMissions = child.defaultMissions.filter(m => String(m.id) !== String(missionId));
+                        updateOrCleanTodayMissionsForDefault(missionId, true);
+                    }
+                });
+
+                showToast("선택한 기본 반복 계획을 삭제했습니다.");
+                await saveStateToFirestore();
+                syncDOM();
+            });
+        }
+
+        // 선택된 개별 학습 미션 일괄 삭제 처리
+        async function deleteSelectedTodayMissions(childId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const checkboxes = Array.from(document.getElementsByName('p-move-mission-check'));
+            const checkedBoxes = checkboxes.filter(cb => cb.checked);
+
+            if (checkedBoxes.length === 0) {
+                showToast("선택된 미션이 없습니다.");
+                return;
+            }
+
+            const selectedIds = checkedBoxes.map(cb => String(cb.value).trim());
+            const selectedMissions = child.todayMissions.filter(m => {
+                const mIdStr = String(m.id).trim();
+                return selectedIds.some(id => id === mIdStr || parseFloat(id) === parseFloat(mIdStr));
+            });
+            const hasCompleted = selectedMissions.some(m => m.completed);
+
+            if (hasCompleted) {
+                showAlert("삭제 불가", "선택 항목에 이미 완료된 미션이 포함되어 있어 일괄 삭제할 수 없습니다. 완료 미션을 제외하고 선택해 주세요.");
+                return;
+            }
+
+            const doBulkDelete = async () => {
+                // 할 일 목록에서 일괄 제거
+                child.todayMissions = child.todayMissions.filter(m => {
+                    const mIdStr = String(m.id).trim();
+                    const isMatch = selectedIds.some(id => id === mIdStr || parseFloat(id) === parseFloat(mIdStr));
+                    return !isMatch;
+                });
+
+                showToast(`선택한 ${selectedMissions.length}개의 미션을 일괄 삭제했습니다.`);
+
+                await saveStateToFirestore();
+                syncDOM();
+            };
+
+            showConfirm("일괄 삭제 확인", `선택한 ${selectedMissions.length}개의 미션을 오늘 목록에서 삭제하시겠습니까?`, async () => {
+                await doBulkDelete();
+            });
+        }
+
+        // 선택된 개별 학습 미션 일괄 내일로 미루기 처리
+        async function postponeSelectedTodayMissions(childId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const checkboxes = Array.from(document.getElementsByName('p-move-mission-check'));
+            const checkedBoxes = checkboxes.filter(cb => cb.checked);
+
+            if (checkedBoxes.length === 0) {
+                showToast("선택된 미션이 없습니다.");
+                return;
+            }
+
+            const selectedIds = checkedBoxes.map(cb => String(cb.value).trim());
+            const selectedMissions = child.todayMissions.filter(m => {
+                const mIdStr = String(m.id).trim();
+                return selectedIds.some(id => id === mIdStr || parseFloat(id) === parseFloat(mIdStr));
+            });
+            const hasCompleted = selectedMissions.some(m => m.completed);
+
+            // 1. 완료 상태 검증
+            if (hasCompleted) {
+                showAlert("연기 불가", "선택 항목에 이미 완료된 미션이 포함되어 있어 일괄 연기할 수 없습니다. 완료 미션을 제외하고 선택해 주세요.");
+                return;
+            }
+
+            // 2. 한계선(일요일) 초과 여부 사전 검증
+            let hasExceededLimit = false;
+            selectedMissions.forEach(m => {
+                const parts = m.date.split('-');
+                const currentDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                currentDate.setDate(currentDate.getDate() + 1);
+                const targetDateStr = getLocalIsoString(currentDate);
+
+                const maxDate = getSundayOfWeek(m.date);
+                const maxDateStr = getLocalIsoString(maxDate);
+
+                if (targetDateStr > maxDateStr) {
+                    hasExceededLimit = true;
+                }
+            });
+
+            if (hasExceededLimit) {
+                showAlert("연기 불가", "선택한 미션 중 이미 이번 주 일요일에 도달하여 더 이상 내일로 연기할 수 없는 미션이 포함되어 있습니다.");
+                return;
+            }
+
+            showConfirm("일괄 내일로 미루기", `선택한 ${selectedMissions.length}개의 미션을 각각 내일로 연기하시겠습니까?`, async () => {
+                selectedMissions.forEach(m => {
+                    // 내일 날짜 계산
+                    const parts = m.date.split('-');
+                    const currentDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                    currentDate.setDate(currentDate.getDate() + 1);
+                    const targetDateStr = getLocalIsoString(currentDate);
+
+                    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                    const originalParts = m.date.split('-');
+                    const originalDateObj = new Date(Number(originalParts[0]), Number(originalParts[1]) - 1, Number(originalParts[2]));
+                    const originalDay = weekdays[originalDateObj.getDay()];
+
+                    let cleanContent = (m.content || "").replace(/\s*\([월화수목금토일]요일에 못한 일\)/g, "");
+                    m.content = cleanContent ? `${cleanContent} (${originalDay}요일에 못한 일)` : `(${originalDay}요일에 못한 일)`;
+                    m.date = targetDateStr;
+                });
+
+                showToast(`선택한 ${selectedMissions.length}개의 미션을 각각 내일로 연기했습니다.`);
+                await saveStateToFirestore();
+                syncDOM();
+            });
+        }
+
+        // 선택된 개별 학습 미션 일괄 날짜 지정 이동 처리
+        async function moveSelectedTodayMissionsToCustomDate(childId) {
+            const child = state.children[childId];
+            if (!child) return;
+
+            const dateInput = document.getElementById('p-bulk-move-date');
+            if (!dateInput || !dateInput.value) {
+                showAlert("날짜 미지정", "일괄 이동할 목표 날짜를 정확히 선택해 주세요.");
+                return;
+            }
+
+            const targetDateStr = dateInput.value;
+
+            const checkboxes = Array.from(document.getElementsByName('p-move-mission-check'));
+            const checkedBoxes = checkboxes.filter(cb => cb.checked);
+
+            if (checkedBoxes.length === 0) {
+                showToast("선택된 미션이 없습니다.");
+                return;
+            }
+
+            const selectedIds = checkedBoxes.map(cb => String(cb.value).trim());
+            const selectedMissions = child.todayMissions.filter(m => {
+                const mIdStr = String(m.id).trim();
+                return selectedIds.some(id => id === mIdStr || parseFloat(id) === parseFloat(mIdStr));
+            });
+            const hasCompleted = selectedMissions.some(m => m.completed);
+
+            // 1. 완료 상태 검증
+            if (hasCompleted) {
+                showAlert("이동 불가", "선택 항목에 이미 완료된 미션이 포함되어 있어 일괄 이동할 수 없습니다. 완료 미션을 제외하고 선택해 주세요.");
+                return;
+            }
+
+            // 2. 한계 조건 검증 (과거로 이동 또는 일요일 초과 이동 방지)
+            let hasExceededLimit = false;
+            let hasPastLimit = false;
+            selectedMissions.forEach(m => {
+                const maxDate = getSundayOfWeek(m.date);
+                const maxDateStr = getLocalIsoString(maxDate);
+
+                if (targetDateStr > maxDateStr) {
+                    hasExceededLimit = true;
+                }
+                if (targetDateStr < m.date) {
+                    hasPastLimit = true;
+                }
+            });
+
+            if (hasExceededLimit) {
+                showAlert("이동 불가", "선택한 미션 중 목표 날짜가 이번 주 일요일을 초과하는 항목이 포함되어 있어 이동할 수 없습니다. 미션은 주 범위 내의 일요일까지만 이동할 수 있습니다.");
+                return;
+            }
+            if (hasPastLimit) {
+                showAlert("이동 불가", "선택한 미션 중 원래 계획된 날짜보다 과거로 이동하려는 항목이 포함되어 있어 이동할 수 없습니다.");
+                return;
+            }
+
+            showConfirm("일괄 날짜 이동", `선택한 ${selectedMissions.length}개의 미션을 ${targetDateStr}(으)로 일괄 이동하시겠습니까?`, async () => {
+                selectedMissions.forEach(m => {
+                    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+                    const originalParts = m.date.split('-');
+                    const originalDateObj = new Date(Number(originalParts[0]), Number(originalParts[1]) - 1, Number(originalParts[2]));
+                    const originalDay = weekdays[originalDateObj.getDay()];
+
+                    let cleanContent = (m.content || "").replace(/\s*\([월화수목금토일]요일에 못한 일\)/g, "");
+                    m.content = cleanContent ? `${cleanContent} (${originalDay}요일에 못한 일)` : `(${originalDay}요일에 못한 일)`;
+                    m.date = targetDateStr;
+                });
+
+                showToast(`선택한 ${selectedMissions.length}개의 미션을 ${targetDateStr}(으)로 이동했습니다.`);
                 await saveStateToFirestore();
                 syncDOM();
             });
@@ -4347,10 +4975,19 @@
             const tableContainer = document.getElementById('parent-default-missions-table');
             if (!tableContainer) return;
 
+            const childFilterEl = document.getElementById('p-table-filter-child');
+            const dayFilterEl = document.getElementById('p-table-filter-day');
+
+            const childFilter = childFilterEl ? childFilterEl.value : 'ALL';
+            const dayFilter = dayFilterEl ? dayFilterEl.value : 'ALL';
+
             let tableHtml = `
                 <table class="w-full text-left border-collapse text-xs mt-2">
                     <thead>
                         <tr class="border-b-2 border-orange-200 bg-amber-50/50 text-slate-500 font-bold">
+                                <th class="p-2.5 text-center border-r border-orange-100 w-10">
+                                    <input type="checkbox" id="p-default-select-all" onchange="toggleAllDefaultMissionsSelect(this)" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                                </th>
                                 <th class="p-2.5 whitespace-nowrap border-r border-orange-100">자녀이름</th>
                                 <th class="p-2.5 whitespace-nowrap border-r border-orange-100">요일</th>
                                 <th class="p-2.5 whitespace-nowrap border-r border-orange-100">시작일자</th>
@@ -4369,8 +5006,12 @@
             const dayOrder = { '월': 1, '화': 2, '수': 3, '목': 4, '금': 5, '토': 6, '일': 7 };
 
             Object.values(state.children || {}).forEach(c => {
+                if (childFilter !== 'ALL' && c.id !== childFilter) return;
+
                 let defaults = c.defaultMissions || [];
                 defaults.forEach(m => {
+                    if (dayFilter !== 'ALL' && m.day !== dayFilter) return;
+
                     allMissions.push({
                         childId: c.id,
                         childName: c.name,
@@ -4399,7 +5040,7 @@
             });
 
             if (allMissions.length === 0) {
-                tableHtml += `<tr><td colspan="9" class="p-6 text-center text-slate-400">등록된 기본 계획이 없습니다.</td></tr>`;
+                tableHtml += `<tr><td colspan="10" class="p-6 text-center text-slate-400">선택한 필터 조건에 부합하는 등록된 기본 계획이 없습니다.</td></tr>`;
             } else {
                 let prevChild = null;
                 let prevDay = null;
@@ -4422,6 +5063,10 @@
 
                     tableHtml += `
                         <tr class="${trClass}">
+                                <td class="p-2.5 text-center border-r border-slate-100 bg-slate-50/50 w-10">
+                                    <input type="checkbox" name="p-default-mission-check" value="${m.childId}:${m.id}"
+                                        class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer">
+                                </td>
                                 <td class="p-2.5 font-bold text-slate-700 whitespace-nowrap border-r border-slate-100 bg-slate-50/50">
                                     <div class="flex items-center gap-2">
                                         ${avatarHtml}
@@ -4538,7 +5183,6 @@
             document.getElementById('reward-form-cost').value = "";
             document.getElementById('reward-form-submit-btn').innerHTML = `<i class="fa-solid fa-plus"></i> 등록`;
 
-            renderParentRewardsStoreTable();
             await saveStateToFirestore();
             syncDOM();
         }
@@ -4547,7 +5191,6 @@
             showConfirm("포상 삭제", "해당 포상 상품을 상점에서 정말로 철수할까요?", async () => {
                 state.rewards = state.rewards.filter(r => String(r.id) !== String(rewardId));
                 showToast("포상 상품이 삭제 처리되었습니다.");
-                renderParentRewardsStoreTable();
                 await saveStateToFirestore();
                 syncDOM();
             });
@@ -4842,7 +5485,6 @@
             if (!targetChild.todayMissions) targetChild.todayMissions = [];
             targetChild.todayMissions.push(newMission);
 
-            document.getElementById('child-form-subject').value = "";
             document.getElementById('child-form-content').value = "";
             document.getElementById('child-form-range').value = "";
             document.getElementById('child-form-stars').value = "1";
@@ -5888,7 +6530,7 @@
                     if (currentDateStr !== m.dateStr) {
                         currentDateStr = m.dateStr;
                         html += `
-                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <div class="sticky top-0 bg-white z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                                 <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                     <i class="fa-regular fa-calendar-check text-indigo-500"></i> ${m.dateStr}
                                 </h4>
@@ -5957,7 +6599,7 @@
                     if (currentDateStr !== m.dateStr) {
                         currentDateStr = m.dateStr;
                         html += `
-                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <div class="sticky top-0 bg-white z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                                 <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                     <i class="fa-regular fa-calendar-check text-emerald-500"></i> ${m.dateStr}
                                 </h4>
@@ -6030,7 +6672,7 @@
                     if (currentDateStr !== m.dateStr) {
                         currentDateStr = m.dateStr;
                         listEl.innerHTML += `
-                            <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <div class="sticky top-0 bg-white z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                                 <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                     <i class="fa-regular fa-calendar-check text-amber-500"></i> ${m.dateStr}
                                 </h4>
@@ -6117,7 +6759,7 @@
                         const isToday = s.duedate === todayStr;
                         const headerId = isToday ? 'id="week-exam-today-anchor"' : '';
                         html += `
-                            <div ${headerId} class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                            <div ${headerId} class="sticky top-0 bg-white z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                                 <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                     <i class="fa-regular fa-calendar text-indigo-500"></i> ${s.dateStr}
                                 </h4>
@@ -6396,7 +7038,7 @@
                 if (currentDateStr !== item.dateStr) {
                     currentDateStr = item.dateStr;
                     html += `
-                        <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                        <div class="sticky top-0 bg-white z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                             <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                 <i class="fa-regular fa-calendar-check text-amber-500"></i> ${item.dateStr}
                             </h4>
@@ -6751,7 +7393,7 @@
                 if (currentDateStr !== item.dateStr) {
                     currentDateStr = item.dateStr;
                     html += `
-                        <div class="sticky top-0 bg-white/95 backdrop-blur-sm z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
+                        <div class="sticky top-0 bg-white z-10 py-2 mb-2 border-b border-slate-200 shadow-sm rounded-t-xl px-2">
                             <h4 class="text-sm font-black text-slate-700 flex items-center gap-2">
                                 <i class="fa-regular fa-calendar-check text-indigo-500"></i> ${item.dateStr}
                             </h4>
@@ -6949,7 +7591,9 @@
                 }
 
                 html += `
-                    <div class="flex flex-col items-center gap-2 min-w-[50px] ${animationClass}">
+                    <div onclick="selectChecklistDateStr('${dStr}')" 
+                        class="flex flex-col items-center gap-2 min-w-[50px] cursor-pointer hover:scale-110 active:scale-95 transition-transform duration-200 ${animationClass}"
+                        title="${dStr} 체크리스트로 이동">
                         <span class="text-[11px] font-bold ${isToday ? 'text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full' : 'text-slate-500'}">${weekdays[i]}</span>
                         ${stickerHtml}
                     </div>
@@ -8720,12 +9364,25 @@
             const childSelect = document.getElementById('child-form-subject');
             const parentSelect = document.getElementById('p-form-subject');
 
+            const prevChildVal = childSelect ? childSelect.value : '';
+            const prevParentVal = parentSelect ? parentSelect.value : '';
+
             if (!state.subjects) state.subjects = ['국어', '영어', '수학', '독서', '예체능', '생활', '한자'];
 
             const optionsHtml = state.subjects.map(s => `<option value="${s}">${s}</option>`).join('');
 
-            if (childSelect) childSelect.innerHTML = optionsHtml;
-            if (parentSelect) parentSelect.innerHTML = optionsHtml;
+            if (childSelect) {
+                childSelect.innerHTML = optionsHtml;
+                if (prevChildVal && state.subjects.includes(prevChildVal)) {
+                    childSelect.value = prevChildVal;
+                }
+            }
+            if (parentSelect) {
+                parentSelect.innerHTML = optionsHtml;
+                if (prevParentVal && state.subjects.includes(prevParentVal)) {
+                    parentSelect.value = prevParentVal;
+                }
+            }
         }
 
         function openSubjectManageModal() {
@@ -9230,9 +9887,27 @@
                     currentDefaultIds.push(d.id);
 
                     // [버그 수정]: 과목명/범위 중복 체크 방식을 제외하고, 오직 고유 defaultMissionId 기준으로만 중복 체크합니다.
-                    const alreadyExists = activeChild.todayMissions.some(m =>
-                        m.date === targetDateStr && !m.isCustom && String(m.defaultMissionId) === String(d.id)
-                    );
+                    // 단, 미션을 다른 날로 미룬 경우(예: 토요일에서 일요일) 당일 날짜에 없다는 이유로 재 생성되는 버그를 방지하기 위해
+                    // 당일 날짜 대신 해당 주간(월요일~일요일) 내에 생성 이력이 있는지를 주간 단위 범위로 검증합니다.
+                    const parts = targetDateStr.split('-');
+                    const targetDateObj_copy = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                    const targetDay = targetDateObj_copy.getDay();
+                    const mondayDiff = (targetDay === 0) ? -6 : (1 - targetDay);
+                    const weekStart = new Date(targetDateObj_copy);
+                    weekStart.setDate(targetDateObj_copy.getDate() + mondayDiff);
+                    const weekStartStr = getLocalIsoString(weekStart);
+                    
+                    const sunday = new Date(weekStart);
+                    sunday.setDate(weekStart.getDate() + 6);
+                    const weekEndStr = getLocalIsoString(sunday);
+
+                    const alreadyExists = activeChild.todayMissions.some(m => {
+                        if (m.isCustom) return false;
+                        const dmIdStr = String(m.defaultMissionId || '').trim();
+                        const dIdStr = String(d.id).trim();
+                        const isIdMatch = dmIdStr && (dmIdStr === dIdStr || parseFloat(dmIdStr) === parseFloat(dIdStr));
+                        return isIdMatch && m.date >= weekStartStr && m.date <= weekEndStr;
+                    });
 
                     if (!alreadyExists) {
                         activeChild.todayMissions.push({
@@ -9262,7 +9937,12 @@
                 // 오늘 날짜에서만 현재 플랜과 동기화 (과거 이력은 보존)
                 activeChild.todayMissions = activeChild.todayMissions.filter(m => {
                     if (!m.isCustom && m.defaultMissionId && !m.completed && m.date === targetDateStr) {
-                        if (!currentDefaultIds.map(String).includes(String(m.defaultMissionId))) {
+                        const dmIdStr = String(m.defaultMissionId).trim();
+                        const isFound = currentDefaultIds.some(id => {
+                            const idStr = String(id).trim();
+                            return idStr === dmIdStr || parseFloat(idStr) === parseFloat(dmIdStr);
+                        });
+                        if (!isFound) {
                             return false;
                         }
                     }
@@ -9383,6 +10063,28 @@
             }
             renderTodayMissionsList();
             renderWeeklyStickerBoard();
+        }
+
+        function selectChecklistDateStr(dateStr) {
+            const parts = dateStr.split('-');
+            currentChecklistDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            const activeChild = state.children[state.activeChildId];
+            if (activeChild) {
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const targetDayName = dayNames[currentChecklistDate.getDay()];
+                const isModified = syncTodayMissionsWithDefault(activeChild, targetDayName, currentChecklistDate);
+                if (isModified) {
+                    saveStateToFirestore();
+                }
+            }
+            renderTodayMissionsList();
+            renderWeeklyStickerBoard();
+
+            // Smooth scroll to the checklist header for premium user experience
+            const listHeader = document.getElementById('checklist-title');
+            if (listHeader) {
+                listHeader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         function renderTodayMissionsList() {
@@ -9685,51 +10387,52 @@
         }
 
         function renderParentView() {
-            const childListContainer = document.getElementById('parent-child-list-container');
-            if (childListContainer) {
-                let cardsHtml = "";
-                const childrenArray = getSortedChildren();
+            if (state.parentActiveTab === 'CHILD') {
+                const childListContainer = document.getElementById('parent-child-list-container');
+                if (childListContainer) {
+                    let cardsHtml = "";
+                    const childrenArray = getSortedChildren();
 
-                if (childrenArray.length === 0) {
-                    cardsHtml = `<div class="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold bg-slate-50">등록된 자녀 대원이 없습니다. 새 대원 등록을 통해 첫 대원을 만들어 보세요!</div>`;
-                } else {
-                    childrenArray.forEach(c => {
-                        const validPhoto = getValidPhoto(c.photo);
-                        const avatarHtml = validPhoto
-                            ? `<img src="${validPhoto}" class="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0">`
-                            : `<div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 text-base font-black shrink-0 border border-orange-200">${c.name.substring(0, 2)}</div>`;
+                    if (childrenArray.length === 0) {
+                        cardsHtml = `<div class="col-span-full p-8 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold bg-slate-50">등록된 자녀 대원이 없습니다. 새 대원 등록을 통해 첫 대원을 만들어 보세요!</div>`;
+                    } else {
+                        childrenArray.forEach(c => {
+                            const validPhoto = getValidPhoto(c.photo);
+                            const avatarHtml = validPhoto
+                                ? `<img src="${validPhoto}" class="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0">`
+                                : `<div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 text-base font-black shrink-0 border border-orange-200">${c.name.substring(0, 2)}</div>`;
 
-                        cardsHtml += `
-                            <div class="p-4 rounded-3xl border border-slate-200 bg-slate-50 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-white transition duration-200">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    ${avatarHtml}
-                                    <div class="overflow-hidden">
-                                        <h4 class="font-black text-slate-800 text-xs truncate">${c.name}</h4>
-                                        <p class="text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-coins"></i> 코인 ${c.stars}개 보유</p>
+                            cardsHtml += `
+                                <div class="p-4 rounded-3xl border border-slate-200 bg-slate-50 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-white transition duration-200">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                        ${avatarHtml}
+                                        <div class="overflow-hidden">
+                                            <h4 class="font-black text-slate-800 text-xs truncate">${c.name}</h4>
+                                            <p class="text-[10px] text-amber-600 font-bold mt-0.5"><i class="fa-solid fa-coins"></i> 코인 ${c.stars}개 보유</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end sm:shrink-0">
+                                        <button onclick="grantBonusCoinToChild('${c.id}')" class="flex-1 sm:flex-initial text-center text-[10px] sm:text-xs bg-white text-amber-600 hover:bg-amber-50 hover:text-amber-700 border border-amber-300 font-bold px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-coins"></i> <span class="hidden sm:inline">코인 </span>지급</button>
+                                        <button onclick="openChildManageModal('EDIT', '${c.id}')" class="flex-1 sm:flex-initial text-center text-[10px] sm:text-xs bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 font-bold px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-pen-to-square"></i> 수정</button>
+                                        <button onclick="deleteChild('${c.id}')" class="flex-1 sm:flex-initial text-center text-[10px] sm:text-xs bg-white text-rose-500 hover:bg-rose-50 border border-rose-200 font-bold px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-user-minus"></i> 삭제</button>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end sm:shrink-0">
-                                    <button onclick="grantBonusCoinToChild('${c.id}')" class="flex-1 sm:flex-initial text-center text-[10px] sm:text-xs bg-white text-amber-600 hover:bg-amber-50 hover:text-amber-700 border border-amber-300 font-bold px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-coins"></i> <span class="hidden sm:inline">코인 </span>지급</button>
-                                    <button onclick="openChildManageModal('EDIT', '${c.id}')" class="flex-1 sm:flex-initial text-center text-[10px] sm:text-xs bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 font-bold px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-pen-to-square"></i> 수정</button>
-                                    <button onclick="deleteChild('${c.id}')" class="flex-1 sm:flex-initial text-center text-[10px] sm:text-xs bg-white text-rose-500 hover:bg-rose-50 border border-rose-200 font-bold px-2 py-1.5 sm:px-2.5 sm:py-1.5 rounded-xl transition shadow-sm"><i class="fa-solid fa-user-minus"></i> 삭제</button>
-                                </div>
-                            </div>
-                        `;
-                    });
+                            `;
+                        });
+                    }
+                    childListContainer.innerHTML = cardsHtml;
                 }
-                childListContainer.innerHTML = cardsHtml;
-            }
-
-            renderApprovalRequests();
-            renderApprovalHistory();
-
-            if (state.parentActiveTab === 'DASHBOARD') {
+            } else if (state.parentActiveTab === 'APPROVAL') {
+                renderApprovalRequests();
+                renderApprovalHistory();
+            } else if (state.parentActiveTab === 'DASHBOARD') {
                 updateParentDashboard();
             } else if (state.parentActiveTab === 'REWARDS_MGMT') {
                 renderParentRewardsStoreTable();
+            } else if (state.parentActiveTab === 'PLAN') {
+                renderParentDefaultMissionsTable();
+                renderParentTodayMissionsManage();
             }
-
-            renderParentDefaultMissionsTable();
         }
 
         // ==================== 📮 마법 우체통 (메시지) 비즈니스 로직 ====================
