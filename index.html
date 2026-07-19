@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>My study planner</title>
 
     <!-- 카카오톡 인앱 브라우저 아웃링크 (외부 브라우저 강제 실행) -->
@@ -104,7 +103,8 @@
         }
 
         /* 모바일 터치 스크롤 가속 최적화 */
-        .overflow-y-auto, .overflow-x-auto {
+        .overflow-y-auto,
+        .overflow-x-auto {
             -webkit-overflow-scrolling: touch;
         }
 
@@ -361,9 +361,26 @@
 
         /* 🎁 럭키박스 상자 흔들림 애니메이션 (Wiggle) */
         @keyframes boxWiggle {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            10%, 30%, 50%, 70%, 90% { transform: rotate(-8deg) scale(1.05); }
-            20%, 40%, 60%, 80% { transform: rotate(8deg) scale(1.05); }
+
+            0%,
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: rotate(-8deg) scale(1.05);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: rotate(8deg) scale(1.05);
+            }
         }
 
         .animate-box-wiggle {
@@ -382,10 +399,12 @@
                 transform: scale(3) rotate(-45deg) translateZ(0);
                 opacity: 0;
             }
+
             80% {
                 transform: scale(0.9) rotate(-10deg) translateZ(0);
                 opacity: 0.8;
             }
+
             100% {
                 transform: scale(1) rotate(-15deg) translateZ(0);
                 opacity: 1;
@@ -749,7 +768,8 @@
                                         <h3 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-1"
                                             id="avatar-banner-display-name">수호 아바타 알</h3>
                                     </div>
-                                    <div class="flex flex-wrap items-center gap-1.5 select-none" id="avatar-banner-combo-area">
+                                    <div class="flex flex-wrap items-center gap-1.5 select-none"
+                                        id="avatar-banner-combo-area">
                                         <!-- JS로 동적 렌더링 (ex: 🔥 4주 연속 | 🛡️ 보호막 1개) -->
                                     </div>
                                 </div>
@@ -861,7 +881,8 @@
                                             <!-- JS에서 img 태그 동적 삽입 -->
                                         </div>
                                         <div>
-                                            <h4 class="text-[11px] font-black text-indigo-500 mb-0.5 tracking-wide" id="plan-ai-cheer-title">AI 선생님의 응원</h4>
+                                            <h4 class="text-[11px] font-black text-indigo-500 mb-0.5 tracking-wide"
+                                                id="plan-ai-cheer-title">AI 선생님의 응원</h4>
                                             <p class="text-sm font-bold text-slate-700" id="plan-ai-cheer-message">매일매일
                                                 조금씩 자라나는 모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
                                         </div>
@@ -1135,7 +1156,8 @@
                                 <!-- JS에서 img 태그 동적 삽입 -->
                             </div>
                             <div>
-                                <h4 class="text-[11px] font-black text-indigo-400 mb-0.5 tracking-wide" id="child-ai-cheer-title">AI 선생님의 응원</h4>
+                                <h4 class="text-[11px] font-black text-indigo-400 mb-0.5 tracking-wide"
+                                    id="child-ai-cheer-title">AI 선생님의 응원</h4>
                                 <p class="text-sm font-bold text-slate-700" id="child-ai-cheer-message">매일매일 조금씩 자라나는
                                     모습이 멋져요! 오늘도 신나는 하루 보내요! 🎡</p>
                             </div>
@@ -1219,19 +1241,22 @@
                                             class="bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-xl px-3 py-1.5 text-right shrink-0">
                                             <span class="text-[9px] font-bold block leading-none">누적 코인</span>
                                             <span class="text-sm font-black child-font"
-                                                id="avatar-tab-cumulative-coins">0</span><span class="text-[10px] font-bold">개</span>
+                                                id="avatar-tab-cumulative-coins">0</span><span
+                                                class="text-[10px] font-bold">개</span>
                                         </div>
                                         <div
                                             class="bg-rose-50 border border-rose-100 text-rose-700 rounded-xl px-3 py-1.5 text-right shrink-0">
                                             <span class="text-[9px] font-bold block leading-none">연속 콤보</span>
                                             <span class="text-sm font-black child-font"
-                                                id="avatar-tab-combo-count">0</span><span class="text-[10px] font-bold">주</span>
+                                                id="avatar-tab-combo-count">0</span><span
+                                                class="text-[10px] font-bold">주</span>
                                         </div>
                                         <div
                                             class="bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-xl px-3 py-1.5 text-right shrink-0">
                                             <span class="text-[9px] font-bold block leading-none">보호막</span>
                                             <span class="text-sm font-black child-font"
-                                                id="avatar-tab-shield-count">0</span><span class="text-[10px] font-bold">개</span>
+                                                id="avatar-tab-shield-count">0</span><span
+                                                class="text-[10px] font-bold">개</span>
                                         </div>
                                     </div>
                                 </div>
@@ -1266,7 +1291,8 @@
                         </div>
 
                         <!-- 📜 나의 명예 수료증 갤러리 -->
-                        <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-100 space-y-4">
+                        <div
+                            class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-100 space-y-4">
                             <div class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
                                 <div>
                                     <h3 class="font-bold text-base sm:text-lg text-slate-800 flex items-center gap-2">
@@ -1766,9 +1792,11 @@
                         </form>
 
                         <!-- 반복 기본 학습 계획 조회 필터 (자녀별/요일별 페이징/필터링) -->
-                        <div class="flex flex-wrap items-center gap-3 mb-4 text-xs font-semibold bg-orange-50/40 p-3 rounded-2xl border border-orange-100/50">
+                        <div
+                            class="flex flex-wrap items-center gap-3 mb-4 text-xs font-semibold bg-orange-50/40 p-3 rounded-2xl border border-orange-100/50">
                             <div class="flex items-center gap-2">
-                                <span class="text-slate-600 font-bold"><i class="fa-solid fa-filter text-indigo-500"></i> 조회 필터 선택:</span>
+                                <span class="text-slate-600 font-bold"><i
+                                        class="fa-solid fa-filter text-indigo-500"></i> 조회 필터 선택:</span>
                             </div>
                             <div>
                                 <select id="p-table-filter-child" onchange="renderParentDefaultMissionsTable()"
@@ -1811,12 +1839,14 @@
                                     class="fa-solid fa-calendar-day text-lg"></i></span>
                             <div>
                                 <h3 class="font-bold text-lg text-slate-800">📅 개별 미션 날짜 변경 및 미루기</h3>
-                                <p class="text-xs text-slate-400">매일 반복되는 기본 루틴(위의 목록)은 그대로 둔 채, 오늘 완료하지 못했거나 다른 날로 연기해야 하는 특정 학습을 다른 날로 손쉽게 이동시킵니다.</p>
+                                <p class="text-xs text-slate-400">매일 반복되는 기본 루틴(위의 목록)은 그대로 둔 채, 오늘 완료하지 못했거나 다른 날로 연기해야
+                                    하는 특정 학습을 다른 날로 손쉽게 이동시킵니다.</p>
                             </div>
                         </div>
 
                         <!-- 필터 선택 영역 -->
-                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col sm:flex-row gap-3 mb-6 text-xs font-semibold">
+                        <div
+                            class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col sm:flex-row gap-3 mb-6 text-xs font-semibold">
                             <div class="flex-1">
                                 <label class="block text-slate-500 font-bold mb-1">대상 자녀 대원</label>
                                 <select id="p-move-child-select" onchange="renderParentTodayMissionsManage()"
@@ -2492,7 +2522,8 @@
                 <div
                     class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-indigo-50 border-t-2 border-l-2 border-indigo-200 rotate-45">
                 </div>
-                <h4 class="text-xs font-bold text-indigo-600 mb-1" id="ai-teacher-zoom-title">👩‍🏫 AI 선생님의 칭찬 한마디 👨‍🏫</h4>
+                <h4 class="text-xs font-bold text-indigo-600 mb-1" id="ai-teacher-zoom-title">👩‍🏫 AI 선생님의 칭찬 한마디 👨‍🏫
+                </h4>
                 <p class="text-sm font-black text-slate-700 leading-relaxed" id="ai-teacher-zoom-message">참 잘했어요!</p>
             </div>
             <button onclick="closeAiTeacherZoom()"
@@ -2515,7 +2546,8 @@
             </button>
 
             <!-- 콤보 정보 배지 -->
-            <div class="bg-amber-100 border border-amber-200 rounded-full px-4 py-1 text-xs font-black text-amber-700 mt-2" id="lucky-box-combo-badge">
+            <div class="bg-amber-100 border border-amber-200 rounded-full px-4 py-1 text-xs font-black text-amber-700 mt-2"
+                id="lucky-box-combo-badge">
                 🔥 4주 연속 달성 중!
             </div>
 
@@ -2554,24 +2586,31 @@
             </button>
 
             <!-- 마법 테두리 장식 -->
-            <div class="absolute inset-2 border-2 border-dashed border-amber-300/60 rounded-[1.5rem] pointer-events-none"></div>
+            <div
+                class="absolute inset-2 border-2 border-dashed border-amber-300/60 rounded-[1.5rem] pointer-events-none">
+            </div>
 
             <!-- 수료증 컨텐츠 영역 -->
             <div class="flex flex-col items-center w-full mt-4 flex-1 justify-center gap-4 sm:gap-5 text-center">
                 <!-- 리본 칭호 -->
-                <div class="bg-amber-500 text-white font-black px-4 py-1.5 rounded-full text-xs shadow-md border border-white tracking-wider flex items-center gap-1">
+                <div
+                    class="bg-amber-500 text-white font-black px-4 py-1.5 rounded-full text-xs shadow-md border border-white tracking-wider flex items-center gap-1">
                     👑 <span id="cert-month-title">1달 연속 완성</span> 👑
                 </div>
 
                 <!-- 아바타 이미지 서클 -->
-                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white relative">
-                    <img id="cert-avatar-img" src="assets/cute_hero_bunny.png" alt="아바타" class="w-full h-full object-cover">
+                <div
+                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white relative">
+                    <img id="cert-avatar-img" src="assets/cute_hero_bunny.png" alt="아바타"
+                        class="w-full h-full object-cover">
                 </div>
 
                 <!-- 수증서 본문 -->
                 <div class="space-y-1 sm:space-y-2">
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight" id="cert-child-name">김서윤 대원</h2>
-                    <p class="text-[10px] sm:text-xs text-amber-700 font-bold uppercase tracking-widest" id="cert-sub-detail">위 대원은 4주 연속 공부 미션을 완료했습니다.</p>
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight" id="cert-child-name">김서윤 대원
+                    </h2>
+                    <p class="text-[10px] sm:text-xs text-amber-700 font-bold uppercase tracking-widest"
+                        id="cert-sub-detail">위 대원은 4주 연속 공부 미션을 완료했습니다.</p>
                 </div>
 
                 <!-- 칭찬 증서 격려글 -->
@@ -2581,7 +2620,8 @@
 
                 <!-- 도장과 도장 애니메이션 영역 -->
                 <div class="relative w-20 h-20 flex items-center justify-center shrink-0">
-                    <div id="cert-stamp" class="absolute w-16 h-16 rounded-full border-4 border-rose-600 border-double flex items-center justify-center text-rose-600 font-black text-xs rotate-[-15deg] opacity-0 select-none pointer-events-none transition-all duration-500">
+                    <div id="cert-stamp"
+                        class="absolute w-16 h-16 rounded-full border-4 border-rose-600 border-double flex items-center justify-center text-rose-600 font-black text-xs rotate-[-15deg] opacity-0 select-none pointer-events-none transition-all duration-500">
                         <div class="text-[8px] leading-tight text-center">
                             참 잘했어요<br>
                             <span class="text-[10px] font-black tracking-wide">APPROVED</span>
@@ -3114,10 +3154,10 @@
                     // [동시성 버그 수정] 부모 모드 또는 전체 업데이트 시:
                     // 다른 자녀의 최신 데이터를 지닌 Firestore의 정보가 현재 기기의 과거 데이터로 덮어씌워지지 않도록,
                     // 전체 setDoc 대신 변경 사항이 발생한 특정 자녀/공통 데이터만 부분 업데이트(updateDoc)를 수행합니다.
-                    const canUsePartialUpdate = lastReceivedState && 
-                                                lastReceivedState.children && 
-                                                stateToSave.children && 
-                                                Object.keys(lastReceivedState.children).length === Object.keys(stateToSave.children).length;
+                    const canUsePartialUpdate = lastReceivedState &&
+                        lastReceivedState.children &&
+                        stateToSave.children &&
+                        Object.keys(lastReceivedState.children).length === Object.keys(stateToSave.children).length;
 
                     if (canUsePartialUpdate) {
                         const updateData = {};
@@ -3127,7 +3167,7 @@
                         Object.keys(stateToSave.children).forEach(childId => {
                             const localChildStr = stringifyStable(stateToSave.children[childId]);
                             const remoteChildStr = stringifyStable(lastReceivedState.children[childId]);
-                            
+
                             if (localChildStr !== remoteChildStr) {
                                 updateData[`state.children.${childId}`] = stateToSave.children[childId];
                                 hasChanges = true;
@@ -3352,69 +3392,201 @@
                     if (!c[f]) c[f] = [];
                     else if (!Array.isArray(c[f])) c[f] = Object.values(c[f]).filter(Boolean);
                 });
-                rollbackTestDataIfNeeded(st);
+
+                // 1. 과거 롤백 오류로 소실된 퍼펙트/콤보 기록 자동 스캔 및 복구 (메모리 정정)
+                autoRestorePerfectWeeks(c);
+
+                // 2. 과거 오류나 경쟁 상태로 오염되어 0개 등으로 유실된 코인(stars) 정밀 자가 복원
+                restoreChildStarsFromLogs(c);
             });
         }
 
-        // 🧪 잘못 변경된 테스트용 데이터 안전 복원 (4주차 이상 기록, 코인, 실드 회구)
-        function rollbackTestDataIfNeeded(st) {
-            if (!st || !st.children) return;
-            let databaseUpdated = false;
-            Object.keys(st.children).forEach(cid => {
-                const child = st.children[cid];
-                if (!child) return;
-                
-                let hasTestRecord = false;
-                const originalClaims = [];
-                let refundCoins = 0;
-                
-                (child.perfectWeeksClaimed || []).forEach(claim => {
-                    let isTestClaim = false;
-                    if (claim && typeof claim === 'object') {
-                        if (claim.comboCount >= 4) {
-                            isTestClaim = true;
-                            refundCoins += (claim.bonusCoins || 0);
-                        }
-                    } else if (typeof claim === 'string') {
-                        if (claim.includes('4주차') || claim.includes('5주차') || claim.includes('6주차') || claim.includes('7주차') || claim.includes('8주차')) {
-                            isTestClaim = true;
-                        }
-                    }
-                    
-                    if (isTestClaim) {
-                        hasTestRecord = true;
-                    } else {
-                        originalClaims.push(claim);
-                    }
-                });
-                
-                if (hasTestRecord || (child.perfectWeekCombo >= 4)) {
-                    console.log(`[안전 복원] ${child.name} 대원의 테스트용 데이터(콤보: ${child.perfectWeekCombo})를 3주차로 원복합니다.`);
-                    
-                    // 1. 수료증/콤보 기록은 상위 3주차까지만 보존
-                    child.perfectWeeksClaimed = originalClaims.slice(0, 3);
-                    // 2. 연속 콤보는 3주로 강제 리셋
-                    child.perfectWeekCombo = 3;
-                    child.perfectWeekMaxCombo = 3;
-                    // 3. 테스트로 지급된 보호막(실드) 회수 (0개로 복구)
-                    child.perfectWeekShields = 0;
-                    // 4. 테스트로 추가된 코인(별) 차감
-                    if (refundCoins > 0) {
-                        child.stars = Math.max(0, (child.stars || 0) - refundCoins);
-                        if (child.totalEarnedCoins !== undefined) {
-                            child.totalEarnedCoins = Math.max(0, child.totalEarnedCoins - refundCoins);
-                        }
-                    }
-                    databaseUpdated = true;
+        // 자녀의 누락된 퍼펙트 주간 및 콤보/실드를 과거 studyLogs 이력으로부터 안전하게 자동 복원하는 함수
+        function autoRestorePerfectWeeks(child) {
+            if (!child || !child.studyLogs) return false;
+
+            const logs = getValidStudyLogs(child);
+            const dateMap = {};
+
+            logs.forEach(l => {
+                if (!l.date || (l.missionId && String(l.missionId).startsWith('parent-adjust-'))) return;
+                if (!dateMap[l.date]) {
+                    dateMap[l.date] = { total: 0, completed: 0 };
+                }
+                dateMap[l.date].total++;
+                if (l.completed) {
+                    dateMap[l.date].completed++;
                 }
             });
-            
-            if (databaseUpdated) {
-                setTimeout(() => {
-                    saveStateToFirestore();
-                    showToast("🧪 테스트 데이터(4주차 이상 기록, 코인, 실드)가 안전하게 3주차 상태로 원상복귀되었습니다!", "success");
-                }, 1000);
+
+            const dates = Object.keys(dateMap).sort();
+            if (dates.length === 0) return false;
+
+            const minDate = new Date(dates[0]);
+            const maxDate = new Date(dates[dates.length - 1]);
+
+            const currentWeek = getWeekStart(minDate);
+            const endWeek = getWeekStart(maxDate);
+
+            let comboCounter = 0;
+            const claimMap = {};
+
+            (child.perfectWeeksClaimed || []).forEach(claim => {
+                const wStart = typeof claim === 'string' ? claim : claim.weekStartStr;
+                claimMap[wStart] = claim;
+            });
+
+            let databaseUpdated = false;
+            let shieldCounter = child.perfectWeekShields || 0;
+
+            while (currentWeek <= endWeek) {
+                const weekStartStr = getLocalIsoString(currentWeek);
+
+                let perfectDays = 0;
+                let hasMissions = false;
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(currentWeek);
+                    d.setDate(d.getDate() + i);
+                    const dStr = getLocalIsoString(d);
+
+                    const stats = dateMap[dStr];
+                    if (stats && stats.total > 0) {
+                        hasMissions = true;
+                        if (stats.completed === stats.total) {
+                            perfectDays++;
+                        }
+                    }
+                }
+
+                const isPerfectWeek = hasMissions && (perfectDays === 7);
+
+                if (isPerfectWeek) {
+                    comboCounter++;
+
+                    if (comboCounter >= 4 && comboCounter % 4 === 0) {
+                        if (!claimMap[weekStartStr]) {
+                            shieldCounter++;
+                        }
+                    }
+
+                    if (!claimMap[weekStartStr]) {
+                        const startObj = new Date(currentWeek);
+                        const endObj = new Date(startObj);
+                        endObj.setDate(endObj.getDate() + 6);
+                        const weekEndStr = getLocalIsoString(endObj);
+                        const weekLogs = logs.filter(l => !l.isPerfectBonus && l.date >= weekStartStr && l.date <= weekEndStr);
+                        const calculatedCoins = weekLogs.reduce((sum, l) => sum + (l.stars || 0), 0);
+
+                        const hasCertificate = (comboCounter >= 4 && comboCounter % 4 === 0);
+
+                        const newClaim = {
+                            weekStartStr,
+                            bonusCoins: calculatedCoins,
+                            comboCount: comboCounter,
+                            hasCertificate
+                        };
+
+                        if (!child.perfectWeeksClaimed) child.perfectWeeksClaimed = [];
+                        child.perfectWeeksClaimed.push(newClaim);
+                        claimMap[weekStartStr] = newClaim;
+                        databaseUpdated = true;
+
+                        console.log(`[복원] ${child.name} 대원의 누락된 퍼펙트 주간(${weekStartStr}, 콤보: ${comboCounter}주)을 자동 복원하였습니다.`);
+                    } else {
+                        const existing = claimMap[weekStartStr];
+                        if (typeof existing === 'object') {
+                            if (existing.comboCount !== comboCounter) {
+                                existing.comboCount = comboCounter;
+                                databaseUpdated = true;
+                            }
+                        }
+                    }
+                } else if (hasMissions) {
+                    if (shieldCounter > 0) {
+                        shieldCounter--;
+                        console.log(`[복원 시뮬레이션] ${child.name} 대원의 ${weekStartStr} 주간 퍼펙트 실패에 대해 콤보 보호막을 1개 소모하여 콤보(${comboCounter}주)를 유지합니다.`);
+                    } else {
+                        comboCounter = 0;
+                    }
+                }
+
+                currentWeek.setDate(currentWeek.getDate() + 7);
             }
+
+            if (databaseUpdated) {
+                child.perfectWeekCombo = comboCounter;
+                child.perfectWeekMaxCombo = Math.max(child.perfectWeekMaxCombo || 0, comboCounter);
+                child.perfectWeekShields = shieldCounter;
+                return true;
+            }
+            return false;
+        }
+
+        // 자녀의 오염되거나 유실된 코인(stars) 잔액을 전체 획득/소모 로그를 기반으로 역산하여 자동 복구하는 함수
+        function restoreChildStarsFromLogs(child) {
+            if (!child) return false;
+
+            const logs = getValidStudyLogs(child).filter(l => l.completed);
+            const baseCoins = logs.reduce((sum, l) => sum + (l.stars || 0), 0);
+
+            let perfectBonusCoins = 0;
+            (child.perfectWeeksClaimed || []).forEach(entry => {
+                const wStartStr = typeof entry === 'string' ? entry : entry.weekStartStr;
+                let bonusCoins = 0;
+                if (typeof entry === 'object' && entry.bonusCoins != null) {
+                    bonusCoins = entry.bonusCoins;
+                } else {
+                    const startObj = new Date(wStartStr);
+                    const endObj = new Date(startObj);
+                    endObj.setDate(endObj.getDate() + 6);
+                    const weekEndStr = getLocalIsoString(endObj);
+                    const weekLogs = logs.filter(l => !l.isPerfectBonus && l.date >= wStartStr && l.date <= weekEndStr && !(l.missionId && String(l.missionId).startsWith('parent-adjust-')));
+                    bonusCoins = weekLogs.reduce((sum, l) => sum + (l.stars || 0), 0);
+                }
+                perfectBonusCoins += bonusCoins;
+            });
+
+            let luckyBoxCoins = 0;
+            const loggedLuckyBox = logs.filter(l => l.isLuckyBoxBonus).reduce((sum, l) => sum + (l.stars || 0), 0);
+            luckyBoxCoins += loggedLuckyBox;
+
+            (child.perfectWeeksClaimed || []).forEach(entry => {
+                if (typeof entry !== 'object') return;
+                const combo = entry.comboCount || 0;
+                if (combo < 4) return;
+
+                const wStartStr = entry.weekStartStr;
+                const startObj = new Date(wStartStr);
+                const endObj = new Date(startObj);
+                endObj.setDate(endObj.getDate() + 6);
+                const weekEndStr = getLocalIsoString(endObj);
+
+                const hasExisting = logs.some(l =>
+                    l.isLuckyBoxBonus &&
+                    l.date >= wStartStr &&
+                    l.date <= weekEndStr
+                );
+
+                if (!hasExisting) {
+                    let estCoins = 5;
+                    if (combo === 4) estCoins = 7;
+                    else if (combo % 4 === 0) estCoins = 8;
+                    luckyBoxCoins += estCoins;
+                }
+            });
+
+            const totalUsed = (child.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+            const totalEarned = baseCoins + perfectBonusCoins + luckyBoxCoins;
+            const correctBalance = Math.max(0, totalEarned - totalUsed);
+
+            if (child.stars === undefined || child.stars !== correctBalance) {
+                const oldStars = child.stars || 0;
+                child.stars = correctBalance;
+                child.totalEarnedCoins = totalEarned;
+                console.log(`[코인 복구 성공] ${child.name} 대원의 손상된 코인을 복구했습니다. (기존: ${oldStars} -> 복구: ${correctBalance}개, 누적: ${totalEarned}개)`);
+                return true;
+            }
+            return false;
         }
 
         // 기본 상태 초기화 (신규 생성 패밀리용)
@@ -4520,7 +4692,7 @@
             }
 
             let html = "";
-            
+
             // 일괄 제어 바 추가
             html += `
                 <div class="bg-slate-100/80 p-3.5 rounded-2xl border border-slate-200/50 mb-3 text-xs flex flex-col gap-3">
@@ -4738,7 +4910,7 @@
                 // 오늘 할 일 목록에서 삭제 시 기본 반복 계획 미션인 경우 오늘만 취소 이력 기록
                 if (!mission.isCustom && mission.defaultMissionId) {
                     if (!child.canceledDefaultMissions) child.canceledDefaultMissions = [];
-                    const exists = child.canceledDefaultMissions.some(c => 
+                    const exists = child.canceledDefaultMissions.some(c =>
                         String(c.defaultMissionId) === String(mission.defaultMissionId) && c.date === mission.date
                     );
                     if (!exists) {
@@ -4832,7 +5004,7 @@
                 if (!child.canceledDefaultMissions) child.canceledDefaultMissions = [];
                 selectedMissions.forEach(m => {
                     if (!m.isCustom && m.defaultMissionId) {
-                        const exists = child.canceledDefaultMissions.some(c => 
+                        const exists = child.canceledDefaultMissions.some(c =>
                             String(c.defaultMissionId) === String(m.defaultMissionId) && c.date === m.date
                         );
                         if (!exists) {
@@ -6909,6 +7081,49 @@
             modal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
+        // 과거 럭키박스 보상 중 studyLogs에 누락된 항목을 동적으로 생성하여 주입하는 헬퍼 함수
+        function getMergedStudyLogsWithLuckyBox(activeChild) {
+            const logs = [...getValidStudyLogs(activeChild).filter(l => l.completed)];
+
+            if (activeChild.perfectWeeksClaimed && activeChild.perfectWeeksClaimed.length > 0) {
+                activeChild.perfectWeeksClaimed.forEach(entry => {
+                    if (typeof entry !== 'object') return;
+
+                    const combo = entry.comboCount || 0;
+                    if (combo < 4) return;
+
+                    const wStartStr = entry.weekStartStr;
+                    const startObj = new Date(wStartStr);
+                    const endObj = new Date(startObj);
+                    endObj.setDate(endObj.getDate() + 6);
+                    const weekEndStr = getLocalIsoString(endObj);
+
+                    const hasExisting = logs.some(l =>
+                        l.isLuckyBoxBonus &&
+                        l.date >= wStartStr &&
+                        l.date <= weekEndStr
+                    );
+
+                    if (!hasExisting) {
+                        let estCoins = 5;
+                        if (combo === 4) estCoins = 7;
+                        else if (combo % 4 === 0) estCoins = 8;
+
+                        logs.push({
+                            date: weekEndStr,
+                            subject: "연속 콤보 보상",
+                            content: `🔥 ${combo}주 연속 달성 럭키박스 보상 코인 획득! (과거 획득분 보정)`,
+                            stars: estCoins,
+                            completed: true,
+                            isLuckyBoxBonus: true,
+                            isEstimatedPastBonus: true
+                        });
+                    }
+                });
+            }
+            return logs;
+        }
+
         function showWeeklyCoinsDetail() {
             const modal = document.getElementById('weekly-coins-detail-modal');
             const activeChild = state.children[state.activeChildId];
@@ -6917,7 +7132,8 @@
             const weekStart = getWeekStart(new Date());
             const weekStartStr = getLocalIsoString(weekStart);
 
-            const logs = getValidStudyLogs(activeChild).filter(log => log.date >= weekStartStr && log.completed);
+            const mergedLogs = getMergedStudyLogsWithLuckyBox(activeChild);
+            const logs = mergedLogs.filter(log => log.date >= weekStartStr);
 
             if (activeChild.perfectWeeksClaimed) {
                 const claimedEntry = activeChild.perfectWeeksClaimed.find(entry =>
@@ -6972,7 +7188,7 @@
             const activeChild = state.children[state.activeChildId];
             if (!modal || !activeChild) return;
 
-            const logs = getValidStudyLogs(activeChild).filter(l => l.completed);
+            const logs = getMergedStudyLogsWithLuckyBox(activeChild);
 
             if (activeChild.perfectWeeksClaimed && activeChild.perfectWeeksClaimed.length > 0) {
                 activeChild.perfectWeeksClaimed.forEach(entry => {
@@ -7086,7 +7302,7 @@
                     `;
                 }
 
-                if (item.isPerfectBonus) {
+                if (item.isPerfectBonus || item.isLuckyBoxBonus) {
                     html += `
                         <div class="rounded-3xl border-2 border-yellow-400 bg-gradient-to-r from-yellow-50 to-amber-100 shadow-[0_0_15px_rgba(250,204,21,0.4)] transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2 relative overflow-hidden p-4">
                             <div class="absolute -right-4 -top-4 opacity-20 text-8xl text-yellow-500 pointer-events-none">
@@ -7162,28 +7378,62 @@
                 `;
             }
 
-            if (currentCoinDetailMode === 'TOTAL') {
-                const expectedTotal = activeChild.stars + (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
-                if (expectedTotal !== logSum) {
-                    const diff = expectedTotal - logSum;
-                    html += `
-                        <div class="rounded-3xl border border-slate-200 bg-slate-50 border-l-4 border-l-slate-400 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2">
-                            <div class="flex flex-col gap-3">
-                                <div class="flex items-start justify-between gap-3">
-                                    <h4 class="text-sm sm:text-base font-black text-slate-800 flex-1 leading-snug break-keep">
-                                        <span class="text-slate-500">[시스템 보정]</span> 과거 내역 동기화 보정 코인
-                                    </h4>
-                                </div>
-                                <div class="flex justify-end">
-                                    <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-slate-600 bg-white border border-slate-300 px-3 py-1.5 rounded-2xl shadow-sm">
-                                        <i class="fa-solid fa-coins text-slate-400"></i> 
-                                        코인 ${diff > 0 ? '+' : ''}${diff}개
-                                    </span>
-                                </div>
+            // 전체 획득 코인의 합산 (StudyLogs + perfectWeeksClaimed 보너스)
+            const allLogs = getMergedStudyLogsWithLuckyBox(activeChild);
+            let allPerfectCoins = 0;
+            if (activeChild.perfectWeeksClaimed && activeChild.perfectWeeksClaimed.length > 0) {
+                activeChild.perfectWeeksClaimed.forEach(entry => {
+                    const wStartStr = typeof entry === 'string' ? entry : entry.weekStartStr;
+                    let bonusCoins;
+                    if (typeof entry === 'object' && entry.bonusCoins != null) {
+                        bonusCoins = entry.bonusCoins;
+                    } else {
+                        const startObj = new Date(wStartStr);
+                        const endObj = new Date(startObj);
+                        endObj.setDate(endObj.getDate() + 6);
+                        const weekEndStr = getLocalIsoString(endObj);
+                        const weekLogs = allLogs.filter(l => !l.isPerfectBonus && l.date >= wStartStr && l.date <= weekEndStr && !(l.missionId && String(l.missionId).startsWith('parent-adjust-')));
+                        bonusCoins = weekLogs.reduce((sum, l) => sum + (l.stars || 0), 0);
+                    }
+                    allPerfectCoins += bonusCoins;
+                });
+            }
+            const totalLogSum = allLogs.reduce((sum, m) => sum + (m.stars || 0), 0) + allPerfectCoins;
+            const expectedTotal = activeChild.stars + (activeChild.rewardRequests || []).reduce((sum, r) => sum + (r.cost || 0), 0);
+
+            if (expectedTotal !== totalLogSum) {
+                const diff = expectedTotal - totalLogSum;
+
+                // diff > 0 일 때(오류로 더 많이 지급 되었을 때)는 중복 부여 경고 문구로 표시
+                const title = diff > 0
+                    ? '⚠️ [오류 보정] 중복 부여된 오류 코인 (날짜 이동 중복 지급)'
+                    : '⚙️ [시스템 보정] 과거 내역 동기화 보정 코인';
+                const desc = diff > 0
+                    ? '날짜 이동 중복 팝업 등으로 인해 중복해서 잘못 부여된 코인입니다.'
+                    : '과거 데이터 동기화 과정에서 보정된 코인입니다.';
+                const borderClass = diff > 0 ? 'border-red-200 bg-red-50 border-l-red-500 text-red-800' : 'border-slate-200 bg-slate-50 border-l-slate-400 text-slate-800';
+                const titleColor = diff > 0 ? 'text-red-600' : 'text-slate-500';
+                const badgeClass = diff > 0 ? 'text-red-600 bg-white border-red-300' : 'text-slate-600 bg-white border-slate-300';
+                const iconClass = diff > 0 ? 'fa-solid fa-triangle-exclamation text-red-500' : 'fa-solid fa-coins text-slate-400';
+
+                html += `
+                    <div class="rounded-3xl border border-l-4 p-4 shadow-sm transition-all hover:scale-[1.02] mb-3 ml-1 sm:ml-2 ${borderClass}">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <h4 class="text-sm sm:text-base font-black flex-1 leading-snug break-keep">
+                                    <span class="${titleColor}">${title}</span>
+                                    <p class="text-[10px] sm:text-xs text-slate-500 mt-1 font-bold">${desc}</p>
+                                </h4>
+                            </div>
+                            <div class="flex justify-end">
+                                <span class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black px-3 py-1.5 rounded-2xl shadow-sm border ${badgeClass}">
+                                    <i class="${iconClass}"></i> 
+                                    코인 ${diff > 0 ? '+' : ''}${diff}개
+                                </span>
                             </div>
                         </div>
-                    `;
-                }
+                    </div>
+                `;
             }
 
             listEl.innerHTML = html;
@@ -7656,7 +7906,7 @@
                     if (isWeekChanged && alreadyClaimed) {
                         setTimeout(() => {
                             if (!document.getElementById('perfect-week-grand-celebration') && typeof showGrandPerfectWeekCelebration === 'function') {
-                                showGrandPerfectWeekCelebration();
+                                showGrandPerfectWeekCelebration(false);
                             }
                         }, 800);
                     }
@@ -7672,7 +7922,7 @@
                         perfectBadge.title = '클릭해서 축하 파티 다시 보기! ✨';
                         perfectBadge.onclick = () => {
                             if (typeof showGrandPerfectWeekCelebration === 'function') {
-                                showGrandPerfectWeekCelebration();
+                                showGrandPerfectWeekCelebration(false);
                             }
                         };
                         perfectBadge.innerHTML = '<i class="fa-solid fa-crown"></i> 퍼펙트 달성!';
@@ -7711,15 +7961,15 @@
                             if (currentCombo > (activeChild.perfectWeekMaxCombo || 0)) {
                                 activeChild.perfectWeekMaxCombo = currentCombo;
                             }
-                            
+
                             const hasCertificate = (currentCombo >= 4 && currentCombo % 4 === 0);
                             if (hasCertificate) {
                                 activeChild.perfectWeekShields = (activeChild.perfectWeekShields || 0) + 1;
                             }
 
                             // bonusCoins 및 콤보 정보를 함께 저장하여 이력 관리 최적화
-                            activeChild.perfectWeeksClaimed.push({ 
-                                weekStartStr, 
+                            activeChild.perfectWeeksClaimed.push({
+                                weekStartStr,
                                 bonusCoins,
                                 comboCount: currentCombo,
                                 hasCertificate: hasCertificate
@@ -7748,7 +7998,7 @@
                                     // 5마리 동물들의 화려한 퍼펙트 위크 축하 모달 연출 발동! (코인 획득 연출 후 자연스럽게 오버랩)
                                     setTimeout(() => {
                                         if (typeof showGrandPerfectWeekCelebration === 'function') {
-                                            showGrandPerfectWeekCelebration();
+                                            showGrandPerfectWeekCelebration(true);
                                         }
                                     }, 1500);
                                 }, 2500);
@@ -8838,6 +9088,8 @@
                 }
             });
         }
+
+
 
         function renderCoinChartByPeriod(activeChild) {
             if (!activeChild) return;
@@ -9940,7 +10192,7 @@
                     currentDefaultIds.push(d.id);
 
                     // 오늘만 취소된 미션 이력이 있다면 재생성하지 않고 건너뜀
-                    const isCanceledForDate = (activeChild.canceledDefaultMissions || []).some(c => 
+                    const isCanceledForDate = (activeChild.canceledDefaultMissions || []).some(c =>
                         String(c.defaultMissionId) === String(d.id) && c.date === targetDateStr
                     );
                     if (isCanceledForDate) {
@@ -9957,7 +10209,7 @@
                     const weekStart = new Date(targetDateObj_copy);
                     weekStart.setDate(targetDateObj_copy.getDate() + mondayDiff);
                     const weekStartStr = getLocalIsoString(weekStart);
-                    
+
                     const sunday = new Date(weekStart);
                     sunday.setDate(weekStart.getDate() + 6);
                     const weekEndStr = getLocalIsoString(sunday);
@@ -12004,7 +12256,7 @@
             const modal = document.getElementById('wonder-certificate-modal');
             const card = document.getElementById('wonder-certificate-card');
             const stamp = document.getElementById('cert-stamp');
-            
+
             const title = document.getElementById('cert-month-title');
             const name = document.getElementById('cert-child-name');
             const subDetail = document.getElementById('cert-sub-detail');
@@ -12140,7 +12392,7 @@
             if (comboArea) {
                 const combo = activeChild.perfectWeekCombo || 0;
                 const shields = activeChild.perfectWeekShields || 0;
-                
+
                 let comboHtml = "";
                 if (combo > 0) {
                     comboHtml += `
@@ -12414,7 +12666,7 @@
         }
 
         // ==================== [신규기능] 원더위크 대합창 축하 연출 ====================
-        function showGrandPerfectWeekCelebration() {
+        function showGrandPerfectWeekCelebration(isFirstTime = false) {
             const activeChild = state.children[state.activeChildId];
             if (!activeChild) return;
 
@@ -12477,6 +12729,7 @@
             // 모달 컨테이너 생성
             const modal = document.createElement('div');
             modal.id = 'perfect-week-grand-celebration';
+            modal.dataset.isFirstTime = isFirstTime ? 'true' : 'false';
             modal.className = 'fixed inset-0 z-[99999] flex items-center justify-center bg-slate-950/80 backdrop-blur-md opacity-0 transition-opacity duration-500 pointer-events-none';
 
             // 뒷배경 글로우 및 모달 내부 구성
@@ -12641,9 +12894,13 @@
                 const card = modal.querySelector('.bg-gradient-to-br');
                 if (card) card.classList.add('scale-90');
 
+                const isFirstTime = modal.dataset.isFirstTime === 'true';
+
                 setTimeout(() => {
                     modal.remove();
-                    triggerWonderLuckyBoxFlow();
+                    if (isFirstTime) {
+                        triggerWonderLuckyBoxFlow();
+                    }
                 }, 500);
             }
         }
@@ -12667,7 +12924,7 @@
             const title = document.getElementById('lucky-box-title');
             const guide = document.getElementById('lucky-box-guide');
             const claimBtn = document.getElementById('lucky-box-claim-btn');
-            
+
             const activeChild = state.children[state.activeChildId];
             if (!modal || !card || !activeChild) return;
 
@@ -12684,7 +12941,7 @@
                 boxTitle = '황금 보물상자가 도착했어요!';
             } else if (combo > 4 && combo % 4 === 0) {
                 boxEmoji = '👑';
-                boxTitle = `${Math.floor(combo/4)}달 완성! 황금 왕관 상자!`;
+                boxTitle = `${Math.floor(combo / 4)}달 완성! 황금 왕관 상자!`;
             } else {
                 boxEmoji = '🔮';
                 boxTitle = `피버 타임! 마법 보물상자!`;
@@ -12725,9 +12982,9 @@
 
             // 2. confetti 터뜨리기 (모달 zIndex인 100002보다 높은 zIndex 설정)
             if (typeof confetti === 'function') {
-                confetti({ 
-                    particleCount: 100, 
-                    spread: 80, 
+                confetti({
+                    particleCount: 100,
+                    spread: 80,
                     origin: { y: 0.65 },
                     zIndex: 100010
                 });
@@ -12771,6 +13028,17 @@
                 activeChild.stars = (activeChild.stars || 0) + bonusCoins;
                 initChildCoins(activeChild);
                 activeChild.totalEarnedCoins = (activeChild.totalEarnedCoins || 0) + bonusCoins;
+
+                // 럭키박스 보상 이력을 studyLogs에 기록하여 상세 내역에 반영
+                if (!activeChild.studyLogs) activeChild.studyLogs = [];
+                activeChild.studyLogs.push({
+                    date: getLocalIsoString(new Date()),
+                    subject: "연속 콤보 보상",
+                    content: `🔥 ${combo}주 연속 달성 럭키박스 보상 코인 획득!`,
+                    stars: bonusCoins,
+                    completed: true,
+                    isLuckyBoxBonus: true
+                });
 
                 const globalStarCount = document.getElementById('global-star-count');
                 if (globalStarCount) globalStarCount.innerText = activeChild.stars;
@@ -12968,7 +13236,7 @@
         window.showShieldInfo = showShieldInfo;
 
         // 🧪 수동 테스트용 헬퍼 함수 (개발자 도구 콘솔용)
-        window.testWonderWeekCombo = function(targetCombo) {
+        window.testWonderWeekCombo = function (targetCombo) {
             const activeChild = state.children[state.activeChildId];
             if (!activeChild) {
                 showToast("로그인된 자녀 정보가 없습니다.", "error");
@@ -12989,7 +13257,7 @@
             activeChild.perfectWeekCombo = targetCombo;
             if (targetCombo >= 4 && targetCombo % 4 === 0) {
                 activeChild.perfectWeekShields = (activeChild.perfectWeekShields || 0) + 1;
-                
+
                 // 🏆 명예 수료증 갤러리 시각화 테스트를 위해 가상의 클레임 기록 임시 주입
                 if (!activeChild.perfectWeeksClaimed) activeChild.perfectWeeksClaimed = [];
                 const hasExisting = activeChild.perfectWeeksClaimed.some(c => c.comboCount === targetCombo);
@@ -13008,10 +13276,10 @@
             if (typeof renderAvatarTabDetails === 'function') renderAvatarTabDetails();
 
             showToast(`🧪 테스트 모드: ${activeChild.name} 대원의 연속 콤보를 ${targetCombo}주로 설정했습니다. (종료 시 자동 복원됩니다)`, "info");
-            
+
             // 즉시 대합창 팝업 호출 (종료 시 럭키박스, 수료증 순차 연동됨)
             if (typeof showGrandPerfectWeekCelebration === 'function') {
-                showGrandPerfectWeekCelebration();
+                showGrandPerfectWeekCelebration(true);
             }
         };
 
