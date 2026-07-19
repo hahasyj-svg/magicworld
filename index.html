@@ -1787,6 +1787,12 @@
                                     <option value="일">일요일</option>
                                 </select>
                             </div>
+                            <div>
+                                <select id="p-table-filter-subject" onchange="renderParentDefaultMissionsTable()"
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 font-bold text-slate-700">
+                                    <option value="ALL">📚 전체 과목</option>
+                                </select>
+                            </div>
                             <div class="ml-auto">
                                 <button onclick="deleteSelectedDefaultMissions()"
                                     class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shadow-sm text-[11px]">
@@ -5008,9 +5014,11 @@
 
             const childFilterEl = document.getElementById('p-table-filter-child');
             const dayFilterEl = document.getElementById('p-table-filter-day');
+            const subjectFilterEl = document.getElementById('p-table-filter-subject');
 
             const childFilter = childFilterEl ? childFilterEl.value : 'ALL';
             const dayFilter = dayFilterEl ? dayFilterEl.value : 'ALL';
+            const subjectFilter = subjectFilterEl ? subjectFilterEl.value : 'ALL';
 
             let tableHtml = `
                 <table class="w-full text-left border-collapse text-xs mt-2">
@@ -5042,6 +5050,7 @@
                 let defaults = c.defaultMissions || [];
                 defaults.forEach(m => {
                     if (dayFilter !== 'ALL' && m.day !== dayFilter) return;
+                    if (subjectFilter !== 'ALL' && m.subject !== subjectFilter) return;
 
                     allMissions.push({
                         childId: c.id,
@@ -9394,9 +9403,11 @@
         function renderSubjectOptions() {
             const childSelect = document.getElementById('child-form-subject');
             const parentSelect = document.getElementById('p-form-subject');
+            const filterSubjectSelect = document.getElementById('p-table-filter-subject');
 
             const prevChildVal = childSelect ? childSelect.value : '';
             const prevParentVal = parentSelect ? parentSelect.value : '';
+            const prevFilterSubjectVal = filterSubjectSelect ? filterSubjectSelect.value : 'ALL';
 
             if (!state.subjects) state.subjects = ['국어', '영어', '수학', '독서', '예체능', '생활', '한자'];
 
@@ -9412,6 +9423,14 @@
                 parentSelect.innerHTML = optionsHtml;
                 if (prevParentVal && state.subjects.includes(prevParentVal)) {
                     parentSelect.value = prevParentVal;
+                }
+            }
+            if (filterSubjectSelect) {
+                filterSubjectSelect.innerHTML = `<option value="ALL">📚 전체 과목</option>` + state.subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+                if (prevFilterSubjectVal && (prevFilterSubjectVal === 'ALL' || state.subjects.includes(prevFilterSubjectVal))) {
+                    filterSubjectSelect.value = prevFilterSubjectVal;
+                } else {
+                    filterSubjectSelect.value = 'ALL';
                 }
             }
         }
@@ -9627,13 +9646,13 @@
         function syncDOM() {
             if (!loggedInUser) return;
 
+            renderSubjectOptions();
+
             // 총괄관리자 예외 처리
             if (loggedInUser.role === 'admin') {
                 renderParentView();
                 return;
             }
-
-            renderSubjectOptions();
 
             if (!state.children) {
                 state.children = {};
