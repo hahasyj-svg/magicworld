@@ -1,5 +1,5 @@
 // Service Worker for My Study Planner PWA
-const CACHE_NAME = 'study-planner-v3';
+const CACHE_NAME = 'study-planner-v4';
 
 // 캐시할 핵심 파일 목록
 const CORE_ASSETS = [
