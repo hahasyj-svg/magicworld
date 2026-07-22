@@ -1,5 +1,5 @@
 // Service Worker for My Study Planner PWA
-const CACHE_NAME = 'study-planner-v1';
+const CACHE_NAME = 'study-planner-v3';
 
 // 캐시할 핵심 파일 목록
 const CORE_ASSETS = [
@@ -8,6 +8,79 @@ const CORE_ASSETS = [
   './manifest.json',
   './assets/icon-192.png',
   './assets/icon-512.png',
+  
+  // 동물 캐릭터 이미지 (칭찬용)
+  './assets/cute_egg.png',
+  './assets/cute_baby_bird.png',
+  './assets/cute_baby_bunny.png',
+  './assets/cute_baby_cat.png',
+  './assets/cute_baby_dog.png',
+  './assets/cute_baby_dragon.png',
+  './assets/cute_baby_monkey.png',
+  './assets/cute_baby_panda.png',
+  './assets/cute_baby_sea.png',
+  './assets/cute_baby_tiger.png',
+  
+  './assets/cute_kid_bird.png',
+  './assets/cute_kid_bunny.png',
+  './assets/cute_kid_cat.png',
+  './assets/cute_kid_dog.png',
+  './assets/cute_kid_dragon.png',
+  './assets/cute_kid_monkey.png',
+  './assets/cute_kid_panda.png',
+  './assets/cute_kid_sea.png',
+  './assets/cute_kid_tiger.png',
+  
+  './assets/cute_junior_bird.png',
+  './assets/cute_junior_bunny.png',
+  './assets/cute_junior_cat.png',
+  './assets/cute_junior_dog.png',
+  './assets/cute_junior_dragon.png',
+  './assets/cute_junior_monkey.png',
+  './assets/cute_junior_panda.png',
+  './assets/cute_junior_sea.png',
+  './assets/cute_junior_tiger.png',
+  
+  './assets/cute_hero_bird.png',
+  './assets/cute_hero_bunny.png',
+  './assets/cute_hero_cat.png',
+  './assets/cute_hero_dog.png',
+  './assets/cute_hero_dragon.png',
+  './assets/cute_hero_monkey.png',
+  './assets/cute_hero_panda.png',
+  './assets/cute_hero_sea.png',
+  './assets/cute_hero_tiger.png',
+  
+  './assets/cute_legend_bird.png',
+  './assets/cute_legend_bunny.png',
+  './assets/cute_legend_cat.png',
+  './assets/cute_legend_dog.png',
+  './assets/cute_legend_dragon.png',
+  './assets/cute_legend_monkey.png',
+  './assets/cute_legend_panda.png',
+  './assets/cute_legend_sea.png',
+  './assets/cute_legend_tiger.png',
+  
+  // AI 선생님 이미지 (칭찬용)
+  './assets/ai-teacher/female_default.png',
+  './assets/ai-teacher/female_all_done.png',
+  './assets/ai-teacher/female_half_done.png',
+  './assets/ai-teacher/female_first_done.png',
+  './assets/ai-teacher/female_partial_done.png',
+  './assets/ai-teacher/female_high_weekly.png',
+  './assets/ai-teacher/female_high_coins.png',
+  './assets/ai-teacher/female_med_weekly.png',
+  './assets/ai-teacher/female_low_weekly.png',
+  
+  './assets/ai-teacher/male_default.png',
+  './assets/ai-teacher/male_all_done.png',
+  './assets/ai-teacher/male_half_done.png',
+  './assets/ai-teacher/male_first_done.png',
+  './assets/ai-teacher/male_partial_done.png',
+  './assets/ai-teacher/male_high_weekly.png',
+  './assets/ai-teacher/male_high_coins.png',
+  './assets/ai-teacher/male_med_weekly.png',
+  './assets/ai-teacher/male_low_weekly.png'
 ];
 
 // ─── 설치: 핵심 파일 캐싱 ───────────────────────────────────────────────────
