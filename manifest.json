@@ -2,12 +2,11 @@
   "name": "My Study Planner",
   "short_name": "스터디플래너",
   "description": "윤자매 학습 플래너 앱",
-  "start_url": "/magicworld/index.html",
-  "scope": "/magicworld/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#1e1b4b",
   "theme_color": "#4f46e5",
-  "orientation": "any",
   "lang": "ko",
   "icons": [
     {
