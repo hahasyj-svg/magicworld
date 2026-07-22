@@ -1384,7 +1384,7 @@
                         <i class="fa-solid fa-envelope text-[14px]"></i> 마법 우체통
                     </button>
                     <button onclick="switchParentTab('APPROVAL')" id="ptab-approval"
-                        class="flex-1 min-w-[80px] py-3 px-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800">
+                        class="flex-1 min-w-[80px] py-3 px-2 rounded-xl text-center transition flex items-center justify-center gap-1.5 text-slate-500 hover:text-slate-800 relative">
                         <i class="fa-solid fa-stamp text-[14px]"></i> 결재 관리
                     </button>
                     <button onclick="switchParentTab('PLAN')" id="ptab-plan"
@@ -10142,6 +10142,25 @@
                     badge.className = 'unread-badge ml-1 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full';
                     badge.innerText = totalUnread;
                     ptabTalk.appendChild(badge);
+                }
+            }
+
+            // 💮 [추가 구현] 부모 모드 결재 관리 대기 건수 배지 업데이트
+            let totalApprovalRequests = 0;
+            Object.values(state.children || {}).forEach(c => {
+                const rewardReqs = (c.rewardRequests || []).filter(r => !r.status || r.status === 'REQUESTED' || r.status === 'SHIPPING').length;
+                const missionReqs = (c.missionRequests || []).length;
+                totalApprovalRequests += (rewardReqs + missionReqs);
+            });
+            const ptabApproval = document.getElementById('ptab-approval');
+            if (ptabApproval) {
+                const existingBadge = ptabApproval.querySelector('.unread-badge');
+                if (existingBadge) existingBadge.remove();
+                if (totalApprovalRequests > 0) {
+                    const badge = document.createElement('span');
+                    badge.className = 'unread-badge ml-1 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full';
+                    badge.innerText = totalApprovalRequests;
+                    ptabApproval.appendChild(badge);
                 }
             }
             if (state.isParentMode && state.parentActiveTab === 'TALK') {
